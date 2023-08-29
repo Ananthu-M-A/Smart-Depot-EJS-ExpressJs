@@ -1,0 +1,72 @@
+<div class="container">
+    <div class="row">
+      <div class="col-md">
+        <table class="table text-center" id="admin-table">
+          <thead>
+            <tr>
+              <th scope="col">Categories</th>
+              <th scope="col">Block Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% categories.forEach(category=> { %>  
+              <tr>
+                <td class="align-middle">
+                  <%= category.productCategory %>
+                </td>
+                <td class="align-middle">
+                  <div class="form-check form-switch">
+                    <input class="form-check-input text-center" type="checkbox" role="switch" id="categoryBlockStatus"
+                      onclick="categoryBlockStatus('<%= category._id %>')" <% if (category.blocked) { %>checked<% } %>
+                      >
+                  </div>
+                </td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+        <div class="text-center" id="admin-table">
+          <button class="btn fw-bold bg-dark text-light w-25 p-2 rounded-3" id="btnAddCategory">Add new Category</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+  
+    const btnAddCategory = document.getElementById('btnAddCategory');
+  
+    btnAddCategory.addEventListener('click', () => {
+      analyticsTable.style.display = 'none';
+      productsTable.style.display = 'none';
+      ordersTable.style.display = 'none';
+      usersTable.style.display = 'none';
+      addProduct.style.display = 'none';
+      editProduct.style.display = 'none';
+      categoriesTable.style.display = 'none';
+      addCategory.style.display = 'block';
+    });
+  
+  
+  async function categoryBlockStatus(id) {
+  const checkbox = document.getElementById('categoryBlockStatus');
+  
+  if (confirm(`Are you sure you want to make changes in block status of the category?`)) {
+    const userData = {
+      id: id,
+    };
+  
+    try {
+      const response = await fetch(`/adminHome/categoryBlockStatus`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(userData),
+      });
+    } catch (error) {
+      console.error('Error updating product:', error);
+      alert('An error occurred while updating the product block status.');
+    }
+  }
+  }
+  
+  </script>

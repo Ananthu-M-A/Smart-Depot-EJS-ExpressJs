@@ -1,0 +1,114 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md">
+      <table class="table text-center" id="admin-table">
+        <thead>
+          <tr>
+            <th scope="col">Image</th>
+            <th scope="col">Product Name</th>
+            <th scope="col">Category</th>
+            <th scope="col">Brand</th>
+            <th scope="col">Quality</th>
+            <th scope="col">Price</th>
+            <th scope="col">Stock</th>
+            <th scope="col">Update</th>
+            <th scope="col">Block Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% products.forEach(product=> { %>  
+            <tr>
+              <td class="align-middle">
+                <div>
+                  <img src="/productImage/<%= product.productImageNames[0] %>" class="card-img-top zoomable-image2" id="productImage" alt="Product Image">
+                </div>
+              </td>
+              <td class="align-middle">
+                <%= product.productName %>
+              </td>
+              <td class="align-middle">
+                <%= product.productCategory %>
+              </td>
+              <td class="align-middle">
+                <%= product.productBrand %>
+              </td>
+              <td class="align-middle">
+                <%= product.productQuality %>
+              </td>
+              <td class="align-middle">
+                <%= product.productPrice %>
+              </td>
+              <td class="align-middle">
+                <%= product.productStock %>
+              </td>
+              <td class="align-middle">
+                <button class="btn" id="btnProductUpdate">
+                  <img src="/images/update.png" alt="Update" class="btn-icon" id="productUpdate">
+                </button>
+              </td>
+              <td class="align-middle">
+                <div class="form-check form-switch">
+                  <input class="form-check-input text-center" type="checkbox" role="switch" id="productBlockStatus"
+                    onclick="productBlockStatus('<%= product._id %>')" <% if (product.blocked) { %>checked<% } %>
+                    >
+                </div>
+              </td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+      <div class="text-center" id="admin-table">
+        <button class="btn fw-bold text-light w-25 p-2 rounded-3" id="btnAddProduct">Add new Product</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+
+  const btnAddProduct = document.getElementById('btnAddProduct');
+
+  btnAddProduct.addEventListener('click', () => {
+    analyticsTable.style.display = 'none';
+    productsTable.style.display = 'none';
+    ordersTable.style.display = 'none';
+    usersTable.style.display = 'none';
+    addProduct.style.display = 'block';
+    editProduct.style.display = 'none';
+
+  });
+
+  const btnProductUpdate = document.getElementById('productUpdate');
+
+  btnProductUpdate.addEventListener('click', () => {
+  analyticsTable.style.display = 'none';
+  productsTable.style.display = 'none';
+  ordersTable.style.display = 'none';
+  usersTable.style.display = 'none';
+  addProduct.style.display = 'none';
+  editProduct.style.display = 'block';
+});
+
+async function productBlockStatus(id) {
+const checkbox = document.getElementById('productBlockStatus');
+
+if (confirm(`Are you sure you want to make changes in block status of the product?`)) {
+  const userData = {
+    id: id,
+  };
+
+  try {
+    const response = await fetch(`/adminHome/productBlockStatus`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(userData),
+    });
+  } catch (error) {
+    console.error('Error updating product:', error);
+    alert('An error occurred while updating the product block status.');
+  }
+}
+}
+
+
+</script>

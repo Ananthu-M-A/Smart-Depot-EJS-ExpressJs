@@ -1,0 +1,183 @@
+<%-include('partials/header.ejs')%>
+  <div class="sidebar bg-dark">
+    <div class="col-lg-3 d-none d-lg-block text-center mt-3 mb-3">
+      <a href="" class="text-decoration-none">
+        <img class="rounded" src="/images/smart-depot1.png" width="200" alt=""></a>
+    </div>
+    <ul class="nav-links">
+      <li>
+        <a href="#">
+          <i class='bx bx-grid-alt'></i>
+          <span class="links_name" id="analytics">Analytics</span>
+        </a>
+      </li>
+      <li>
+        <a href="#">
+          <i class='bx bx-box'></i>
+          <span class="links_name" id="products">Products</span>
+        </a>
+      </li>
+      <li>
+        <a href="#">
+          <i class='bx bx-list-ul'></i>
+          <span class="links_name" id="orders">Orders</span>
+        </a>
+      </li>
+      <li>
+        <a href="#">
+          <i class='bx bx-user'></i>
+          <span class="links_name" id="users">Users</span>
+        </a>
+      </li>
+      <li>
+        <a href="#">
+          <i class='bx bx-cog'></i>
+          <span class="links_name" id="categories">Categories</span>
+        </a>
+      </li>
+      <li class="acc_setting">
+        <a href="#">
+          <i class='bx bx-grid'></i>
+          <span class="links_name">Account Settings</span>
+        </a>
+      </li>
+      <li class="log_out">
+        <a href="#">
+          <i class='bx bx-log-out'></i>
+          <span class="links_name">Log out</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+  <section class="home-section">
+    <nav>
+      <div class="sidebar-button">
+        <i class='bx  sidebarBtn'></i>
+        <span class="dashboard">Dashboard</span>
+      </div>
+      <div class="search-box">
+        <input type="text" placeholder="Search...">
+        <i class='bx bx-search'></i>
+      </div>
+      <div class="profile-details bg-secondary">
+        <img src="/images/bck.png" alt="">
+        <span class="admin_name">Ananthu M A</span>
+        <i class='bx bx-chevron-down'></i>
+      </div>
+    </nav>
+
+    <div id="addCategory" style="display: none;">
+      <%- include('partials/addCategory.ejs') %>
+    </div>
+
+    <div id="categoriesTable" style="display: none;">
+      <%- include('partials/categoriesTable.ejs', { categories }) %>
+    </div>
+
+    <div id="addProduct" style="display: none;">
+      <%- include('partials/addProduct.ejs') %>
+    </div>
+
+    <div id="editProduct" style="display: none;">
+      <%- include('partials/editProduct.ejs', { products: products }) %>
+    </div>
+
+    <div id="productsTable" style="display: none;">
+      <%- include('partials/productsTable.ejs', { products: products }) %>
+    </div>
+
+    <div id="ordersTable" style="display: none;">
+      <%- include('partials/ordersTable.ejs') %>
+    </div>
+
+    <div id="usersTable" style="display: none;">
+      <%- include('partials/usersTable.ejs') %>
+    </div>
+
+    <div id="analyticsTable">
+      <%- include('partials/analyticsTable.ejs') %>
+    </div>
+
+    <%-include('partials/footer.ejs')%>
+
+      <script>
+
+        const analytics = document.getElementById('analytics');
+        const products = document.getElementById('products');
+        const orders = document.getElementById('orders');
+        const users = document.getElementById('users');
+        const categories = document.getElementById('categories');
+        const btnCancel = document.getElementById('btnCancel');
+        const analyticsTable = document.getElementById('analyticsTable');
+        const productsTable = document.getElementById('productsTable');
+        const ordersTable = document.getElementById('ordersTable');
+        const usersTable = document.getElementById('usersTable');
+        const categoriesTable = document.getElementById('categoriesTable');
+
+        analytics.addEventListener('click', () => {
+          analyticsTable.style.display = 'block';
+          productsTable.style.display = 'none';
+          ordersTable.style.display = 'none';
+          usersTable.style.display = 'none';
+          addProduct.style.display = 'none';
+          editProduct.style.display = 'none';
+          categoriesTable.style.display = 'none';
+          addCategory.style.display = 'none';
+        });
+
+        products.addEventListener('click', () => {
+          analyticsTable.style.display = 'none';
+          productsTable.style.display = 'block';
+          ordersTable.style.display = 'none';
+          usersTable.style.display = 'none';
+          addProduct.style.display = 'none';
+          editProduct.style.display = 'none';
+          categoriesTable.style.display = 'none';
+          addCategory.style.display = 'none';
+        });
+
+        orders.addEventListener('click', () => {
+          analyticsTable.style.display = 'none';
+          productsTable.style.display = 'none';
+          ordersTable.style.display = 'block';
+          usersTable.style.display = 'none';
+          addProduct.style.display = 'none';
+          editProduct.style.display = 'none';
+          categoriesTable.style.display = 'none';
+          addCategory.style.display = 'none';
+        });
+
+        users.addEventListener('click', () => {
+          analyticsTable.style.display = 'none';
+          productsTable.style.display = 'none';
+          ordersTable.style.display = 'none';
+          usersTable.style.display = 'block';
+          addProduct.style.display = 'none';
+          editProduct.style.display = 'none';
+          categoriesTable.style.display = 'none';
+          addCategory.style.display = 'none';
+        });
+
+        categories.addEventListener('click', () => {
+          analyticsTable.style.display = 'none';
+          productsTable.style.display = 'none';
+          ordersTable.style.display = 'none';
+          usersTable.style.display = 'none';
+          addProduct.style.display = 'none';
+          editProduct.style.display = 'none';
+          categoriesTable.style.display = 'block';
+          addCategory.style.display = 'none';
+        });
+
+        btnCancel.addEventListener('click', () => {
+          analyticsTable.style.display = 'none';
+          productsTable.style.display = 'block';
+          ordersTable.style.display = 'none';
+          usersTable.style.display = 'none';
+          addProduct.style.display = 'none';
+          editProduct.style.display = 'none';
+          categoriesTable.style.display = 'none';
+          addCategory.style.display = 'none';
+        });
+
+      </script>

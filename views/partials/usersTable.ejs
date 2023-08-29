@@ -1,0 +1,67 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md">
+      <table class="table text-center" id="admin-table">
+        <thead>
+          <tr>
+            <th scope="col">Full Name</th>
+            <th scope="col">Email</th>
+            <th scope="col">Mobile</th>
+            <th scope="col">Block Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% users.forEach(user=> { %>
+            <tr>
+              <td>
+                <%= user.fullname %>
+              </td>
+              <td>
+                <%= user.email %>
+              </td>
+              <td>
+                <%= user.mobile %>
+              </td>
+              <td>
+                <div class="form-check form-switch">
+                  <input class="form-check-input text-center" type="checkbox" role="switch" id="userBlockStatus"
+                    onclick="userBlockStatus('<%= user._id %>')" <% if (user.blocked) { %>checked<% } %>
+                    >
+                </div>
+              </td>
+            </tr>
+            <% }); %>
+        </tbody>
+      </table>
+      <div class="text-center" id="admin-table">
+        <button class="btn fw-bold text-light w-25 p-2 rounded-3" id="" type="button">NEW</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+
+async function userBlockStatus(id) {
+const checkbox = document.getElementById('userBlockStatus');
+
+if (confirm(`Are you sure you want to make changes in block status of the user?`)) {
+  const userData = {
+    id: id,
+  };
+
+  try {
+    const response = await fetch(`/adminHome/userBlockStatus`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(userData),
+    });
+  } catch (error) {
+    // An error occurred while making the request
+    console.error('Error updating user:', error);
+    alert('An error occurred while updating the user block status.');
+  }
+}
+}
+
+</script>
