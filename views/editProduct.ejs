@@ -1,0 +1,60 @@
+<%-include('partials/header.ejs')%>
+
+
+  <div class="container">
+    <form action="/adminHome/updateProduct/<%= products._id %>" method="POST">
+    <div class="row">
+      <div class="col-md">
+        <table class="table text-center" id="admin-table">
+          <thead>
+            <tr>
+              <th scope="col">Image</th>
+              <th scope="col">Product Name</th>
+              <th scope="col">Category</th>
+              <th scope="col">Brand</th>
+              <th scope="col">Quality</th>
+              <th scope="col">Price</th>
+              <th scope="col">Stock</th>
+              <th scope="col">Block Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="align-middle">
+                <div>
+                  <img src="/productImage/<%= products.productImageNames[0] %>" id="productImage" alt="Product Image">
+                </div>
+              </td>
+              <td class="align-middle">
+                <input type="text" id="productName" name="productName" value="<%= products.productName %>" required>
+              </td>
+              <td class="align-middle">
+                <input type="text" id="productCategory" name="productCategory" value="<%= products.productCategory %>" required>
+              </td>
+              <td class="align-middle">
+                <input type="text" id="productBrand" name="productBrand" value="<%= products.productBrand %>" required>
+              </td>
+              <td class="align-middle">
+                <input type="text" id="productQuality" name="productQuality" value="<%= products.productQuality %>" required>
+              </td>
+              <td class="align-middle">
+                <input type="text" id="productPrice" name="productPrice" value="<%= products.productPrice %>" required>
+              </td>
+              <td class="align-middle">
+                <input type="text" id="productStock" name="productStock" value="<%= products.productStock %>" required>
+              </td>
+              <td class="align-middle">
+                <%= products.blocked %>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="text-center" id="admin-table">
+          <button class="btn fw-bold text-light w-25 p-2 rounded-3" type="submit" id="btnAddProduct">Update Product</button>
+        </div>
+      </form>
+      </div>
+    </div>
+  </div>
+
+  <%-include('partials/footer.ejs')%>

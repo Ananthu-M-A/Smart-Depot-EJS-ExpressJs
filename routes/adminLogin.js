@@ -13,7 +13,8 @@ router.post('/', async (req, res, next) => {
     const admin = await Admin.findOne({ email });
     if((admin.email === email)&&(password === '1234'))
     {
-      res.render('adminHome');
+      req.session.admin = email;
+      res.redirect('/adminHome');
     }
 
     if (!admin) {

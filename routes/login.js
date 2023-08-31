@@ -1,10 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
-const UserLoginData = require("../models/userModel");
+const UserLoginData = require("../models/userModel");     
 
-router.get('/', function (req, res, next) {
-  res.render('login', { title: 'LOGIN' });
+router.get('/', function (req, res) {
+  if(!req.session.user){
+  res.render('login');
+  } else {
+  res.redirect('\home');
+  }
 });
 
 router.post('/', async (req, res, next) => {
@@ -16,15 +20,15 @@ router.post('/', async (req, res, next) => {
       return res.status(400).send('User not found');
     }
 
+    if (user.blocked) {
+      return res.status(400).send('You are not allowed');
+    }
+
     const passwordMatch = await bcrypt.compare(password, user.password);
 
     if (passwordMatch) {
-
-      if (user.blocked) {
-        return res.status(400).send('You are not allowed');
-      }
-
-      return res.render('home');
+      req.session.user = email;
+      return res.redirect('/home');
       
     } else {
       return res.status(401).send('Enter correct password');

@@ -34,20 +34,15 @@ router.post('/',async(req,res)=>{
   transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
       console.error('Error sending OTP email:', error);
-      // Handle error response
     } else {
       console.log('OTP email sent:', info.response);
-      // Handle success response
     }
   });
     res.redirect('/signup/verify-otp');
   } catch (error) {
     console.error('Error saving user:', error);
-    // Handle error response
   }
 
-  
-  
 });
 
 function generateOTP() {
@@ -68,7 +63,6 @@ router.post('/verify-otp', async (req, res) => {
   }
 
   if (enteredOTP === storedUserData.otp) {
-    // OTP matches, save user data to the database
     const { fullname, email, mobile, password } = storedUserData;
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -82,16 +76,13 @@ router.post('/verify-otp', async (req, res) => {
 
     try {
       await registerUserWithOTP.save();
-      // Clear the session data after successful verification
       req.session.userData = null;
 
       res.render('login');
     } catch (error) {
       console.error('Error saving user:', error);
-      // Handle error response
     }
   } else {
-    // OTP doesn't match, destroy the session data
     req.session.userData = null;
     res.status(400).send('Invalid OTP');
   }

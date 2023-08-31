@@ -21,7 +21,7 @@ body, html {
   background-color: black;
 }
 
-#productDelete,#productUpdate{
+#productDelete,#btnEditProduct{
   height: 4vh;
 }
 

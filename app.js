@@ -6,14 +6,12 @@ let cookieParser = require('cookie-parser');
 let logger = require('morgan');
 let mongoose = require('mongoose');
 
-const UserLoginData = require('./models/userModel');
-const userController = require('./controllers/userControllers');
-
 let signupRouter = require('./routes/signup');
 let loginRouter = require('./routes/login');
 let adminLoginRouter = require('./routes/adminLogin');
 let homeRouter = require('./routes/home');
 let adminHomeRouter = require('./routes/adminHome');
+
 
 mongoose.connect('mongodb://127.0.0.1:27017/smartDepot', {
   useNewUrlParser: true,
@@ -26,9 +24,10 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 app.use(session({
-  secret: 'your-secret-key',
+  secret: 'the_smart_depot',
   resave: false,
-  saveUninitialized: true
+  saveUninitialized: true,
+  cookie: { secure: false }
 }));
 
 app.use(logger('dev'));
@@ -58,6 +57,4 @@ app.use(function(err, req, res, next) {
 });
 
 module.exports = app;
-
-// For Commit
 

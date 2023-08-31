@@ -29,7 +29,7 @@
           <span class="links_name" id="users">Users</span>
         </a>
       </li>
-      <li>
+      <li>  
         <a href="#">
           <i class='bx bx-cog'></i>
           <span class="links_name" id="categories">Categories</span>
@@ -42,7 +42,7 @@
         </a>
       </li>
       <li class="log_out">
-        <a href="#">
+        <a href="/adminHome/logout">
           <i class='bx bx-log-out'></i>
           <span class="links_name">Log out</span>
         </a>
@@ -70,16 +70,8 @@
       <%- include('partials/addCategory.ejs') %>
     </div>
 
-    <div id="categoriesTable" style="display: none;">
-      <%- include('partials/categoriesTable.ejs', { categories }) %>
-    </div>
-
     <div id="addProduct" style="display: none;">
       <%- include('partials/addProduct.ejs') %>
-    </div>
-
-    <div id="editProduct" style="display: none;">
-      <%- include('partials/editProduct.ejs', { products: products }) %>
     </div>
 
     <div id="productsTable" style="display: none;">
@@ -92,6 +84,10 @@
 
     <div id="usersTable" style="display: none;">
       <%- include('partials/usersTable.ejs') %>
+    </div>
+
+    <div id="categoriesTable" style="display: none;">
+      <%- include('partials/categoriesTable.ejs', { categories: categories }) %>
     </div>
 
     <div id="analyticsTable">
@@ -107,7 +103,6 @@
         const orders = document.getElementById('orders');
         const users = document.getElementById('users');
         const categories = document.getElementById('categories');
-        const btnCancel = document.getElementById('btnCancel');
         const analyticsTable = document.getElementById('analyticsTable');
         const productsTable = document.getElementById('productsTable');
         const ordersTable = document.getElementById('ordersTable');
@@ -120,7 +115,6 @@
           ordersTable.style.display = 'none';
           usersTable.style.display = 'none';
           addProduct.style.display = 'none';
-          editProduct.style.display = 'none';
           categoriesTable.style.display = 'none';
           addCategory.style.display = 'none';
         });
@@ -131,7 +125,6 @@
           ordersTable.style.display = 'none';
           usersTable.style.display = 'none';
           addProduct.style.display = 'none';
-          editProduct.style.display = 'none';
           categoriesTable.style.display = 'none';
           addCategory.style.display = 'none';
         });
@@ -142,7 +135,6 @@
           ordersTable.style.display = 'block';
           usersTable.style.display = 'none';
           addProduct.style.display = 'none';
-          editProduct.style.display = 'none';
           categoriesTable.style.display = 'none';
           addCategory.style.display = 'none';
         });
@@ -153,30 +145,18 @@
           ordersTable.style.display = 'none';
           usersTable.style.display = 'block';
           addProduct.style.display = 'none';
-          editProduct.style.display = 'none';
           categoriesTable.style.display = 'none';
           addCategory.style.display = 'none';
         });
 
         categories.addEventListener('click', () => {
-          analyticsTable.style.display = 'none';
+          console.log('Categories link clicked');
+  console.log('Before: categoriesTable display =', categoriesTable.style.display); analyticsTable.style.display = 'none';
           productsTable.style.display = 'none';
           ordersTable.style.display = 'none';
           usersTable.style.display = 'none';
           addProduct.style.display = 'none';
-          editProduct.style.display = 'none';
           categoriesTable.style.display = 'block';
-          addCategory.style.display = 'none';
-        });
-
-        btnCancel.addEventListener('click', () => {
-          analyticsTable.style.display = 'none';
-          productsTable.style.display = 'block';
-          ordersTable.style.display = 'none';
-          usersTable.style.display = 'none';
-          addProduct.style.display = 'none';
-          editProduct.style.display = 'none';
-          categoriesTable.style.display = 'none';
           addCategory.style.display = 'none';
         });
 

@@ -12,7 +12,7 @@
                             </td>
                             <td>
                                 <div class="input-group">
-                                    <select class="form-select" id="inputGroupSelect02">
+                                    <select class="form-select" id="inputGroupSelect02" name="productCategory">
                                         <option selected>Choose category</option>
                                         <% categories.forEach(category=> { %>
                                             <option value="<%= category.productCategory %>">
@@ -65,12 +65,6 @@
                         Product</button>
                 </div>
             </form>
-            <div class="text-center">
-                <button btn class="btn btn-outline-primary fw-bold text-dark w-25 p-2 rounded-3"
-                    id="btnCancel">Cancel</button>
-            </div>
-
-
         </div>
     </div>
 </div>

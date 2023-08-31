@@ -1,9 +1,11 @@
 const express = require('express');
 const multer = require('multer');
 const path = require('path');
+let mongoose = require('mongoose');
 const productData = require('../models/productModel');
 const UserLoginData = require('../models/userModel');
 const categoryData = require('../models/categoryModel');
+
 const router = express.Router();
 
 const storage = multer.diskStorage({
@@ -16,13 +18,16 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage : storage });
 
-router.get('/', async (req, res) => {
+router.get('/' , async (req, res) => {
   try {
+    if(req.session.admin){
     const products = await productData.find();
     const users = await UserLoginData.find();
     const categories = await categoryData.find();
-
-    res.render('adminHome', { products, users, categories });
+    res.render('adminHome', { admin : req.session.admin , products, users, categories });
+    } else {
+      res.redirect('/adminLogin');
+    }
   } catch (error) {
     res.render('adminHome', { error: 'Error fetching user data.' });
   }
@@ -30,7 +35,11 @@ router.get('/', async (req, res) => {
 
 router.get('/products', async (req, res) => {
   try {
-    res.render('adminHome');
+    if(req.session.admin){
+    res.render('adminHome' , { admin : req.session.admin });
+  } else {
+    res.redirect('/adminLogin');
+  }
   } catch (error) {
     res.render('adminHome', { error: 'Error fetching user data.' });
   }
@@ -47,7 +56,7 @@ router.post('/addProduct', upload.array('images', 4), async (req, res) => {
       productStock,
       productDescription,
     } = req.body;
-    
+
     const imageNames = req.files.map(file => file.filename);
 
     const product = new productData({
@@ -71,6 +80,8 @@ router.post('/addProduct', upload.array('images', 4), async (req, res) => {
   }
 });
 
+
+
 router.patch('/userBlockStatus', async (req, res) => {
   try {
     let result;
@@ -91,6 +102,37 @@ router.patch('/userBlockStatus', async (req, res) => {
     res.status(500).json({ message: 'Error toggling user admin status', error: error.message });
   }
 });
+
+router.get('/editProduct/:productId', async (req, res) => {
+  try {
+    if(req.session.admin){
+    const productId = req.params.productId;
+    const products = await productData.findById(productId);
+    const categories = await categoryData.findById(productId);
+    res.render('editProduct', { admin : req.session.user , products , categories });
+  } else {
+    res.redirect('/adminLogin');
+  }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+router.post('/updateProduct/:productId', async (req, res) => {
+  try {
+    const productId = req.params.productId;
+    const updatedProductData = req.body;
+
+    await productData.findByIdAndUpdate(productId,updatedProductData);
+
+    res.redirect('/adminHome'); 
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
 
 router.patch('/productBlockStatus', async (req, res) => {
   try {
@@ -148,6 +190,15 @@ router.patch('/categoryBlockStatus', async (req, res) => {
     res.json({ message: 'Category block status changed successfully' });
   } catch (error) {
     res.status(500).json({ message: 'Error toggling category block status', error: error.message });
+  }
+});
+
+router.get('/logout', async(req, res) => {
+  try {
+    // req.session.destroy();
+    res.redirect('/adminLogin');
+  } catch (error) {
+    res.render('/adminLogin', { error: 'Error logging in' });
   }
 });
 

@@ -1,7 +1,10 @@
 <div class="container">
   <div class="row">
     <div class="col-md">
-      <table class="table text-center" id="admin-table">
+      <div class="text-center mb-5" id="admin-table">
+        <button class="btn bg-dark fw-bold text-light w-25 p-2 rounded-3" id="btnAddProduct">Add new Product</button>
+      </div>
+      <table class="table text-center">
         <thead>
           <tr>
             <th scope="col">Image</th>
@@ -42,9 +45,9 @@
                 <%= product.productStock %>
               </td>
               <td class="align-middle">
-                <button class="btn" id="btnProductUpdate">
-                  <img src="/images/update.png" alt="Update" class="btn-icon" id="productUpdate">
-                </button>
+                <a href="/adminHome/editProduct/<%= product._id %>">
+                  <img src="/images/update.png" alt="Update" class="btn-icon" id="btnEditProduct">
+                </a>
               </td>
               <td class="align-middle">
                 <div class="form-check form-switch">
@@ -57,9 +60,6 @@
           <% }); %>
         </tbody>
       </table>
-      <div class="text-center" id="admin-table">
-        <button class="btn fw-bold text-light w-25 p-2 rounded-3" id="btnAddProduct">Add new Product</button>
-      </div>
     </div>
   </div>
 </div>
@@ -67,6 +67,7 @@
 <script>
 
   const btnAddProduct = document.getElementById('btnAddProduct');
+  const btnEditProduct = document.getElementById('btnEditProduct');
 
   btnAddProduct.addEventListener('click', () => {
     analyticsTable.style.display = 'none';
@@ -75,19 +76,20 @@
     usersTable.style.display = 'none';
     addProduct.style.display = 'block';
     editProduct.style.display = 'none';
-
+    categoriesTable.style.display = 'none';
+    addCategory.style.display = 'none';
   });
 
-  const btnProductUpdate = document.getElementById('productUpdate');
-
-  btnProductUpdate.addEventListener('click', () => {
-  analyticsTable.style.display = 'none';
-  productsTable.style.display = 'none';
-  ordersTable.style.display = 'none';
-  usersTable.style.display = 'none';
-  addProduct.style.display = 'none';
-  editProduct.style.display = 'block';
-});
+  btnEditProduct.addEventListener('click', () => {
+    analyticsTable.style.display = 'none';
+    productsTable.style.display = 'none';
+    ordersTable.style.display = 'none';
+    usersTable.style.display = 'none';
+    addProduct.style.display = 'none';
+    editProduct.style.display = 'block';
+    categoriesTable.style.display = 'none';
+    addCategory.style.display = 'none';
+  });
 
 async function productBlockStatus(id) {
 const checkbox = document.getElementById('productBlockStatus');
