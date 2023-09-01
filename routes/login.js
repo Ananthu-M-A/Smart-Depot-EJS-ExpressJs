@@ -3,8 +3,8 @@ const router = express.Router();
 const bcrypt = require('bcrypt');
 const UserLoginData = require("../models/userModel");     
 
-router.get('/', function (req, res) {
-  if(!req.session.user){
+router.get('/',function (req, res) {
+  if(!req.session.user || req.session.status !== 'logged-in'){
   res.render('login');
   } else {
   res.redirect('\home');
@@ -20,14 +20,11 @@ router.post('/', async (req, res, next) => {
       return res.status(400).send('User not found');
     }
 
-    if (user.blocked) {
-      return res.status(400).send('You are not allowed');
-    }
-
     const passwordMatch = await bcrypt.compare(password, user.password);
 
     if (passwordMatch) {
       req.session.user = email;
+      req.session.status = 'logged-in';
       return res.redirect('/home');
       
     } else {

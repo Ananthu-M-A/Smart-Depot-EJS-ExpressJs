@@ -66,12 +66,13 @@
       </div>
     </nav>
 
-    <div id="addCategory" style="display: none;">
-      <%- include('partials/addCategory.ejs') %>
-    </div>
-
+    
     <div id="addProduct" style="display: none;">
       <%- include('partials/addProduct.ejs') %>
+    </div>
+    
+    <div id="addCategory" style="display: none;">
+      <%- include('partials/addCategory.ejs') %>
     </div>
 
     <div id="productsTable" style="display: none;">
@@ -108,13 +109,23 @@
         const ordersTable = document.getElementById('ordersTable');
         const usersTable = document.getElementById('usersTable');
         const categoriesTable = document.getElementById('categoriesTable');
+        const btnAddCategory = document.getElementById('btnAddCategory');
+        const addCategory = document.getElementById('addCategory');
+
+    btnAddCategory.addEventListener('click', () => {
+      analyticsTable.style.display = 'none';
+      productsTable.style.display = 'none';
+      ordersTable.style.display = 'none';
+      usersTable.style.display = 'none';
+      categoriesTable.style.display = 'none';
+      addCategory.style.display = 'block';
+    });
 
         analytics.addEventListener('click', () => {
           analyticsTable.style.display = 'block';
           productsTable.style.display = 'none';
           ordersTable.style.display = 'none';
           usersTable.style.display = 'none';
-          addProduct.style.display = 'none';
           categoriesTable.style.display = 'none';
           addCategory.style.display = 'none';
         });
@@ -124,7 +135,6 @@
           productsTable.style.display = 'block';
           ordersTable.style.display = 'none';
           usersTable.style.display = 'none';
-          addProduct.style.display = 'none';
           categoriesTable.style.display = 'none';
           addCategory.style.display = 'none';
         });
@@ -134,7 +144,6 @@
           productsTable.style.display = 'none';
           ordersTable.style.display = 'block';
           usersTable.style.display = 'none';
-          addProduct.style.display = 'none';
           categoriesTable.style.display = 'none';
           addCategory.style.display = 'none';
         });
@@ -144,18 +153,15 @@
           productsTable.style.display = 'none';
           ordersTable.style.display = 'none';
           usersTable.style.display = 'block';
-          addProduct.style.display = 'none';
           categoriesTable.style.display = 'none';
           addCategory.style.display = 'none';
         });
 
         categories.addEventListener('click', () => {
-          console.log('Categories link clicked');
-  console.log('Before: categoriesTable display =', categoriesTable.style.display); analyticsTable.style.display = 'none';
+          analyticsTable.style.display = 'none';
           productsTable.style.display = 'none';
           ordersTable.style.display = 'none';
           usersTable.style.display = 'none';
-          addProduct.style.display = 'none';
           categoriesTable.style.display = 'block';
           addCategory.style.display = 'none';
         });

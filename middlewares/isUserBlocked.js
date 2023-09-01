@@ -1,0 +1,18 @@
+const UserLoginData = require('../models/userModel');
+
+async function isUserBlocked(req, res, next) {
+    try {
+        const blockStatus = await UserLoginData.findOne({ email: req.session.user }, { blocked: 1, _id: 0 });
+
+        if(blockStatus.blocked)
+        {
+            req.session.destroy();
+            req.session.status = 'logged-out';
+            res.redirect('/login');
+        }
+        next();
+  } catch (error) {
+    res.render('login', { error: 'Error logging in' });
+  }
+}
+module.exports = isUserBlocked;

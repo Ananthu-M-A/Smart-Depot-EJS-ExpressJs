@@ -57,7 +57,6 @@ if (confirm(`Are you sure you want to make changes in block status of the user?`
       body: JSON.stringify(userData),
     });
   } catch (error) {
-    // An error occurred while making the request
     console.error('Error updating user:', error);
     alert('An error occurred while updating the user block status.');
   }

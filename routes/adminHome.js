@@ -5,7 +5,7 @@ let mongoose = require('mongoose');
 const productData = require('../models/productModel');
 const UserLoginData = require('../models/userModel');
 const categoryData = require('../models/categoryModel');
-
+const requireAuth = require('../middlewares/isAuthenticatedAdmin');
 const router = express.Router();
 
 const storage = multer.diskStorage({
@@ -18,34 +18,28 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage : storage });
 
-router.get('/' , async (req, res) => {
+router.get('/', requireAuth, async (req, res) => {
   try {
-    if(req.session.admin){
     const products = await productData.find();
     const users = await UserLoginData.find();
     const categories = await categoryData.find();
     res.render('adminHome', { admin : req.session.admin , products, users, categories });
-    } else {
-      res.redirect('/adminLogin');
     }
-  } catch (error) {
+  catch (error) {
     res.render('adminHome', { error: 'Error fetching user data.' });
   }
 });
 
-router.get('/products', async (req, res) => {
+router.get('/products', requireAuth, async (req, res) => {
   try {
-    if(req.session.admin){
     res.render('adminHome' , { admin : req.session.admin });
-  } else {
-    res.redirect('/adminLogin');
   }
-  } catch (error) {
+  catch (error) {
     res.render('adminHome', { error: 'Error fetching user data.' });
   }
 });
 
-router.post('/addProduct', upload.array('images', 4), async (req, res) => {
+router.post('/addProduct', requireAuth, upload.array('images', 4), async (req, res) => {
   try {
     const {
       productName,
@@ -82,7 +76,7 @@ router.post('/addProduct', upload.array('images', 4), async (req, res) => {
 
 
 
-router.patch('/userBlockStatus', async (req, res) => {
+router.patch('/userBlockStatus', requireAuth, async (req, res) => {
   try {
     let result;
     const blockStatus = await UserLoginData.findOne({ _id: req.body.id }, { blocked: 1, _id: 0 })
@@ -103,7 +97,7 @@ router.patch('/userBlockStatus', async (req, res) => {
   }
 });
 
-router.get('/editProduct/:productId', async (req, res) => {
+router.get('/editProduct/:productId', requireAuth, async (req, res) => {
   try {
     if(req.session.admin){
     const productId = req.params.productId;
@@ -119,7 +113,7 @@ router.get('/editProduct/:productId', async (req, res) => {
   }
 });
 
-router.post('/updateProduct/:productId', async (req, res) => {
+router.post('/updateProduct/:productId', requireAuth, async (req, res) => {
   try {
     const productId = req.params.productId;
     const updatedProductData = req.body;
@@ -134,7 +128,7 @@ router.post('/updateProduct/:productId', async (req, res) => {
 });
 
 
-router.patch('/productBlockStatus', async (req, res) => {
+router.patch('/productBlockStatus', requireAuth, async (req, res) => {
   try {
     let result;
     const blockStatus = await productData.findOne({ _id: req.body.id }, { blocked: 1, _id: 0 })
@@ -155,8 +149,9 @@ router.patch('/productBlockStatus', async (req, res) => {
   }
 });
 
-router.post('/addCategory',async (req, res) => {
+router.post('/addCategory', requireAuth, async (req, res) => {
   try {
+    console.log('1234');
     const {
       productCategory,
     } = req.body;
@@ -173,7 +168,7 @@ router.post('/addCategory',async (req, res) => {
   }
 });
 
-router.patch('/categoryBlockStatus', async (req, res) => {
+router.patch('/categoryBlockStatus', requireAuth, async (req, res) => {
   try {
     let result;
     const blockStatus = await categoryData.findOne({ _id: req.body.id }, { blocked: 1, _id: 0 })
@@ -195,8 +190,12 @@ router.patch('/categoryBlockStatus', async (req, res) => {
 
 router.get('/logout', async(req, res) => {
   try {
-    // req.session.destroy();
+  const { admin } = req.session;
+  if (admin) {
+    admin.adminStatus = 'logged-out';
+    req.session.destroy();
     res.redirect('/adminLogin');
+  }
   } catch (error) {
     res.render('/adminLogin', { error: 'Error logging in' });
   }

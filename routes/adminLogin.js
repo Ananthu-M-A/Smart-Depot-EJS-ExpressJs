@@ -3,9 +3,13 @@ const router = express.Router();
 const bcrypt = require('bcrypt');
 const Admin = require("../models/adminModel");
 
-router.get('/', function (req, res, next) {
-  res.render('adminLogin');
-});
+router.get('/', function (req, res) {
+  if(!req.session.admin || req.session.adminStatus !== 'logged-in'){
+    res.render('adminLogin');
+    } else {
+    res.redirect('\adminHome');
+    }
+  });
 
 router.post('/', async (req, res, next) => {
   const { email, password } = req.body;
@@ -14,7 +18,8 @@ router.post('/', async (req, res, next) => {
     if((admin.email === email)&&(password === '1234'))
     {
       req.session.admin = email;
-      res.redirect('/adminHome');
+      req.session.adminStatus = 'logged-in';
+      return res.redirect('/adminHome');
     }
 
     if (!admin) {

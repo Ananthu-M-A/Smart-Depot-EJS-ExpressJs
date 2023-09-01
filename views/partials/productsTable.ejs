@@ -67,7 +67,6 @@
 <script>
 
   const btnAddProduct = document.getElementById('btnAddProduct');
-  const btnEditProduct = document.getElementById('btnEditProduct');
 
   btnAddProduct.addEventListener('click', () => {
     analyticsTable.style.display = 'none';
@@ -76,17 +75,6 @@
     usersTable.style.display = 'none';
     addProduct.style.display = 'block';
     editProduct.style.display = 'none';
-    categoriesTable.style.display = 'none';
-    addCategory.style.display = 'none';
-  });
-
-  btnEditProduct.addEventListener('click', () => {
-    analyticsTable.style.display = 'none';
-    productsTable.style.display = 'none';
-    ordersTable.style.display = 'none';
-    usersTable.style.display = 'none';
-    addProduct.style.display = 'none';
-    editProduct.style.display = 'block';
     categoriesTable.style.display = 'none';
     addCategory.style.display = 'none';
   });
