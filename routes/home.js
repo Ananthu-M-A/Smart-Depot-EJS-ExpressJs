@@ -33,6 +33,14 @@ router.get('/cart', requireAuth, async(req, res) => {
     res.render('cart', { error: 'Error fetching product data.' });
   }
 });
+
+router.get('/checkout', requireAuth, async(req, res) => {
+  try {
+    res.render('checkout', { user: req.session.user}); 
+  } catch (error) {
+    res.render('checkout', { error: 'Error fetching product data.' });
+  }
+});
  
 router.get('/logout', async(req, res) => {
   try {

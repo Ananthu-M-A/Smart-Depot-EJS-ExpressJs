@@ -1,60 +1,137 @@
 <%-include('partials/header.ejs')%>
+<%-include('partials/sidebarList.ejs')%>
 
-
-  <div class="container">
-    <form action="/adminHome/updateProduct/<%= products._id %>" method="POST">
+<div class="container">
+  <form action="/adminHome/updateProduct/<%= products._id %>" method="POST" enctype="multipart/form-data">
     <div class="row">
       <div class="col-md">
-        <table class="table text-center" id="admin-table">
-          <thead>
-            <tr>
-              <th scope="col">Image</th>
-              <th scope="col">Product Name</th>
-              <th scope="col">Category</th>
-              <th scope="col">Brand</th>
-              <th scope="col">Quality</th>
-              <th scope="col">Price</th>
-              <th scope="col">Stock</th>
-              <th scope="col">Block Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td class="align-middle">
-                <div>
-                  <img src="/productImage/<%= products.productImageNames[0] %>" id="productImage" alt="Product Image">
-                </div>
-              </td>
-              <td class="align-middle">
-                <input type="text" id="productName" name="productName" value="<%= products.productName %>" required>
-              </td>
-              <td class="align-middle">
-                <input type="text" id="productCategory" name="productCategory" value="<%= products.productCategory %>" required>
-              </td>
-              <td class="align-middle">
-                <input type="text" id="productBrand" name="productBrand" value="<%= products.productBrand %>" required>
-              </td>
-              <td class="align-middle">
-                <input type="text" id="productQuality" name="productQuality" value="<%= products.productQuality %>" required>
-              </td>
-              <td class="align-middle">
-                <input type="text" id="productPrice" name="productPrice" value="<%= products.productPrice %>" required>
-              </td>
-              <td class="align-middle">
-                <input type="text" id="productStock" name="productStock" value="<%= products.productStock %>" required>
-              </td>
-              <td class="align-middle">
-                <%= products.blocked %>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="table-responsive">
+          <table class="table text-center" id="admin-table">
+            <thead>
+              <tr>
+                <th scope="col">Product Name</th>
+                <th scope="col">Category</th>
+                <th scope="col">Brand</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="align-middle">
+                  <input type="text" id="productName" name="productName" value="<%= products.productName %>" required>
+                </td>
+                <td class="align-middle">
+                  <input type="text" id="productCategory" name="productCategory" value="<%= products.productCategory %>" required>
+                </td>
+                <td class="align-middle">
+                  <input type="text" id="productBrand" name="productBrand" value="<%= products.productBrand %>" required>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="table-responsive">
+          <table class="table text-center" id="admin-table">
+            <thead>
+              <tr>
+                <th scope="col">Quality</th>
+                <th scope="col">Price</th>
+                <th scope="col">Stock</th>
+                <th scope="col">Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="align-middle">
+                  <input type="text" id="productQuality" name="productQuality" value="<%= products.productQuality %>" required>
+                </td>
+                <td class="align-middle">
+                  <input type="text" id="productPrice" name="productPrice" value="<%= products.productPrice %>" required>
+                </td>
+                <td class="align-middle">
+                  <input type="text" id="productStock" name="productStock" value="<%= products.productStock %>" required>
+                </td>
+                <td class="align-middle">
+                  <input type="text" id="productDescription" name="productDescription" value="<%= products.productDescription %>" required>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table text-center" id="admin-table">
+            <thead>
+              <tr>
+                <th scope="col">Image 1</th>
+                <th scope="col">Image 2</th>
+                <th scope="col">Image 3</th>
+                <th scope="col">Image 4</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="align-middle">
+                  <div class="clickable-image" onclick="changeImage('image1', 0)">
+                    <img width="100vw" src="/productImage/<%= products.productImageNames[0] %>" alt="" id="image1">
+                  </div>
+                  <input type="file" name="images" accept="image/*" style="display: none;" id="fileInput1">
+                </td>
+                <td class="align-middle">
+                  <div class="clickable-image" onclick="changeImage('image2', 1)">
+                    <img width="100vw" src="/productImage/<%= products.productImageNames[1] %>" alt="" id="image2">
+                  </div>
+                  <input type="file" name="images" accept="image/*" style="display: none;" id="fileInput2" alt="image2">
+                </td>
+                <td class="align-middle">
+                  <div class="clickable-image" onclick="changeImage('image3', 2)">
+                    <img width="100vw" src="/productImage/<%= products.productImageNames[2] %>" alt="" id="image3">
+                  </div>
+                  <input type="file" name="images" accept="image/*" style="display: none;" id="fileInput3" alt="image3">
+                </td>
+                <td class="align-middle">
+                  <div class="clickable-image" onclick="changeImage('image4', 3)">
+                    <img width="100vw" src="/productImage/<%= products.productImageNames[3] %>" alt="" id="image4">
+                  </div>
+                  <input type="file" name="images" accept="image/*" style="display: none;" id="fileInput4" alt="image4">
+                </td>
+              </tr>
+            </tbody>
+
+          </table>
+        </div>
+
         <div class="text-center" id="admin-table">
           <button class="btn fw-bold text-light w-25 p-2 rounded-3" type="submit" id="btnAddProduct">Update Product</button>
         </div>
-      </form>
       </div>
     </div>
-  </div>
+  </form>
+</div>
 
-  <%-include('partials/footer.ejs')%>
+<%-include('partials/footer.ejs')%>
+
+<script>
+
+function changeImage(imageId, index) {
+  const fileInput = document.getElementById('fileInput' + (index + 1));
+  fileInput.click();
+
+  fileInput.addEventListener('change', function() {
+    const image = document.getElementById(imageId);
+    const selectedFile = fileInput.files[0];
+    const reader = new FileReader();
+
+    reader.onload = function(e) {
+      image.src = e.target.result;
+    };
+
+    reader.readAsDataURL(selectedFile);
+  });
+}
+
+
+</script>
+
+
+
+

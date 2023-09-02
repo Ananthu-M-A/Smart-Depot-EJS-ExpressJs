@@ -39,6 +39,7 @@ router.get('/products', requireAuth, async (req, res) => {
   }
 });
 
+
 router.post('/addProduct', requireAuth, upload.array('images', 4), async (req, res) => {
   try {
     const {
@@ -71,6 +72,44 @@ router.post('/addProduct', requireAuth, upload.array('images', 4), async (req, r
     res.redirect('/adminHome');
   } catch (error) {
     res.render('adminHome', { error: 'Error fetching user data.' });
+  }
+});
+
+router.post('/updateProduct/:productId', requireAuth, upload.array('images', 4), async (req, res) => {
+  try {
+    const {
+      productName,
+      productCategory,
+      productBrand,
+      productQuality,
+      productPrice,
+      productStock,
+      productDescription,
+    } = req.body;
+
+    const imageNames = req.files.map(file => file.filename);
+
+    const productId = req.params.productId;
+    const updatedProduct = {
+      productName: productName,
+      productCategory: productCategory,
+      productBrand: productBrand,
+      productQuality: productQuality,
+      productPrice: productPrice,
+      productStock: productStock,
+      productDescription: productDescription,
+      productImageNames: imageNames,
+    };
+
+    const result = await productData.findByIdAndUpdate(productId, updatedProduct, { new: true });
+
+    if (!result) {
+      return res.render('adminHome', { error: 'Product not found.' });
+    }
+
+    res.redirect('/adminHome');
+  } catch (error) {
+    res.render('adminHome', { error: 'Error updating the product.' });
   }
 });
 

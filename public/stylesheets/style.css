@@ -65,6 +65,10 @@ body, html {
   width: 10vw;
 }
 
+.clickable-image {
+  cursor: pointer;
+}
+
 .icon-hover:hover {
   border-color: #3b71ca !important;
   background-color: white !important;
