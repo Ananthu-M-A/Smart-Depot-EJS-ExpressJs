@@ -38,7 +38,7 @@
                 </div>
             </div>
             <div class="col-lg-4 pb-5 border text-center">
-                <form action="/home/cart" method="get">
+                <form action="/home/cart/<%= product._id %>" method="POST">
                 <p class="font-weight-semi-bold mb-4 ml-0"><%= product.productCategory %> > </p>
                 <h3 class="font-weight-semi-bold"><%= product.productName %></h3>
                 <p class="font-weight-semi-bold mb-4">Brand: <%= product.productBrand %>, Quality: <%= product.productQuality %> Class</p>
@@ -52,7 +52,7 @@
                         <a class="btn">
                             <i class="fa fa-minus" onclick="decreaseValue()"></i>
                         </a>
-                        <input type="text" id="quantity" class="form-control bg-secondary text-center" value="1">
+                        <input type="text" id="quantity" name="quantity" class="form-control bg-secondary text-center" value="1">
                         <a class="btn">
                             <i class="fa fa-plus" onclick="increaseValue()"></i>
                         </a>
@@ -66,7 +66,7 @@
             </div>
 
                 <div class="col-lg-4">
-                    <form class="mb-5" action="">
+                    <form class="mb-5" action="/home/coupon" method="POST">
                         <div class="input-group">
                             <input type="text" class="form-control p-4" placeholder="Coupon Code">
                             <div class="input-group-append">
@@ -75,6 +75,7 @@
                         </div>
                     </form>
                     <div class="card border-secondary mb-5">
+                        <form class="mb-5" action="/home/checkout/<%= product._id %>" method="POST">
                         <div class="card-header bg-secondary border-0">
                             <h4 class="font-weight-semi-bold m-0 text-center">Checkout</h4>
                         </div>
@@ -97,8 +98,9 @@
                                 <h5 class="font-weight-bold">Total</h5>
                                 <h5 class="font-weight-bold">₹<%= product.productPrice %></h5>
                             </div>
-                            <a class="btn btn-block btn-primary my-3 py-3" href="/home/checkout">Proceed To Checkout</a>
+                            <button class="btn btn-block btn-primary my-3 py-3">Proceed To Checkout</button>
                         </div>
+                    </form>
                     </div>
                 </div>
     

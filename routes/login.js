@@ -22,8 +22,8 @@ router.post('/', async (req, res, next) => {
 
     const passwordMatch = await bcrypt.compare(password, user.password);
 
-    if (passwordMatch) {
-      req.session.user = email;
+    if (passwordMatch) {  
+      req.session.user = user._id;
       req.session.status = 'logged-in';
       return res.redirect('/home');
       

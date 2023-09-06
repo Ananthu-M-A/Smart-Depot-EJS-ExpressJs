@@ -31,7 +31,8 @@
                 <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
                     <div class="navbar-nav mr-auto py-0">
                         <a href="/home" class="nav-item nav-link active">Home</a>
-                        <a href="shop.html" class="nav-item nav-link">Orders</a>
+                        <a href="/home/orders" class="nav-item nav-link">Orders</a>
+                        <a href="/home/account" class="nav-item nav-link"><%= users.fullname %></a>
                     </div>
                     <div class="navbar-nav ml-auto py-0">
                         <% if(!user) { %> 
@@ -46,7 +47,7 @@
             <div id="header-carousel" class="carousel slide" data-ride="carousel">
                 <div class="carousel-inner">
                     <div class="carousel-item active" style="height: 410px;">
-                        <img class="img-fluid" src="images/brocken.png" alt="Image">
+                        <img class="img-fluid" src="/images/brocken.png" alt="Image">
                         <div class="carousel-caption d-flex flex-column align-items-center justify-content-center">
                             <div class="p-3" style="max-width: 700px;">
                                 <h4 class="text-light text-uppercase font-weight-medium mb-3">10% Off Your First Bookings</h4>
@@ -56,7 +57,7 @@
                         </div>
                     </div>
                     <div class="carousel-item" style="height: 410px;">
-                        <img class="img-fluid" src="images/signupImage.png" alt="Image">
+                        <img class="img-fluid" src="/images/signupImage.png" alt="Image">
                         <div class="carousel-caption d-flex flex-column align-items-center justify-content-center">
                             <div class="p-3" style="max-width: 700px;">
                                 <h4 class="text-light text-uppercase font-weight-medium mb-3">10% Off Your First Bookings</h4>

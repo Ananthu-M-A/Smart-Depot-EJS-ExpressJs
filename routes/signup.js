@@ -13,6 +13,12 @@ router.get('/', function(req, res, next) {
 
 router.post('/',async(req,res)=>{
   const { fullname, email, mobile, password } = req.body;
+  const user = await UserLoginData.findOne({ email });
+
+  if (user) {
+    return res.status(400).send('You already have an account');
+  }
+
   const otp = generateOTP();
 
   req.session.userData = {

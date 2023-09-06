@@ -1,0 +1,34 @@
+<%-include('partials/header.ejs')%>
+<%-include('partials/topbarUser.ejs')%>
+    <!-- Page Header Start -->
+    <div class="container-fluid bg-secondary mb-5">
+        <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 300px">
+            <h1 class="font-weight-semi-bold text-uppercase mb-3">Orders</h1>
+            <div class="d-inline-flex">
+                <p class="m-0"><a href="">Home</a></p>
+                <p class="m-0 px-2">-</p>
+                <p class="m-0">Shopping Cart</p>
+            </div>
+        </div>
+    </div>
+    <!-- Page Header End -->
+<div class="container-fluid pt-5">
+    <div class="row px-xl-5">
+        <% orders.forEach(order=> { %>  
+        <div class="col-md-6 pb-4">
+            <div class="position-relative bg-secondary text-center text-md-right text-white mb-2 py-5 px-5">
+                <div class="position-relative" style="z-index: 1;">
+                    <h5 class="text-uppercase text-primary mb-3"><%= order._id %></h5>
+                    <p class="text-dark"><%= order.orderDate %></p>
+                    <h1 class="mb-4 font-weight-semi-bold">₹<%= order.total %>/-</h1>
+                    <h5 class="mb-4 font-weight-semi-bold"><%= order.products.length %> Items</h5>
+                    <a href="" class="btn btn-outline-primary py-md-2 px-md-3">Order Details</a>
+                </div>
+            </div>
+        </div>
+        <% }); %>
+    </div>
+</div>
+
+<%-include('partials/bottombarUser.ejs')%>
+<%-include('partials/footer.ejs')%>

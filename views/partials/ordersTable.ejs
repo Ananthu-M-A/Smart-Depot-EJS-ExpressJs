@@ -1,26 +1,55 @@
 <div class="container">
   <div class="row">
     <div class="col-md">
-      <table class="table" id="admin-table">
+      <table class="table text-center" id="admin-table">
         <thead>
           <tr>
-            <th scope="col">Image</th>
-            <th scope="col">Product ID</th>
-            <th scope="col">Product Name</th>
-            <th scope="col">Brand</th>
-            <th scope="col">Price</th>
-            <th scope="col">Stock</th>
-            <th scope="col">Edit</th>
-            <th scope="col">Delete</th>
+            <th scope="col">Order Id</th>
+            <th scope="col">Items</th>
+            <th scope="col">Amount</th>
+            <th scope="col">Method</th>
+            <th scope="col">Status</th>
           </tr>
         </thead>
         <tbody>
-
+          <% orders.forEach(order=> { %>  
+            <tr>
+              <td class="align-middle">
+                <h5><%= order._id %>
+                  <button class="btn-icon">
+                  <img src="/images/details.png" style="width: 3vh;" alt=""></button>
+                </h5>
+                <p><%= order.orderDate %></p>
+              </td>
+              <td class="align-middle">
+                <%= order.products.length %>
+              </td>
+              <td class="align-middle">
+                <%= order.total %>
+              </td>
+              <td class="align-middle">
+                <%= order.paymentMethod %>
+              </td>
+              <td class="align-middle">
+                <div>
+                  <select class="custom-select text-center  ">
+                      <option selected>Order Initiated</option>
+                      <option>Order Pending</option>
+                      <option>Order Confirmed</option>
+                      <option>Shipped</option>
+                      <option>Cancelled</option>
+                      <option>Return Initiated</option>
+                      <option>Returned</option>
+                  </select>
+              </div>
+            </td>
+            </tr>
+          <% }); %>
         </tbody>
       </table>
-      <div class= "text-center" id="admin-table">
+      <!-- <div class= "text-center" id="admin-table">
         <button  class="btn fw-bold text-light w-25 p-2 rounded-3" id="" type="button">NEW</button>
-      </div>
+      </div> -->
     </div>
   </div>
 </div>

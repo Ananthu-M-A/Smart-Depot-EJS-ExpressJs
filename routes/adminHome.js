@@ -5,6 +5,7 @@ let mongoose = require('mongoose');
 const productData = require('../models/productModel');
 const UserLoginData = require('../models/userModel');
 const categoryData = require('../models/categoryModel');
+const orderData = require('../models/orderModel');
 const requireAuth = require('../middlewares/isAuthenticatedAdmin');
 const router = express.Router();
 
@@ -23,7 +24,8 @@ router.get('/', requireAuth, async (req, res) => {
     const products = await productData.find();
     const users = await UserLoginData.find();
     const categories = await categoryData.find();
-    res.render('adminHome', { admin : req.session.admin , products, users, categories });
+    const orders = await orderData.find();
+    res.render('adminHome', { admin : req.session.admin , products, users, categories, orders });
     }
   catch (error) {
     res.render('adminHome', { error: 'Error fetching user data.' });
@@ -118,7 +120,7 @@ router.post('/updateProduct/:productId', requireAuth, upload.array('images', 4),
 router.patch('/userBlockStatus', requireAuth, async (req, res) => {
   try {
     let result;
-    const blockStatus = await UserLoginData.findOne({ _id: req.body.id }, { blocked: 1, _id: 0 })
+    const blockStatus = await UserLoginData.findOne({ _id: req.body.id }, { blocked: 1, _id: 0 });
     if (blockStatus.blocked === true) {
       
       result = await UserLoginData.findByIdAndUpdate(req.body.id, { blocked: false });
