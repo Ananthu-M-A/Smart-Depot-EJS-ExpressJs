@@ -6,6 +6,7 @@ const cartData = require('../models/cartModel');
 const addressData = require('../models/addressModel');
 const UserLoginData = require('../models/userModel');
 const orderData = require('../models/orderModel');
+const wishlistData = require('../models/wishlistModel');
 const requireAuth = require('../middlewares/isAuthenticatedUser');
 const isUserBlocked = require('../middlewares/isUserBlocked');
 
@@ -41,6 +42,18 @@ router.get('/cart', requireAuth, isUserBlocked, async(req, res) => {
     res.render('cart', { error: 'Error fetching product data.' });
   }
 });
+
+router.get('/wishlist', requireAuth, async(req, res) => {
+  try {
+    const wishlist = await wishlistData.find({ customerId: req.session.user })
+    .populate('productId') 
+    .exec();  
+    res.render('wishlist',{ user: req.session.user , wishlist }); 
+  } catch (error) {
+    res.render('wishlist', { error: 'Error fetching product data.' });
+  }
+});
+
 
 router.get('/orders', requireAuth, isUserBlocked, async(req, res) => {
   try {
@@ -88,11 +101,24 @@ router.post('/saveAddress', requireAuth, async(req, res) => {
 
 router.post('/cart/:productId', requireAuth, async(req, res) => {
   try {
-    const productId = req.params.productId;
     const customerId = req.session.user;
+    const productId = req.params.productId;
     const productQuantity = req.body.quantity;
     const products = await productData.findById(productId);
     const currentDate = new Date();
+
+    const cartProduct = await cartData.findOne({ productId : productId });
+    if( cartProduct && ( cartProduct.productId == productId ) )
+    {
+      const updatedQuantity = parseFloat(productQuantity) + parseFloat(cartProduct.productQuantity);
+      const updatedProduct = { productQuantity : updatedQuantity };
+      const result = await cartData.findByIdAndUpdate(cartProduct._id, updatedProduct , { new: true });
+      if (!result) {
+        return res.render('home', { error: 'Product not found.' });
+      }
+      res.redirect('/home/cart'); 
+    }
+    else{
     const cartItems = new cartData({
       customerId: customerId,
       productId: productId,
@@ -102,8 +128,29 @@ router.post('/cart/:productId', requireAuth, async(req, res) => {
     });
     const result = await cartItems.save();
     res.redirect('/home/cart'); 
+  }
   } catch (error) {
     res.render('cart', { error: 'Error fetching product data.' });
+  }
+});
+
+router.post('/wishlist/:productId', requireAuth, async(req, res) => {
+  try {
+    customerId = req.session.user;
+    const currentWishlist = await wishlistData.find({customerId : customerId});
+    const productExisting = currentWishlist.some((item) => item.productId.equals(req.params.productId));
+    if(productExisting)
+    {
+      res.redirect('/home/wishlist');
+    }
+    const wishlist = new wishlistData({
+      customerId: req.session.user,
+      productId: req.params.productId,
+    });
+    const result = await wishlist.save();
+    res.redirect('/home/wishlist'); 
+  } catch (error) {
+    res.render('wishlist', { error: 'Error fetching product data.' });
   }
 });
 
@@ -147,13 +194,12 @@ router.post('/placeOrder/:subTotal/:total', requireAuth, async (req, res) => {
       productQuantity: cartItem.productQuantity,
       productPrice: cartItem.productPrice
     }));
-
     const order = new orderData({
       userId: req.session.user,
       products: orderProducts,
       total: total,
       orderDate: new Date(),
-      paymentMethod: 'COD',
+      paymentMethod: req.body.payment,
       address: address,
     });
 
