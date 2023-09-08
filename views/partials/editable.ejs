@@ -122,14 +122,33 @@
         <% if(!product.blocked) { %>
         <div class="col-md-3">
           <div class="card mb-3">
-            <img src="/productImage/<%= product.productImageNames[0] %>" class="card-img-top" id="productImageLarge" alt="Product Image">
+            <a href="/home/productDetails/<%= product._id %>">
+                <img src="/productImage/<%= product.productImageNames[0] %>" class="card-img-top" id="productImageLarge" alt="Product Image"></a>
             <div class="card-body">
               <h5 class="card-title text-center"><%= product.productName %></h5>
               <p class="card-text">Category: <%= product.productCategory %></p>
               <p class="card-text">Brand: <%= product.productBrand %></p>
               <p class="card-text">Price: <%= product.productPrice %></p>
               <!-- Add other product details as needed -->
-              <a href="/home/productDetails/<%= product._id %>" class="btn btn-primary">View Details</a>
+              <div class="container">
+                <div class="row text-center">
+                    <div class="col-md-4">
+                        <form action="/home/cart/<%= product._id %>" method="POST">
+                            <button class="btn btn-primary"><img width="20vh" src="/images/cart.png"
+                                alt=""></button>
+                        </form>
+                    </div>
+                    <div class="col-md-4">
+                        <a href="/home/productDetails/<%= product._id %>" class="btn btn-primary">View</a>
+                    </div>
+                    <div class="col-md-4">
+                        <form action="/home/wishlist/<%= product._id %>" method="POST">
+                            <button class="btn btn-primary"><img width="20vh" src="/images/wishlist.png"
+                                alt=""></button>
+                        </form>
+                    </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>

@@ -138,6 +138,21 @@ router.patch('/userBlockStatus', requireAuth, async (req, res) => {
   }
 });
 
+router.patch('/updateOrderStatus', requireAuth, async (req, res) => {
+  try {
+    const userData = req.body;
+    console.log(userData.orderStatus);
+    const result = await orderData.findByIdAndUpdate( userData.orderId , { orderStatus : userData.orderStatus } );
+
+    if (result.nModified === 0) {
+      return res.status(404).json({ message: 'Order not updated' });
+    }
+    res.json({ message: 'Order status updated successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating order status', error: error.message });
+  }
+});
+
 router.get('/editProduct/:productId', requireAuth, async (req, res) => {
   try {
     if(req.session.admin){
@@ -192,7 +207,6 @@ router.patch('/productBlockStatus', requireAuth, async (req, res) => {
 
 router.post('/addCategory', requireAuth, async (req, res) => {
   try {
-    console.log('1234');
     const {
       productCategory,
     } = req.body;

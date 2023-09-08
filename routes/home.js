@@ -14,8 +14,10 @@ router.get('/', requireAuth, isUserBlocked, async(req, res) => {
   try {
     const products = await productData.find(); 
     const categories = await categoryData.find();
+    const countCart = await cartData.countDocuments({});
+    const countWishlist = await wishlistData.countDocuments({});
     const users = await UserLoginData.findById(req.session.user);
-    res.render('home', { user: req.session.user , products , categories , users }); 
+    res.render('home', { user: req.session.user , products , categories , users , countCart , countWishlist }); 
   } catch (error) {
     res.render('home', { error: 'Error fetching product data.' });
   }
@@ -62,6 +64,25 @@ router.get('/orders', requireAuth, isUserBlocked, async(req, res) => {
     res.render('order', { user: userId , orders: orders } );
   } catch (error) {
     res.render('order', { error: 'Error fetching product data.' });
+  }
+});
+
+router.get('/orderDetail/:orderId', requireAuth, isUserBlocked, async(req, res) => {
+  try {
+    const userId =  req.session.user ;
+    const orderId = req.params.orderId;
+    const order = await orderData.findOne( { _id : orderId } );
+
+    const products = await orderData.findById(orderId)
+    .populate('products.productId').exec();
+
+  if (!order) {
+    return res.status(404).send('Order not found');
+  }
+
+    res.render('orderDetail', { user: userId , order , products } );
+  } catch (error) {
+    res.render('orderDetail', { error: 'Error fetching product data.' });
   }
 });
 

@@ -1,0 +1,92 @@
+<%-include('partials/header.ejs')%>
+    <%-include('partials/topbarUser.ejs')%>
+        <!-- Page Header Start -->
+        <div class="container-fluid bg-secondary mb-5">
+            <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 300px">
+                <h1 class="font-weight-semi-bold text-uppercase mb-3">Order Details</h1>
+                <div class="d-inline-flex">
+                    <p class="m-0"><a href="/home">Home</a></p>
+                    <p class="m-0 px-2">-</p>
+                    <p class="m-0">Order Details</p>
+                </div>
+            </div>
+        </div>
+        <!-- Page Header End -->
+        <div class="container-fluid pt-5">
+            <div class="row px-xl-5">
+                <div class="col-md-6 pb-4">
+                    <div class="position-relative bg-secondary text-white mb-2 py-5 px-5">
+                        <h5>Order Information</h5>
+                        <p class="text-uppercase text-primary mb-3">Order ID : <%= order._id %>
+                        </p>
+                        <p class="text-dark">Date : <%= order.orderDate %>
+                        </p>
+                        <p class="text-dark">Status : .....</p>
+                    </div>
+                </div>
+                <div class="col-md-6 pb-4">
+                    <div class="position-relative bg-secondary text-white mb-2 py-5 px-5">
+                        <h5>Shipping Details</h5>
+                        <p class="text-uppercase text-primary mb-3">Name : <%= order.address.userFirstName +" "+  order.address.userLastName %></p>
+                    <p class=" text-dark">Address : <%= order.address.userAddressLine1
+                                    +", "+ order.address.userAddressLine2 +" , "+ order.address.userState +" , "+
+                         order.address.userCountry +" , "+ order.address.userZIP %></p>
+                    <p class=" text-dark">Mobile : <%= order.address.userMobileNo %>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="row px-xl-5">
+                <div class="col-md pb-4">
+                    <div class="position-relative bg-secondary text-center text-white mb-2 py-5 px-5">
+                        <h5>Order Items</h5>
+                        <table class="table text-center">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Product</th>
+                                    <th scope="col">Price</th>
+                                    <th scope="col">Quantity</th>
+                                    <th scope="col">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% let i=1 ; %>
+                                    <% products.products.forEach(product=> { %>
+                                        <tr>
+                                            <td>
+                                                <%= i %>
+                                            </td>
+                                            <td>
+                                                <%= product.productId.productName %>
+                                            </td>
+                                            <td>
+                                                <%= product.productId.productPrice %>
+                                            </td>
+                                            <td>
+                                                <%= product.productQuantity %>
+                                            </td>
+                                            <% let total=product.productId.productPrice * product.productQuantity ; %>
+                                                <td>
+                                                    <%= total %>
+                                                </td>
+                                        </tr>
+                                        <% i++; }); %>
+                                        <tr class="font-weight-bold">
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td><h5>Total</h5></td>
+                                            <td>
+                                                ₹<%= order.total %>/-
+                                            </td>
+                                        </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <%-include('partials/bottombarUser.ejs')%>
+            <%-include('partials/footer.ejs')%>

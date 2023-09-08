@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const order = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'userData',
+    ref: 'UserLoginData',
     required: true,
   },
   products: [
@@ -47,6 +47,10 @@ const order = new mongoose.Schema({
     userState: { type: String, required: true },
     userZIP: { type: String, required: true },
   },
+  orderStatus: {
+    type: String,
+    default: "orderInitiated",
+  }
 });
 
 const orderData = mongoose.model('orderData', order);
