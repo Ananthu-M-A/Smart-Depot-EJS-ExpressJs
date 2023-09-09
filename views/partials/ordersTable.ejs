@@ -36,11 +36,12 @@
                       <select class="custom-select text-center" id="orderStatus_<%= order._id %>" onchange="updateOrderStatus('<%= order._id %>')">
                         <option value="Order Initiated" <%= order.orderStatus === "Order Initiated" ? "selected" : "" %>>Order Initiated</option>
                         <option value="Order Confirmed" <%= order.orderStatus === "Order Confirmed" ? "selected" : "" %>>Order Confirmed</option>
-                        <option value="Shipped" <%= order.orderStatus === "Shipped" ? "selected" : "" %>>Shipped</option>
-                        <option value="Cancelled" <%= order.orderStatus === "Cancelled" ? "selected" : "" %>>Cancelled</option>
+                        <option value="Order Cancelled" <%= order.orderStatus === "Order Cancelled" ? "selected" : "" %>>Order Cancelled</option>
+                        <option value="Items Shipped" <%= order.orderStatus === "Items Shipped" ? "selected" : "" %>>Items Shipped</option>
+                        <option value="Order Delivered" <%= order.orderStatus === "Order Delivered" ? "selected" : "" %>>Order Delivered</option>
                         <option value="Return Initiated" <%= order.orderStatus === "Return Initiated" ? "selected" : "" %>>Return Initiated</option>
-                        <option value="Returned" <%= order.orderStatus === "Returned" ? "selected" : "" %>>Returned</option>
-                        <option value="Closed" <%= order.orderStatus === "Closed" ? "selected" : "" %>>Closed</option>
+                        <option value="Items Returned" <%= order.orderStatus === "Items Returned" ? "selected" : "" %>>Items Returned</option>
+                        <option value="Items Closed" <%= order.orderStatus === "Items Closed" ? "selected" : "" %>>Order Closed</option>
                       </select>
                     </div>
                   
