@@ -36,18 +36,22 @@
 
                                     <div class="container-fluid">
                                         <div class="row">
+                                            <% const currentDate = new Date(); %>
+                                            <% const daysDiff = (currentDate - order.deliveredDate) / (1000 * 60 * 60 * 24); %>
                                                 <% if (order.orderStatus === "Order Delivered" ){ %>
+                                                <% if ( daysDiff <= 14 ){ %>
                                                     <div class="col-md">
-                                                        <a href="/home/returnOrder/<%= order._id %>"
-                                                            class="btn btn-outline-primary py-md-2 px-md-3">Return Order</a>
+                                                        <form action="/home/updateOrderStatus/<%= order._id %>" method="post">
+                                                        <button class="btn btn-outline-primary py-md-2 px-md-3">Return Order</button>
+                                                        </form>
                                                     </div>
-                                                <% } %>
+                                                <% }} %>
                                                 <% if (order.orderStatus !== "Order Cancelled" ){ %>
                                                 <% if (order.orderStatus !== "Items Shipped" ){ %>
                                                 <% if (order.orderStatus !== "Order Delivered" ){ %>
                                                 <% if (order.orderStatus !== "Return Initiated"){ %>
                                                 <% if (order.orderStatus !== "Items Returned" ){ %>
-                                                <% if (order.orderStatus !== "Items Closed" ){ %>
+                                                <% if (order.orderStatus !== "Order Closed" ){ %>
                                                 <div class="col-md">
                                                     <a href="/home/cancelOrder/<%= order._id %>"
                                                         class="btn btn-outline-primary py-md-2 px-md-3">Cancel Order</a>

@@ -50,6 +50,14 @@ const order = new mongoose.Schema({
   orderStatus: {
     type: String,
     default: "orderInitiated",
+  },
+  returnOption: {
+    type: Boolean,
+    default: false,
+  },
+  deliveredDate : {
+    type: Date,
+    required: false,
   }
 });
 

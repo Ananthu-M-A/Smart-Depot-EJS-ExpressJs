@@ -41,7 +41,7 @@
                             <% let itemTotal = cartItem.productId.productPrice*cartItem.productQuantity %>
                             <% subTotal = subTotal + itemTotal %>
                             <td class="align-middle">₹<%= itemTotal %></td>
-                            <td class="align-middle"><button class="btn btn-sm btn-primary"><i class="fa fa-times"></i></button></td>
+                            <td class="align-middle"><a href="/home/removeCartItem/<%= cartItem.productId._id %>" class="btn btn-sm btn-primary"><i class="fa fa-times"></i></a></td>
                         </tr>
                         <% }); %>
                     </tbody>

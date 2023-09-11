@@ -65,6 +65,10 @@ body, html {
   width: 10vw;
 }
 
+#filterSmart {
+  list-style-type: none;
+}
+
 .clickable-image {
   cursor: pointer;
 }

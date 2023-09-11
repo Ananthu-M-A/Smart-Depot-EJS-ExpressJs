@@ -141,11 +141,17 @@ router.patch('/userBlockStatus', requireAuth, async (req, res) => {
 router.patch('/updateOrderStatus', requireAuth, async (req, res) => {
   try {
     const userData = req.body;
-    console.log(userData.orderStatus);
     const result = await orderData.findByIdAndUpdate( userData.orderId , { orderStatus : userData.orderStatus } );
 
+    if(userData.orderStatus === "Order Delivered")
+    {
+      const result1 = await orderData.findByIdAndUpdate( userData.orderId , { returnOption : true } );
+      const deliveredDate = new Date();
+      const result2 = await orderData.findOneAndUpdate({ _id: userData.orderId },{ deliveredDate: deliveredDate },{ upsert: true, new: true });
+    }
+
     if (result.nModified === 0) {
-      return res.status(404).json({ message: 'Order not updated' });
+      return res.status(404).json({ message: 'Order status not updated' });
     }
     res.json({ message: 'Order status updated successfully' });
   } catch (error) {
