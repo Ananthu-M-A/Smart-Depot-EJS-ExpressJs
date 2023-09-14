@@ -28,8 +28,8 @@ const order = new mongoose.Schema({
     required: true,
   },
   orderDate: {
-    type: Date,
-    default: Date.now,
+    type: String,
+    required: true,
   },
   paymentMethod: {
     type: String,
@@ -56,7 +56,7 @@ const order = new mongoose.Schema({
     default: false,
   },
   deliveredDate : {
-    type: Date,
+    type: String,
     required: false,
   }
 });

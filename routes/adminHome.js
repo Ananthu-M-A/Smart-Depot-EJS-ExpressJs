@@ -7,6 +7,7 @@ const UserLoginData = require('../models/userModel');
 const categoryData = require('../models/categoryModel');
 const orderData = require('../models/orderModel');
 const requireAuth = require('../middlewares/isAuthenticatedAdmin');
+const moment = require('moment');
 const router = express.Router();
 
 const storage = multer.diskStorage({
@@ -146,7 +147,9 @@ router.patch('/updateOrderStatus', requireAuth, async (req, res) => {
     if(userData.orderStatus === "Order Delivered")
     {
       const result1 = await orderData.findByIdAndUpdate( userData.orderId , { returnOption : true } );
-      const deliveredDate = new Date();
+
+      const dateString = new Date();
+      const deliveredDate = moment(dateString).format('YYYY-MM-DD HH:mm:ss');
       const result2 = await orderData.findOneAndUpdate({ _id: userData.orderId },{ deliveredDate: deliveredDate },{ upsert: true, new: true });
     }
 

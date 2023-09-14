@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const billAddress = mongoose.Schema({
   customerId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'userData',
+    ref: 'userLoginData',
     required: true,
   },
   userFirstName: {

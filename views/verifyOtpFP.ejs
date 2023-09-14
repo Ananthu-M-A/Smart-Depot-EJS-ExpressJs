@@ -1,0 +1,27 @@
+<%-include('partials/header.ejs')%>
+
+<div id="background2" class="container-fluid d-flex justify-content-center align-items-center">
+    <div class="row w-100 m-0">
+      <div class="col-md-4"></div>
+      <div class="col-md-4 bg-light p-5 rounded text-center">
+        <form method="POST" action="/login/verifyOtpFP" class="text-center text-light">
+
+          <div class="mb-3">
+            <label for="number" class="form-label text-dark">Enter your email OTP</label>
+            <input type="text" id="otp" name="otp" class="form-control bg-light" required>
+          </div>
+      
+          <div class="container">
+            <div class="row">
+              <div class="col-md-12">
+                <button class="btn btn-outline-primary w-10" type="submit">Verify OTP</button>
+              </div>
+            </div>
+          </div>
+        </form>
+        </div>
+      <div class="col-md-4"></div>
+    </div>
+  </div>
+
+<%-include('partials/footer.ejs')%>

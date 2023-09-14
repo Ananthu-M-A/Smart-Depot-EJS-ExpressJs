@@ -25,9 +25,9 @@
                     <thead class="bg-secondary text-dark">
                         <tr>
                             <th>Products</th>
-                            <th>Price</th>
+                            <th>Price(₹)</th>
                             <th>Quantity</th>
-                            <th>Total</th>
+                            <th>Total(₹)</th>
                             <th>Remove</th>
                         </tr>
                     </thead>
@@ -36,11 +36,29 @@
                         <% cartItems.forEach(cartItem => { %>  
                             <tr>
                             <td class="align-middle"><img src="img/product-1.jpg" alt="" style="width: 50px;"><%= cartItem.productId.productName %></td>
-                            <td class="align-middle"><%= cartItem.productId.productPrice %></td>
-                            <td class="align-middle text-center"><%= cartItem.productQuantity %></td>
+                            <td class="align-middle" id="itemPrice"><%= cartItem.productId.productPrice %></td>
+                            <td class="align-middle text-center">
+                                <div class="d-flex justify-content-center">
+                                    <form action="/home/addQuantity/<%= cartItem.productId._id %>/<%= cartItem.productQuantity %>" method="POST">
+                                    <button class="btn">
+                                        <i class="fa fa-minus" onclick="decreaseValue('<%= cartItem.productId.productPrice %>')"></i>
+                                    </button>
+                                    </form>                                    
+                                    <input type="text" id="quantity" name="quantity" 
+                                        class="form-control bg-secondary text-center" style="width: 4vw; height: 8vh;" 
+                                        value="<%= cartItem.productQuantity %>">
+                                    <form action="/home/addQuantity/<%= cartItem.productId._id %>/<%= cartItem.productQuantity %>" method="POST">
+                                    <button class="btn">
+                                        <i class="fa fa-plus" onclick="increaseValue('<%= cartItem.productId.productPrice %>')"></i>
+                                    </button>
+                                    </form>
+                                </div>
+                            </td>
                             <% let itemTotal = cartItem.productId.productPrice*cartItem.productQuantity %>
                             <% subTotal = subTotal + itemTotal %>
-                            <td class="align-middle">₹<%= itemTotal %></td>
+                            <td class="align-middle"><input type="text" id="itemTotal" name="itemTotal"
+                                class="form-control bg-secondary text-center w-100 bg-transparent" style="width: 4vw; height: 8vh;" 
+                                value="<%= itemTotal %>"></td>
                             <td class="align-middle"><a href="/home/removeCartItem/<%= cartItem.productId._id %>" class="btn btn-sm btn-primary"><i class="fa fa-times"></i></a></td>
                         </tr>
                         <% }); %>
@@ -63,11 +81,11 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between mb-3 pt-1">
                             <h6 class="font-weight-medium">Subtotal</h6>
-                            <h6 class="font-weight-medium">₹<%= subTotal %></h6>
+                            <h6 class="font-weight-medium"><%= subTotal %></h6>
                         </div>
                         <div class="d-flex justify-content-between">
                             <h6 class="font-weight-medium">Discount</h6>
-                            <h6 class="font-weight-medium">₹0</h6>
+                            <h6 class="font-weight-medium">0</h6>
                         </div>
                     </div>
                     <% let total = subTotal + 0 %>
@@ -89,4 +107,30 @@
     <%-include('partials/bottombarUser.ejs')%>
     <%-include('partials/footer.ejs')%>
 
- 
+    <script>
+
+        let inputElement = document.getElementById('quantity');
+        let outputElement = document.getElementById('itemTotal');
+
+        function increaseValue(itemPrice) {
+            let currentValue = parseInt(inputElement.value);
+            inputElement.value = currentValue + 1;
+            let quantity = parseInt(inputElement.value);
+            let itemTotal = quantity * itemPrice;
+            outputElement.value = itemTotal;       }
+
+        function decreaseValue(itemPrice) {
+            let currentValue = parseInt(inputElement.value);
+            if (currentValue > 1) {
+                inputElement.value = currentValue - 1;
+            }
+            let quantity = parseInt(inputElement.value);
+            let itemTotal = quantity * itemPrice;
+            outputElement.value = itemTotal;
+        }
+
+
+    
+    
+    
+    </script>

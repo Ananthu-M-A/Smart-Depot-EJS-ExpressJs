@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const cart = mongoose.Schema({
   customerId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'userData',
+      ref: 'userLoginData',
       required: true,
     },
   productId: {
@@ -20,7 +20,7 @@ const cart = mongoose.Schema({
     required: true,
   },
   createdTime: {
-    type: Date,
+    type: String,
     required: true,
   },
 });

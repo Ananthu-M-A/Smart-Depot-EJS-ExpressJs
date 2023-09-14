@@ -45,6 +45,11 @@ body, html {
   margin-top: 56vh;
 }
 
+#card{
+  width: 250px;
+  height: 465px;
+}
+
 .zoomable-image {
   transition: transform 0.3s;
 }
