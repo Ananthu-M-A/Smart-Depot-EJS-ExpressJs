@@ -16,9 +16,115 @@
             <tr>
               <td class="align-middle">
                 <h5><%= order._id %>
-                  <button class="btn-icon">
-                  <a href="/home/downloadInvoice/<%= order._id %>"><img src="/images/details.png" style="width: 3vh;" alt=""></a></button>
+                  <button type="button" class="btn mb-2" data-bs-toggle="modal" data-bs-target="#orderModal_<%= order._id %>" data-bs-target="#staticBackdrop">
+                    <img src="/images/details.png" style="width: 3vh;" alt="">
+                  </button>
                 </h5>
+                <!-- Button trigger modal -->
+
+<!-- Modal -->
+<% orders.forEach(order => { %> 
+<div class="modal fade" id="orderModal_<%= order._id %>" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="orderModalLabel_<%= order._id %>" aria-hidden="true">
+  <div class="modal-dialog custom-modal modal-dialog-scrollable">
+    <div class="modal-content custom-modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="staticBackdropLabel">Order Details</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="container-fluid pt-5">
+          <div class="row px-xl-5">
+              <div class="col-md pb-4">
+                  <div class="position-relative bg-secondary text-white mb-2 py-5 px-5">
+                      <h5>Order Information</h5>
+                      <p class="text-uppercase text-primary mb-3">Order ID : <%= order._id %>
+                      </p>
+                      <p class="text-dark">Date : <%= order.orderDate %>
+                      </p>
+                      <p class="text-dark">Payment Method : <%= order.paymentMethod %>
+                      </p>
+                      <p class="text-dark">Status : <%= order.orderStatus %>
+                      </p>
+                  </div>
+              </div>
+              <div class="col-md pb-4">
+                  <div class="position-relative bg-secondary text-white mb-2 py-5 px-5">
+                      <h5>Shipping Details</h5>
+                      <p class="text-uppercase text-primary mb-3">Name : <%= order.address.userFirstName +" "+  order.address.userLastName %></p>
+                  <p class=" text-dark">Address : <%= order.address.userAddressLine1
+                                  +", "+ order.address.userAddressLine2 +" , "+ order.address.userState +" , "+
+                       order.address.userCountry +" , "+ order.address.userZIP %></p>
+                  <p class=" text-dark">Mobile : <%= order.address.userMobileNo %>
+                      </p>
+                  <p class=" text-dark">Email : <%= order.address.userEmail %>
+                  </p>
+                  </div>
+              </div>
+          </div>
+          <div class="row px-xl-5">
+              <div class="col-md pb-4">
+                  <div class="position-relative bg-secondary text-center text-white mb-2 py-5 px-5">
+                      <h5>Order Items</h5>
+                      <table class="table text-center">
+                          <thead>
+                              <tr>
+                                  <th scope="col">#</th>
+                                  <th scope="col">Product</th>
+                                  <th scope="col">Price</th>
+                                  <th scope="col">Quantity</th>
+                                  <th scope="col">Total</th>
+                              </tr>
+                          </thead>
+                          <tbody>
+                              <% let i=1 ; %>
+                                  <% order.products.forEach(product=> { %>
+                                      <tr>
+                                          <td>
+                                              <%= i %>
+                                          </td>
+                                          <td>
+                                              <%= product.productId.productName %>
+                                          </td>
+                                          <td>
+                                              <%= product.productPrice %>
+                                          </td>
+                                          <td>
+                                              <%= product.productQuantity %>
+                                          </td>
+                                          <% let total=product.productPrice * product.productQuantity ; %>
+                                              <td>
+                                                  <%= total %>
+                                              </td>
+                                      </tr>
+                                      <% i++; }); %>
+                                      <tr class="font-weight-bold">
+                                          <td></td>
+                                          <td></td>
+                                          <td></td>
+                                          <td><h5>Total</h5></td>
+                                          <td>
+                                              ₹<%= order.total %>/-
+                                          </td>
+                                      </tr>
+                          </tbody>
+                      </table>
+                      <div class="col-md">
+                          <a href="/home/downloadInvoice/<%= order._id %>"
+                              class="btn btn-outline-primary py-md-2 px-md-3">
+                              Download Invoice<img width="20vh" src="/images/pdfdownload.png" alt=""></a>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>      
+    </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<% }); %>
                 <p><%= order.orderDate %></p>
               </td>
               <td class="align-middle">

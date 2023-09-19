@@ -251,7 +251,7 @@
                                         <h5 class="card-title text-center">
                                             <%= product.productName %>
                                         </h5>
-                                        <p class="card-text">Category: <%= product.productCategory %>
+                                        <p class="card-text">Category: <%= product.productCategory ? product.productCategory.productCategory : 'N/A' %>
                                         </p>
                                         <p class="card-text">Brand: <%= product.productBrand %>
                                         </p>
@@ -355,7 +355,7 @@
                                         <h5 class="card-title text-center">
                                             <%= product.productName %>
                                         </h5>
-                                        <p class="card-text">Category: <%= product.productCategory %>
+                                        <p class="card-text">Category: <%= product.productCategory ? product.productCategory.productCategory : 'N/A' %>
                                         </p>
                                         <p class="card-text">Brand: <%= product.productBrand %>
                                         </p>

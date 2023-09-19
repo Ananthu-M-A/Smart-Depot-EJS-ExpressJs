@@ -35,7 +35,7 @@
                 <a href="/home" class="text-decoration-none">
                 <img src="/images/smart-depot1.png" width="200" alt=""></a>
             </div>
-            <div class="col-lg-7 col-6 text-left">
+            <div class="col-lg-6 col-6 text-left">
                 <form action="/home/search" method="GET">
                     <div class="input-group">
                         <input type="text" class="form-control rounded" placeholder="Search for products" name="searchInput">
@@ -47,18 +47,17 @@
                     </div>
                 </form>
             </div>
-            <div class="col-lg-2 col-6 text-right">
+            <div class="col-lg-3 col-6 text-right">
                 <a href="/home/wishlist" class="btn border rounded-3" id="topicon">
                     <i class="fas fa-heart text-primary"></i>
                     <span class="badge"><%= countWishlist %></span>
                 </a>
+                <a href="/home/account" class="btn" id="profileicon">
+                    <img src="/profileImage/<%= address.profileImageName %>" class="rounded-3" id="profileiconimg" alt="">
+                </a>
                 <a href="/home/cart" class="btn border rounded-3" id="topicon">
                     <i class="fas fa-shopping-cart text-primary"></i>
                     <span class="badge"><%= countCart %></span>
-                </a>
-                <a href="/home/wallet" class="btn border rounded-3" id="topicon">
-                    <i class="fas fa-wallet text-primary"></i>
-                    <span class="badge">0</span>
                 </a>
             </div>
         </div>

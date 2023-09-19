@@ -1,0 +1,106 @@
+<%-include('partials/header.ejs')%>
+<%-include('partials/sidebarList.ejs')%>
+
+        <!-- Page Header Start -->
+        <div class="container-fluid bg-secondary mb-5">
+                <h1>Account Details</h1>
+        </div>
+        <!-- Page Header End -->
+
+        <div class="container-fluid">
+            <div class="nav nav-tabs justify-content-center border-secondary mb-4">
+                <a class="nav-item nav-link" data-toggle="tab" href="#tab-pane-1">User Detail</a>
+                <a class="nav-item nav-link" data-toggle="tab" href="#tab-pane-2">Account Settings</a>
+                <a class="nav-item nav-link" data-toggle="tab" href="#tab-pane-3">Account Transfer</a>
+            </div>
+            <div class="tab-content">
+                <div class="tab-pane fade" id="tab-pane-2">
+                    <h4 class="font-weight-semi-bold mb-4 text-center">ACCOUNT SETTINGS</h4>
+                    <h5 class="font-weight-semi-bold mb-4 text-center">Change Password</h5>
+                    <div class="row">
+                        <div class="col-md-4"></div>
+                        <div class="col-md-4">
+                            <form action="/adminHome/changePassword" method="POST">
+                              <div class="mb-3">
+                                <label>Enter current password</label>
+                                <input type="password" id="password" name="currentPassword" class="form-control" required>
+                              </div>
+                              <div class="mb-3">
+                                <label>Enter new password</label>
+                                <input type="password" id="password" name="newPassword" class="form-control" required>
+                              </div>
+                              <div class="mb-3">
+                                <label>Confirm new password</label>
+                                <input type="password" id="password" name="newPassword2" class="form-control" required>
+                              </div>
+                              <div class="form-group mb-0 text-center">
+                                <button type="submit" class="btn btn-primary px-3">Save new password</button>
+                            </div>
+                            </form>
+                        </div>
+                        <div class="col-md-4"></div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="tab-pane-3">
+                    <h4 class="font-weight-semi-bold mb-4 text-center">TRANSFER ACCOUNT</h4>
+                    <div class="row">
+                        <div class="col-md-4"></div>
+                        <div class="col-md-4">
+                        <form action="/home/deleteAccount" method="POST">
+                            <div class="mb-3">
+                                <label>Enter your primary email</label>
+                                <input class="form-control" name="userEmail" type="text" required>
+                            </div>
+                            <div class="mb-3">
+                                <label>Enter your current password</label>
+                                <input type="password"name="currentPassword" class="form-control" required>
+                            </div>
+                            <div class="form-group mb-0 text-center">
+                                <button type="submit" class="btn btn-primary px-3">Transfer Account</button>
+                            </div>
+                        </form>
+                        </div>
+                        <div class="col-md-4"></div>
+                    </div>
+                </div>
+                <div class="container-fluid tab-pane fade" id="tab-pane-1">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <form action="/adminHome/updateAdminDetail" method="POST" enctype="multipart/form-data">
+                                <h4 class="font-weight-semi-bold mb-4 text-center">ADMIN DETAILS</h4>
+                                <div class="row">
+                                    <div class="col-md-6 form-group">
+                                        <img src="/productImage/<%= adminData.profileImageName %>" width="100" alt="">
+                                        <input type="file" name="image" accept="image/jpeg, image/png, image/gif">
+                                    </div>                                    
+                                    <div class="col-md-6 form-group">
+                                        <label>E-mail</label>
+                                        <input class="form-control" type="text" disabled
+                                            value="<%= adminData.email %>">
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label>Name</label>
+                                        <input class="form-control" name="adminName" type="text"
+                                            value="<%= adminData.fullName %>">
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label>Mobile No</label>
+                                        <input class="form-control" name="adminMobileNo" type="text"
+                                            value="<%= adminData.mobileNo %>">
+                                    </div>
+                                </div>                                
+                        </div>
+                        <br>
+                        <br>
+                        <div class="form-group mb-0 text-center">
+                            <button type="submit" class="btn btn-primary px-3">Save</button>
+                        </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+        </div>
+
+<%-include('partials/footer.ejs')%>

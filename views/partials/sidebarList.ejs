@@ -34,12 +34,6 @@
           <span class="links_name" id="categories">Categories</span>
         </a>
       </li>
-      <li class="acc_setting">
-        <a href="#">
-          <i class='bx bx-grid'></i>
-          <span class="links_name">Account Settings</span>
-        </a>
-      </li>
       <li class="log_out">
         <a href="/adminHome/logout">
           <i class='bx bx-log-out'></i>
@@ -59,8 +53,9 @@
         <i class='bx bx-search'></i>
       </div>
       <div class="profile-details bg-secondary">
-        <img src="/images/bck.png" alt="">
-        <span class="admin_name">Ananthu M A</span>
-        <i class='bx bx-chevron-down'></i>
+       <a href="/adminHome/adminAccount" class="text-decoration-none">
+        <img src="/productImage/<%= adminData.profileImageName %>" alt="">
+        <span class="admin_name"><%= adminData.fullName %></span>
+      </a>
       </div>
     </nav>

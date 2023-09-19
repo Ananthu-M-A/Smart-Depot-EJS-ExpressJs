@@ -30,7 +30,7 @@
                 <%= product.productName %>
               </td>
               <td class="align-middle">
-                <%= product.productCategory %>
+                <%= product.productCategory ? product.productCategory.productCategory : 'N/A' %>
               </td>
               <td class="align-middle">
                 <%= product.productBrand %>

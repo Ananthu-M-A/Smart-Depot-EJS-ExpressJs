@@ -50,6 +50,12 @@ body, html {
   height: 465px;
 }
 
+.custom-modal-content {
+  max-width: 200%;
+  margin: 0 auto;
+}
+
+
 .zoomable-image {
   transition: transform 0.3s;
 }
@@ -97,6 +103,12 @@ body, html {
   padding: 12px;
   width: 4vw;
   height: 7vh;
+}
+
+#profileicon #profileiconimg{
+  padding: 0%;
+  max-width: 4vw;
+  max-height: 7vh;
 }
 
  :root {

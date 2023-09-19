@@ -6,13 +6,11 @@ const wishlistSchema = mongoose.Schema({
     ref: 'UserLoginData',
     required: true,
   },
-  products: [
-    {
+  product: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'productData',
       required: true,
-    },
-  ],
+  },
 });
 
 const wishlistData = mongoose.model('wishlistData', wishlistSchema);

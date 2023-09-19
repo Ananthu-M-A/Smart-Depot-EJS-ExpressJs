@@ -1,16 +1,12 @@
 const mongoose = require('mongoose');
 
-const billAddress = mongoose.Schema({
+const address = mongoose.Schema({
   customerId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'userLoginData',
     required: true,
   },
-  userFirstName: {
-    type: String,
-    required: true,
-  },
-  userLastName: {
+  userName: {
     type: String,
     required: true,
   },
@@ -19,7 +15,11 @@ const billAddress = mongoose.Schema({
     required: true,
   },
   userMobileNo: {
-    type: Number,
+    type: String,
+    required: true,
+  },
+  alternateMobileNo: {
+    type: String,
     required: true,
   },
   userAddressLine1: {
@@ -43,10 +43,40 @@ const billAddress = mongoose.Schema({
     required: true,
   },
   userZIP: {
-    type: Number,
+    type: String,
     required: true,
+  },
+  userName2: {
+    type: String,
+  },
+  userEmail2: {
+    type: String,
+  },
+  alternateMobileNo2: {
+    type: String,
+  },
+  userAddressLine12: {
+    type: String,
+  },
+  userAddressLine22: {
+    type: String,
+  },
+  userCountry2: {
+    type: String,
+  },
+  userCity2: {
+    type: String,
+  },
+  userState2: {
+    type: String,
+  },
+  userZIP2: {
+    type: String,
+  },
+  profileImageName: {
+    type: String,
   },
 });
 
-const addressData = mongoose.model('addressData', billAddress);
+const addressData = mongoose.model('addressData', address);
 module.exports = addressData;

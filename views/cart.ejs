@@ -39,17 +39,17 @@
                             <td class="align-middle" id="itemPrice"><%= cartItem.productId.productPrice %></td>
                             <td class="align-middle text-center">
                                 <div class="d-flex justify-content-center">
-                                    <form action="/home/addQuantity/<%= cartItem.productId._id %>/<%= cartItem.productQuantity %>" method="POST">
+                                    <form action="/home/changeQuantity/<%= cartItem.productId._id %>/<%= cartItem.productQuantity-1 %>" method="POST">
                                     <button class="btn">
-                                        <i class="fa fa-minus" onclick="decreaseValue('<%= cartItem.productId.productPrice %>')"></i>
+                                        <i class="fa fa-minus"></i>
                                     </button>
                                     </form>                                    
                                     <input type="text" id="quantity" name="quantity" 
                                         class="form-control bg-secondary text-center" style="width: 4vw; height: 8vh;" 
                                         value="<%= cartItem.productQuantity %>">
-                                    <form action="/home/addQuantity/<%= cartItem.productId._id %>/<%= cartItem.productQuantity %>" method="POST">
+                                    <form action="/home/changeQuantity/<%= cartItem.productId._id %>/<%= cartItem.productQuantity+1 %>" method="POST">
                                     <button class="btn">
-                                        <i class="fa fa-plus" onclick="increaseValue('<%= cartItem.productId.productPrice %>')"></i>
+                                        <i class="fa fa-plus"></i>
                                     </button>
                                     </form>
                                 </div>
@@ -107,30 +107,3 @@
     <%-include('partials/bottombarUser.ejs')%>
     <%-include('partials/footer.ejs')%>
 
-    <script>
-
-        let inputElement = document.getElementById('quantity');
-        let outputElement = document.getElementById('itemTotal');
-
-        function increaseValue(itemPrice) {
-            let currentValue = parseInt(inputElement.value);
-            inputElement.value = currentValue + 1;
-            let quantity = parseInt(inputElement.value);
-            let itemTotal = quantity * itemPrice;
-            outputElement.value = itemTotal;       }
-
-        function decreaseValue(itemPrice) {
-            let currentValue = parseInt(inputElement.value);
-            if (currentValue > 1) {
-                inputElement.value = currentValue - 1;
-            }
-            let quantity = parseInt(inputElement.value);
-            let itemTotal = quantity * itemPrice;
-            outputElement.value = itemTotal;
-        }
-
-
-    
-    
-    
-    </script>

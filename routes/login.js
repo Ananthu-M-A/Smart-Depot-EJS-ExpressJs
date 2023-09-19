@@ -8,6 +8,7 @@ const crypto = require('crypto');
 router.get('/', async (req, res) => {
   try {
     if (!req.session.user || req.session.status !== 'logged-in') {
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
       res.render('login');
     } else {
       res.redirect('\home');
@@ -104,7 +105,6 @@ router.post('/addNewPassword', async (req, res) => {
   }
 });
 
-
 router.post('/', async (req, res, next) => {
   const { email, password } = req.body;
   try {
@@ -115,12 +115,10 @@ router.post('/', async (req, res, next) => {
     }
 
     const passwordMatch = await bcrypt.compare(password, user.password);
-
     if (passwordMatch) {
       req.session.user = user._id;
       req.session.status = 'logged-in';
       return res.redirect('/home');
-
     } else {
       return res.status(401).send('Enter correct password');
     }

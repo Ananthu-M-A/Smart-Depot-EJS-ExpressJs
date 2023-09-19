@@ -58,6 +58,10 @@ const order = new mongoose.Schema({
   deliveredDate : {
     type: String,
     required: false,
+  },
+  paymentStatus : {
+    type: Boolean,
+    required: true,
   }
 });
 

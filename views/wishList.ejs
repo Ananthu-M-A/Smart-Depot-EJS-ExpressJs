@@ -21,20 +21,20 @@
 <!-- Products Start -->
 <div class="container">
     <div class="row">
-      <% for (const wish of wishlist.products) { %>
+      <% if (wishlist.length > 0) { %>
+        <% wishlist.forEach(wish => { %>
         <div class="col-md-3">
           <div class="card mb-3">
             <a href="/home/productDetails/<%= wish._id %>">
-                <img src="/productImage/<%= wish.productImageNames[0] %>" class="card-img-top" id="productImageLarge" alt="Product Image"></a>
+                <img src="/productImage/<%= wish.product.productImageNames[0] %>" class="card-img-top" id="productImageLarge" alt="Product Image"></a>
             <div class="card-body">
-              <h5 class="card-title text-center"><%=wish.productName %></h5>
-              <p class="card-text">Category: <%= wish.productCategory %></p>
-              <p class="card-text">Brand: <%= wish.productBrand %></p>
-              <p class="card-text">Price: <%= wish.productPrice %></p>
+              <h5 class="card-title text-center"><%=wish.product.productName %></h5>
+              <p class="card-text">Brand: <%= wish.product.productBrand %></p>
+              <p class="card-text">Price: <%= wish.product.productPrice %></p>
               <div class="container">
                 <div class="row text-center">
                     <div class="col-md-4">
-                        <form action="/home/cart/<%= wish._id %>" method="POST">
+                        <form action="/home/cart/<%= wish.product._id %>" method="POST">
                         <input type="text" name="quantity"
                         class="form-control bg-secondary text-center" value="1" hidden>
                             <button class="btn btn-primary"><img width="20vh" src="/images/cart.png"
@@ -42,10 +42,10 @@
                         </form>
                     </div>
                     <div class="col-md-4">
-                      <a href="/home/removeWishlistItem/<%= wish._id %>" class="btn btn-primary">X</i></a></td>
+                      <a href="/home/removeWishlistItem/<%= wish.product._id %>" class="btn btn-primary">X</i></a></td>
                     </div>
                     <div class="col-md-4">
-                        <a href="/home/productDetails/<%= wish._id %>" class="btn btn-primary">
+                        <a href="/home/productDetails/<%= wish.product._id %>" class="btn btn-primary">
                           <img width="20vh" src="/images/view.png" alt=""></a>
                     </div>
                 </div>
@@ -53,7 +53,10 @@
             </div>
           </div>
         </div>
-      <% } %>
+        <% }); %>
+    <% } else { %>
+        <p>No items in the wishlist.</p>
+    <% } %>
     </div>
   </div>
   

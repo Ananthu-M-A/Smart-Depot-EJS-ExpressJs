@@ -20,7 +20,16 @@
                   <input type="text" id="productName" name="productName" value="<%= products.productName %>" required>
                 </td>
                 <td class="align-middle">
-                  <input type="text" id="productCategory" name="productCategory" value="<%= products.productCategory %>" required>
+                  <div class="input-group">
+                    <select class="form-select" id="inputGroupSelect02" name="productCategory">
+                        <option selected><%= products.productCategory.productCategory %></option>
+                        <% categories.forEach(function(category) { %>
+                            <option>
+                              <%= category.productCategory %>
+                            </option>
+                        <% }); %>
+                    </select>
+                </div>
                 </td>
                 <td class="align-middle">
                   <input type="text" id="productBrand" name="productBrand" value="<%= products.productBrand %>" required>

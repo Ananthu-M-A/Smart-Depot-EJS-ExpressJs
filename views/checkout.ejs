@@ -17,7 +17,7 @@
 
 
     <!-- Checkout Start -->
-    <form action="/home/placeOrder/<%= subTotal %>/<%= total %>" method="post">
+    <form id="paymentForm" action="/home/placeOrder/<%= subTotal %>/<%= total %>" method="post">
     <div class="container-fluid pt-5">
         <div class="row px-xl-5">
             <div class="col-lg-8">
@@ -26,12 +26,8 @@
                     <% address.forEach(billAddress => { %>  
                     <div class="row">
                         <div class="col-md-6 form-group">
-                            <label>First Name</label>
-                            <input class="form-control" name="userFirstName" type="text" placeholder="Damon" value="<%= billAddress.userFirstName %>">
-                        </div>
-                        <div class="col-md-6 form-group">
-                            <label>Last Name</label>
-                            <input class="form-control" name="userLastName" type="text" placeholder="Salvatore" value="<%= billAddress.userLastName %>">
+                            <label>Full Name</label>
+                            <input class="form-control" name="userFirstName" type="text" placeholder="Damon" value="<%= billAddress.userName %>">
                         </div>
                         <div class="col-md-6 form-group">
                             <label>E-mail</label>
@@ -84,12 +80,8 @@
                     <% address.forEach(billAddress => { %>  
                     <div class="row">
                         <div class="col-md-6 form-group">
-                            <label>First Name</label>
-                            <input class="form-control" name="userFirstName2" type="text" placeholder="Damon" value="<%= billAddress.userFirstName %>">
-                        </div>
-                        <div class="col-md-6 form-group">
-                            <label>Last Name</label>
-                            <input class="form-control" name="userLastName2" type="text" placeholder="Salvatore" value="<%= billAddress.userLastName %>">
+                            <label>Full Name</label>
+                            <input class="form-control" name="userFirstName2" type="text" placeholder="Damon" value="<%= billAddress.userName %>">
                         </div>
                         <div class="col-md-6 form-group">
                             <label>E-mail</label>
@@ -159,7 +151,7 @@
                     <div class="card-footer border-secondary bg-transparent">
                         <div class="d-flex justify-content-between mt-2">
                             <h5 class="font-weight-bold">Total</h5>
-                            <h5 class="font-weight-bold">₹<%= total %></h5>
+                            <h5 class="font-weight-bold" name="amount">₹<%= total %></h5>
                         </div>
                     </div>
                 </div>
@@ -170,26 +162,14 @@
                     <div class="card-body">
                         <div class="form-group">
                             <div class="custom-control custom-radio">
-                                <input type="radio" class="custom-control-input" name="payment" id="paypal" value="COD" checked>
-                                <label class="custom-control-label" for="paypal">Cash-On-Delivery</label>
+                                <input type="radio" class="custom-control-input" name="paymentMethod" id="cod" value="COD" checked>
+                                <label class="custom-control-label" for="cod">Cash-On-Delivery</label>
                             </div>
-                        </div>
+                        </div>  
                         <div class="form-group">
                             <div class="custom-control custom-radio">
-                                <input type="radio" class="custom-control-input" name="payment" id="directcheck" value="UPI">
-                                <label class="custom-control-label" for="directcheck">UPI Payment</label>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="custom-control custom-radio">
-                                <input type="radio" class="custom-control-input" name="payment" id="banktransfer" value="Net Banking">
-                                <label class="custom-control-label" for="banktransfer">Net Banking</label>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="custom-control custom-radio">
-                                <input type="radio" class="custom-control-input" name="payment" id="banktransfer" value="Debit Card">
-                                <label class="custom-control-label" for="banktransfer">Debit Card Payment</label>
+                                <input type="radio" class="custom-control-input" name="paymentMethod" id="online" value="Online">
+                                <label class="custom-control-label" for="online">Online Payment (RazorPay)</label>
                             </div>
                         </div>
                     </div>

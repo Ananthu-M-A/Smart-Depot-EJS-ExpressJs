@@ -1,18 +1,16 @@
-let createError = require('http-errors');
-let express = require('express');
+const createError = require('http-errors');
+const express = require('express');
 const session = require('express-session');
-let path = require('path');
-let cookieParser = require('cookie-parser');
-let logger = require('morgan');
-let mongoose = require('mongoose');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
+const mongoose = require('mongoose');
 
-
-let signupRouter = require('./routes/signup');
-let loginRouter = require('./routes/login');
-let adminLoginRouter = require('./routes/adminLogin');
-let homeRouter = require('./routes/home');
-let adminHomeRouter = require('./routes/adminHome');
-
+const signupRouter = require('./routes/signup');
+const loginRouter = require('./routes/login');
+const adminLoginRouter = require('./routes/adminLogin');
+const homeRouter = require('./routes/home');
+const adminHomeRouter = require('./routes/adminHome');
 
 mongoose.connect('mongodb://127.0.0.1:27017/smartDepot', {
   useNewUrlParser: true,
@@ -37,7 +35,6 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'uploads')));
-
 
 app.use('/signup', signupRouter);
 app.use('/login', loginRouter);

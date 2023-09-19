@@ -1,7 +1,9 @@
 const express = require('express');
 const multer = require('multer');
+const sharp = require('sharp');
 const path = require('path');
 let mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
 const productData = require('../models/productModel');
 const UserLoginData = require('../models/userModel');
 const categoryData = require('../models/categoryModel');
@@ -9,29 +11,102 @@ const orderData = require('../models/orderModel');
 const requireAuth = require('../middlewares/isAuthenticatedAdmin');
 const moment = require('moment');
 const router = express.Router();
+const networkTime = require('../middlewares/networkTime');
+const Admin = require('../models/adminModel');
 
 const storage = multer.diskStorage({
-  destination: 'uploads/productImage/',
-  filename: function (req, file, cb) {
-      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-      cb(null, file.fieldname + '-' + uniqueSuffix + '.jpg');
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/productImage/');
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, file.fieldname + '-' + uniqueSuffix + '-' + file.originalname);
   }
 });
 
-const upload = multer({ storage : storage });
+const upload = multer({ storage });
 
 router.get('/', requireAuth, async (req, res) => {
   try {
-    const products = await productData.find();
+    const currentDate = moment().format('YYYY-MM-DD HH:mm:ss');
+    const products = await productData.find().populate('productCategory');
     const users = await UserLoginData.find();
-    const categories = await categoryData.find();
-    const orders = await orderData.find();
-    res.render('adminHome', { admin : req.session.admin , products, users, categories, orders });
+    const adminData = await Admin.findOne();
+    const categories = await categoryData.find({},{productCategory: 1, _id: 0});
+    const orders = await orderData.find()
+    .populate('products.productId')
+    .populate('userId')
+    .exec();
+    let totalSales = 0;
+    orders.forEach(order => {
+      totalSales = order.total + totalSales;
+    });
+
+    res.render('adminHome', { admin : req.session.admin , products, users, categories, orders, totalSales, adminData});
     }
   catch (error) {
     res.render('adminHome', { error: 'Error fetching user data.' });
   }
 });
+
+router.get('/adminAccount', requireAuth, async (req, res) => {
+  try {
+    const adminData = await Admin.findOne();
+    res.render('adminAccount' , { admin : req.session.admin, adminData });
+  } catch (error) {
+    console.log(error);
+    res.render('adminHome', { error: 'Error fetching user data.' });
+  }
+});
+
+router.post('/updateAdminDetail', requireAuth, upload.single('image'), async (req, res) => {
+  try {
+    const imageName = req.file.filename;
+    const adminData = {
+      fullName: req.body.adminName,
+      mobileNo: req.body.adminMobileNo,
+      profileImageName: imageName,
+    }
+    const adminId = await Admin.findOne({ email: req.session.admin }, { _id: 1 });
+    const result = await Admin.findByIdAndUpdate(adminId, adminData, { upsert: true });
+    res.redirect('/adminHome/adminAccount');
+  } catch (error) {
+    console.log(error);
+    res.render('adminHome', { error: 'Error fetching user data.' });
+  }
+});
+
+
+router.post('/changePassword', requireAuth, async (req, res) => {
+  try {
+    const { currentPassword, newPassword, newPassword2 } = req.body;
+    if (newPassword !== newPassword2) {
+      console.log('Incorrect password');
+      return res.redirect('/adminHome/adminAccount');
+    }
+
+    const email = req.session.admin;
+    const admin = await Admin.findOne({ email: email }, { password: 1 });
+    const passwordMatch = await bcrypt.compare(currentPassword, admin.password);
+
+    if (passwordMatch) {
+      const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+      const updatePassword = await Admin.findOneAndUpdate({ email: email }, { password: hashedNewPassword });
+
+      if (updatePassword.nModified !== 0) {
+        return res.redirect('/adminHome/adminAccount');
+      } else {
+        res.redirect('/adminHome/logout');
+      }
+    }else{
+      res.redirect('/adminHome/logout');
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 
 router.get('/products', requireAuth, async (req, res) => {
   try {
@@ -43,40 +118,43 @@ router.get('/products', requireAuth, async (req, res) => {
 });
 
 
-router.post('/addProduct', requireAuth, upload.array('images', 4), async (req, res) => {
+router.post('/addProduct', upload.array('images', 4), async (req, res) => {
   try {
     const {
       productName,
-      productCategory,
       productBrand,
       productQuality,
+      productCategory,
       productPrice,
       productStock,
       productDescription,
     } = req.body;
 
-    const imageNames = req.files.map(file => file.filename);
+    const categoryId = await categoryData.findOne({ productCategory: productCategory }, { _id: 1 });
+    
+    const productImageNames = req.files.map(file => file.filename);
 
-    const product = new productData({
-      productName: productName,
-      productCategory: productCategory,
-      productBrand: productBrand,
-      productQuality: productQuality,
-      productPrice: productPrice,
-      productStock: productStock,
-      productDescription: productDescription,
-      productImageNames: imageNames,
+    const newProduct = new productData({
+      productName,
+      productBrand,
+      productQuality,
+      productCategory: categoryId,
+      productPrice,
+      productStock,
+      productDescription,
+      productImageNames,
       blocked: false,
-
     });
 
-
-    const result = await product.save();
-    res.redirect('/adminHome');
+    await newProduct.save();
+    return res.redirect('/adminHome');
   } catch (error) {
-    res.render('adminHome', { error: 'Error fetching user data.' });
+    console.error('Error adding product:', error);
+    res.status(500).json({ error: 'Could not add product' });
   }
 });
+
+
 
 router.post('/updateProduct/:productId', requireAuth, upload.array('images', 4), async (req, res) => {
   try {
@@ -90,12 +168,15 @@ router.post('/updateProduct/:productId', requireAuth, upload.array('images', 4),
       productDescription,
     } = req.body;
 
+    const categoryId = await categoryData.findOne({productCategory: productCategory}, {_id: 1});
+
     const imageNames = req.files.map(file => file.filename);
+    console.log(imageNames);
 
     const productId = req.params.productId;
     const updatedProduct = {
       productName: productName,
-      productCategory: productCategory,
+      productCategory: categoryId,
       productBrand: productBrand,
       productQuality: productQuality,
       productPrice: productPrice,
@@ -148,9 +229,10 @@ router.patch('/updateOrderStatus', requireAuth, async (req, res) => {
     {
       const result1 = await orderData.findByIdAndUpdate( userData.orderId , { returnOption : true } );
 
-      const dateString = new Date();
-      const deliveredDate = moment(dateString).format('YYYY-MM-DD HH:mm:ss');
-      const result2 = await orderData.findOneAndUpdate({ _id: userData.orderId },{ deliveredDate: deliveredDate },{ upsert: true, new: true });
+      const deliveredDate = moment(networkTime.date).format('YYYY-MM-DD HH:mm:ss');
+
+      const result2 = await orderData.findOneAndUpdate({ _id: userData.orderId },
+        { deliveredDate: deliveredDate },{ upsert: true, new: true });
     }
 
     if (result.nModified === 0) {
@@ -166,8 +248,8 @@ router.get('/editProduct/:productId', requireAuth, async (req, res) => {
   try {
     if(req.session.admin){
     const productId = req.params.productId;
-    const products = await productData.findById(productId);
-    const categories = await categoryData.findById(productId);
+    const products = await productData.findOne({_id: productId}).populate('productCategory');
+    const categories = await categoryData.find({},{productCategory: 1, _id: 0});
     res.render('editProduct', { admin : req.session.user , products , categories });
   } else {
     res.redirect('/adminLogin');
@@ -220,12 +302,19 @@ router.post('/addCategory', requireAuth, async (req, res) => {
       productCategory,
     } = req.body;
 
-    const category = new categoryData({
+    const category = await categoryData.findOne({productCategory: productCategory},{_id: 1});
+
+    if(category._id)
+    {
+      res.redirect('/adminHome');
+    }
+
+    const newCategory = new categoryData({
       productCategory: productCategory,
       blocked: false,
     });
 
-    const result = await category.save();
+    const result = await newCategory.save();
     res.redirect('/adminHome');
   } catch (error) {
     res.render('adminHome', { error: 'Error fetching user data.' });

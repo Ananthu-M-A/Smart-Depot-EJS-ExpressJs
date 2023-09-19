@@ -3,6 +3,8 @@ const bcrypt = require('bcrypt');
 const userController = require('../controllers/userControllers');
 const UserLoginData = require("../models/userModel");
 const transporter = require('../controllers/userOtpVerification');
+const addressData = require('../models/addressModel');
+const wishlistData = require('../models/wishlistModel');
 
 const crypto = require('crypto');
 let router = express.Router();
@@ -83,6 +85,22 @@ router.post('/verify-otp', async (req, res) => {
     try {
       await registerUserWithOTP.save();
       req.session.userData = null;
+      console.log(registerUserWithOTP._id);
+
+      const address = new addressData({
+        customerId: registerUserWithOTP._id,
+        userName: fullname,
+        userEmail: email,
+        userMobileNo: mobile,
+        alternateMobileNo: "Nil",
+        userAddressLine1: "Nil",
+        userAddressLine2: "Nil",
+        userCountry: "Nil",
+        userCity: "Nil",
+        userState: "Nil",
+        userZIP: "Nil",
+      });
+      const result = await address.save();
 
       res.render('login');
     } catch (error) {

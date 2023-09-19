@@ -13,16 +13,17 @@ const product = mongoose.Schema({
     type: String,
     required: true,
   },
-  productCategory:{
-    type: String,
+  productCategory: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'categoryData',
     required: true,
   },
   productPrice: {
-    type: String,
+    type: Number,
     required: true,
   },
   productStock: {
-    type: String,
+    type: Number,
     required: true,
   },
   productDescription: {
@@ -30,7 +31,7 @@ const product = mongoose.Schema({
     required: true,
   },
   productImageNames: {
-    type: Array,
+    type: [String],
     required: true,
   },
   blocked: {
