@@ -5,19 +5,24 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const mongoose = require('mongoose');
+const dotenv = require('dotenv');
+const razorpay = require('razorpay');
 
 const signupRouter = require('./routes/signup');
 const loginRouter = require('./routes/login');
 const adminLoginRouter = require('./routes/adminLogin');
 const homeRouter = require('./routes/home');
 const adminHomeRouter = require('./routes/adminHome');
+const paymentRouter = require('./routes/payment');
 
 mongoose.connect('mongodb://127.0.0.1:27017/smartDepot', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
 
+
 let app = express();
+dotenv.config();
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -41,6 +46,7 @@ app.use('/login', loginRouter);
 app.use('/adminLogin', adminLoginRouter);
 app.use('/home', homeRouter);
 app.use('/adminHome', adminHomeRouter);
+app.use('/payment',paymentRouter);
 
 app.use(function(req, res, next) {
   next(createError(404));

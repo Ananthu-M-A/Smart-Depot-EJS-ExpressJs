@@ -17,6 +17,7 @@ const networkTime = require('../middlewares/networkTime');
 const bcrypt = require('bcrypt');
 const mongoose = require('mongoose');
 const multer = require('multer');
+const { error } = require('console');
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -29,30 +30,6 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage });
-
-
-// const Razorpay = require('razorpay');
-
-// var instance = new Razorpay({
-//   key_id: 'YOUR_KEY_ID',
-//   key_secret: 'YOUR_KEY_SECRET',
-// });
-
-// router.get('/createOrder', async (req,res)=>{
-//   const orderId = req.query.id;
-//   const order = await orderData.findOne({_id: orderId});
-//   console.log('Create order id request');
-//   var options = {
-//     amount: order.total,
-//     currency: "INR",
-//     receipt: "rcp1"
-//   };
-//   console.log(order, order.total);
-//   instance.orders.create(options, function(err, order) {
-//     res.send({orderId: order.id});
-//   });
-// })
-
 
 router.get('/', requireAuth, isUserBlocked, async (req, res) => {
   try {
@@ -608,8 +585,7 @@ router.post('/updateOrderStatus/:orderId', requireAuth, async (req, res) => {
 router.post('/placeOrder/:subTotal/:total', requireAuth, async (req, res) => {
   try {
     const address = {
-      userFirstName: req.body.userFirstName,
-      userLastName: req.body.userLastName,
+      userName: req.body.userName,
       userEmail: req.body.userEmail,
       userMobileNo: req.body.userMobileNo,
       userAddressLine1: req.body.userAddressLine1,
@@ -646,24 +622,57 @@ router.post('/placeOrder/:subTotal/:total', requireAuth, async (req, res) => {
     const savedOrder = await order.save();
     const customerId = req.session.user;
 
-    const clearCart = cartData.deleteMany({ customerId: customerId });
-    clearCart.then(result => {
-      console.log(`Successfully deleted ${result.deletedCount} documents from the cart.`);
-    });
-    const countCart = await cartData.find({ customerId: req.session.user }).countDocuments({});
-
-    const countWishlist = await wishlistData.findOne({ customerId: req.session.user }).countDocuments({});
-
     if(req.body.paymentMethod === "Online")
     { 
-      res.redirect(`/home/createOrder?id=${savedOrder._id}`);
+      req.session.orderId = savedOrder._id;
+      res.redirect(`/payment/createOrder?id=${savedOrder._id}`);
     }
-    res.render('orderConfirmation', { user: customerId, savedOrder: savedOrder, countCart, countWishlist });
+    else {
+      res.redirect(`/home/orderConfirmation?id=${savedOrder._id}`);
+    }
+    
   } catch (error) {
     console.log(error);
     res.redirect('/home');
   }
 });
+
+router.get('/orderConfirmation', requireAuth, async (req, res) => {
+  try {
+    const paymentId = req.query.id;
+    const orderId = req.session.orderId;
+    const customerId = req.session.user;
+
+    const countCart = await cartData.countDocuments({ customerId: customerId });
+    const address = await addressData.findOne({ customerId: customerId });
+
+    const clearCartResult = await cartData.deleteMany({ customerId: customerId });
+    console.log(`Successfully deleted ${clearCartResult.deletedCount} documents from the cart.`);
+
+    const countWishlist = await wishlistData.countDocuments({ customerId: customerId });
+
+    const updatedOrder = await orderData.findByIdAndUpdate(orderId, {
+      paymentStatus: true,
+      paymentId: paymentId,
+    });
+
+    if (!updatedOrder) {
+      throw new Error('Order not found');
+    }
+
+    res.render('orderConfirmation', {
+      user: customerId,
+      orderId,
+      countCart,
+      countWishlist,
+      address,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
 
 router.get('/logout', async (req, res) => {
   try {
@@ -760,49 +769,5 @@ router.get('/downloadInvoice/:orderId', async(req, res) => {
   doc.end();
 });
 
-router.get('/downloadInvoice/:orderId', async (req, res) => {
-  try {
-    const orderId = req.params.orderId;
-    const order = await orderData.findById(orderId);
-
-    if (!order) {
-      return res.status(404).send('Order not found');
-    }
-
-    const doc = new PDFDocument();
-    const filename = `order-smartdepot-${orderId}.pdf`;
-
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
-
-    doc.pipe(res);
-
-    doc.fontSize(14).text('Smart Depot Invoice', { align: 'center' }).moveDown(1);
-
-    doc.fontSize(10).text(`Order ID: ${order._id}`);
-    doc.fontSize(10).text(`Order Date: ${order.orderDate}`);
-    doc.fontSize(10).text(`Order Status: ${order.orderStatus}`);
-    doc.fontSize(10).text(`Shipping Address: ${order.address}`);
-    doc.moveDown(1);
-    doc.fontSize(10).text(`Payment Method: ${order.paymentMethod}`);
-    doc.moveDown(1);
-
-    doc.fontSize(12).text('Purchased Items:', { underline: true }).moveDown(1);
-
-    let i = 1;
-    order.products.forEach((product) => {
-      doc.fontSize(10).text(`${i} :   ${product._id}    ${product.productPrice}    ${product.productQuantity}   ${product.productPrice * product.productQuantity}`);
-      i++;
-    });
-
-    doc.fontSize(10).text(`                                                    Order Total : ${order.total}`);
-
-    doc.end();
-
-  } catch (error) {
-    console.error(error);
-    res.redirect('/home/orders');
-  }
-});
 
 module.exports = router;

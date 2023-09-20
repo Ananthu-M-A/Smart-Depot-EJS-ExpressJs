@@ -33,14 +33,13 @@ router.get('/', requireAuth, async (req, res) => {
     const users = await UserLoginData.find();
     const adminData = await Admin.findOne();
     const categories = await categoryData.find({},{productCategory: 1, _id: 0});
-    const orders = await orderData.find()
-    .populate('products.productId')
-    .populate('userId')
-    .exec();
+    const orders = await orderData.find().populate('products.productId').exec();
     let totalSales = 0;
     orders.forEach(order => {
       totalSales = order.total + totalSales;
     });
+    console.log(currentDate, products,users,adminData,categories,orders,totalSales);
+    
 
     res.render('adminHome', { admin : req.session.admin , products, users, categories, orders, totalSales, adminData});
     }

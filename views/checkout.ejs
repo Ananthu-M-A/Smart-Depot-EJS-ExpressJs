@@ -27,7 +27,7 @@
                     <div class="row">
                         <div class="col-md-6 form-group">
                             <label>Full Name</label>
-                            <input class="form-control" name="userFirstName" type="text" placeholder="Damon" value="<%= billAddress.userName %>">
+                            <input class="form-control" name="userName" type="text" placeholder="Damon" value="<%= billAddress.userName %>">
                         </div>
                         <div class="col-md-6 form-group">
                             <label>E-mail</label>
@@ -81,7 +81,7 @@
                     <div class="row">
                         <div class="col-md-6 form-group">
                             <label>Full Name</label>
-                            <input class="form-control" name="userFirstName2" type="text" placeholder="Damon" value="<%= billAddress.userName %>">
+                            <input class="form-control" name="userName2" type="text" placeholder="Damon" value="<%= billAddress.userName %>">
                         </div>
                         <div class="col-md-6 form-group">
                             <label>E-mail</label>
@@ -186,3 +186,27 @@
 
 <%-include('partials/bottombarUser.ejs')%>
 <%-include('partials/footer.ejs')%>
+
+<script>
+let orderId ;
+$(document).ready(function(){
+    let settings = {
+  "url": "/payment/createOrder/orderId",
+  "method": "POST",
+  "timeout": 0,
+  "headers": {
+    "Content-Type": "application/json"
+  },
+  "data": JSON.stringify({
+    "amount": "<%= total %>"
+  }),
+};
+
+//creates new orderId everytime
+$.ajax(settings).done(function (response) {
+
+  orderId=response.data.id;
+  $("button").show();
+});
+});
+</script>

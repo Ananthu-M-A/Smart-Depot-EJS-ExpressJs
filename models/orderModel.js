@@ -36,8 +36,7 @@ const order = new mongoose.Schema({
     required: true,
   },
   address: {
-    userFirstName: { type: String, required: true },
-    userLastName: { type: String, required: true },
+    userName: { type: String, required: true },
     userEmail: { type: String, required: true },
     userMobileNo: { type: String, required: true },
     userAddressLine1: { type: String, required: true },
@@ -62,7 +61,11 @@ const order = new mongoose.Schema({
   paymentStatus : {
     type: Boolean,
     required: true,
-  }
+  },
+  paymentId: {
+    type: String,
+    default: "Nil",
+  },
 });
 
 const orderData = mongoose.model('orderData', order);
