@@ -111,6 +111,15 @@ body, html {
   max-height: 7vh;
 }
 
+.table-container{
+  padding: 10px;  
+}
+
+#topSales{
+  max-height: 300px;
+  overflow: auto;
+}
+
  :root {
   --blue: #007bff;
   --indigo: #6610f2;

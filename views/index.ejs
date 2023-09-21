@@ -2,21 +2,21 @@
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
 var options = {
-    "key": "rzp_test_tckq0nJQnF0XIb", // Enter the Key ID generated from the Dashboard
-    "amount": "<%= data.amount %>", // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+    "key": "rzp_test_tckq0nJQnF0XIb",
+    "amount": "<%= data.amount %>",
     "currency": "INR",
     "name": "SMART DEPOT",
     "description": "Online purchse from Smart Depot",
     "image": "http://localhost:3000/home.com/your_logo",
-    "order_id": "<%= data.id %>", //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+    "order_id": "<%= data.id %>",
     "callback_url": "http://localhost:3000/payment/verifyPayment",
     "prefill": {
-        "name": "Gaurav Kumar",
-        "email": "gaurav.kumar@example.com",
-        "contact": "9000090000"
+        "name": "Smart-Depot",
+        "email": "smartdepot494@gmail.com",
+        "contact": "9876543210"
     },
     "notes": {
-        "address": "Razorpay Corporate Office"
+        "address": "Smart-Depot Corporate Office"
     },
     "theme": {
         "color": "#3399cc"

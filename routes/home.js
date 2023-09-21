@@ -18,6 +18,7 @@ const bcrypt = require('bcrypt');
 const mongoose = require('mongoose');
 const multer = require('multer');
 const { error } = require('console');
+const { ObjectId } = require('mongoose').Types;
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -31,31 +32,59 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
+async function getFilteredProducts(filter, page, itemsPerPage, req) {
+  const startIndex = (page - 1) * itemsPerPage;
+  const totalFilteredProducts = await productData.countDocuments(filter);
+
+  const paginatedProducts = await productData.find(filter)
+    .populate('productCategory')
+    .skip(startIndex)
+    .limit(itemsPerPage);
+
+  const categories = await categoryData.find();
+  const countCart = await cartData.find({ customerId: req.session.user }).countDocuments({});
+  const countWishlist = await wishlistData.findOne({ customerId: req.session.user }).countDocuments({});
+  const users = await UserLoginData.findById(req.session.user);
+
+  return {
+    paginatedProducts,
+    categories,
+    users,
+    countCart,
+    countWishlist,
+    totalPages: Math.ceil(totalFilteredProducts / itemsPerPage),
+  };
+}
+
+
 router.get('/', requireAuth, isUserBlocked, async (req, res) => {
   try {
     res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
     const itemsPerPage = 4;
     const page = parseInt(req.query.page) || 1;
-    const startIndex = (page - 1) * itemsPerPage;
-    const countCart = await cartData.find({ customerId: req.session.user }).countDocuments({});
-    const countWishlist = await wishlistData.findOne({ customerId: req.session.user }).countDocuments({});
-    const totalProducts = await productData.countDocuments();
-    const paginatedProducts = await productData.find().populate('productCategory')
-      .skip(startIndex)
-      .limit(itemsPerPage);
-    const totalPages = Math.ceil(totalProducts / itemsPerPage);
-    const categories = await categoryData.find();
-    const users = await UserLoginData.findById(req.session.user);
-    const address = await addressData.findOne({customerId:req.session.user});
+    const filter = {};
 
-    res.render('home', { user: req.session.user, products: paginatedProducts,
-      categories, users, countCart, countWishlist , totalPages, currentPage: page, address });
-  
+    const { paginatedProducts, categories, users, countCart, countWishlist, totalPages } =
+      await getFilteredProducts(filter, page, itemsPerPage, req);
+
+    const address = await addressData.findOne({ customerId: req.session.user });
+
+    res.render('home', {
+      user: req.session.user,
+      products: paginatedProducts,
+      categories,
+      users,
+      countCart,
+      countWishlist,
+      totalPages,
+      currentPage: page,
+      address,
+    });
+
   } catch (error) {
     res.render('home', { error: 'Error fetching product data.' });
   }
 });
-
 
 router.get('/search', requireAuth, isUserBlocked, async (req, res) => {
   const query = req.query.searchInput;
@@ -90,14 +119,23 @@ router.get('/search', requireAuth, isUserBlocked, async (req, res) => {
   }
 });
 
+
 router.get('/filterProducts', requireAuth, isUserBlocked, async (req, res) => {
   try {
-    const productCategory = req.query.category;
+    const categoryName = req.query.category;
     const productPriceRange = req.query.priceRange;
     const filter = {};
 
-    if (productCategory) {
-      filter.productCategory = productCategory;
+    if (categoryName) {
+      const category = await categoryData.findOne({ productCategory: categoryName });
+      if (category) {
+        filter.productCategory = category._id;
+        console.log(filter.productCategory);
+      } else {
+        console.log('123');
+        // Handle the case where the category doesn't exist
+        // You can render an error message or handle it based on your application's requirements
+      }
     }
 
     if (productPriceRange) {
@@ -110,45 +148,35 @@ router.get('/filterProducts', requireAuth, isUserBlocked, async (req, res) => {
         filter.productPrice = { $gte: parseInt(minPrice), $lte: parseInt(maxPrice) };
       }
     }
-    // Count total filtered products without pagination
-    const totalFilteredProducts = await productData.countDocuments(filter);
-    console.log(totalFilteredProducts);
 
-    // Pagination logic
+    console.log(filter);
+
     const itemsPerPage = 4;
     const page = parseInt(req.query.page) || 1;
-    console.log(page);
-    const startIndex = (page - 1) * itemsPerPage;
-    console.log(startIndex);
 
-    // Fetch paginated products with filtering applied
-    const paginatedProducts = await productData.find(filter)
-      .skip(startIndex)
-      .limit(itemsPerPage);
-      console.log(paginatedProducts);
-      const totalPages = Math.ceil(totalFilteredProducts / itemsPerPage);
-
-    const categories = await categoryData.find();
-    const countCart = await cartData.find({ customerId: req.session.user }).countDocuments({});
-    const countWishlist = await wishlistData.findOne({ customerId: req.session.user }).countDocuments({});
-
-    const users = await UserLoginData.findById(req.session.user);
-    console.log(req.session.user,paginatedProducts,categories,users,countCart,countWishlist);
-    res.render('home', { 
-      user: req.session.user, 
+    const {
+      paginatedProducts,
+      categories,
+      users,
+      countCart,
+      countWishlist,
+      totalPages,
+    } = await getFilteredProducts(filter, page, itemsPerPage, req);
+    console.log('123456');
+    res.render('home', {
+      user: req.session.user,
       products: paginatedProducts,
-      categories, 
-      users, 
-      countCart, 
-      countWishlist, 
-      totalPages: totalPages, 
+      categories,
+      users,
+      countCart,
+      countWishlist,
+      totalPages,
     });
 
   } catch (error) {
     res.render('home', { error: 'Error fetching product data.' });
   }
 });
-
 
 
 router.get('/productDetails/:productId', requireAuth, isUserBlocked, async (req, res) => {
@@ -338,7 +366,6 @@ router.post('/saveAddress', requireAuth, upload.single('image'), async (req, res
   try {
     const customerId = req.session.user;
     const imageName = req.file.filename;
-    console.log(imageName);
     const addressId = await addressData.findOne({customerId:customerId},{_id:1});
 
     const address = {
@@ -620,14 +647,14 @@ router.post('/placeOrder/:subTotal/:total', requireAuth, async (req, res) => {
     });
 
     const savedOrder = await order.save();
-    const customerId = req.session.user;
-
+    req.session.orderId = savedOrder._id;
     if(req.body.paymentMethod === "Online")
     { 
-      req.session.orderId = savedOrder._id;
+      req.session.paymentMethod = "Online";
       res.redirect(`/payment/createOrder?id=${savedOrder._id}`);
     }
     else {
+      req.session.paymentMethod = "COD";
       res.redirect(`/home/orderConfirmation?id=${savedOrder._id}`);
     }
     
@@ -639,25 +666,27 @@ router.post('/placeOrder/:subTotal/:total', requireAuth, async (req, res) => {
 
 router.get('/orderConfirmation', requireAuth, async (req, res) => {
   try {
-    const paymentId = req.query.id;
     const orderId = req.session.orderId;
     const customerId = req.session.user;
-
     const countCart = await cartData.countDocuments({ customerId: customerId });
     const address = await addressData.findOne({ customerId: customerId });
 
     const clearCartResult = await cartData.deleteMany({ customerId: customerId });
     console.log(`Successfully deleted ${clearCartResult.deletedCount} documents from the cart.`);
-
     const countWishlist = await wishlistData.countDocuments({ customerId: customerId });
 
-    const updatedOrder = await orderData.findByIdAndUpdate(orderId, {
-      paymentStatus: true,
-      paymentId: paymentId,
-    });
+    if(req.session.paymentMethod === "Online")
+    {
+      const paymentId = req.query.id;
 
-    if (!updatedOrder) {
-      throw new Error('Order not found');
+      const updatedOrder = await orderData.findByIdAndUpdate(orderId, {
+        paymentStatus: true,
+        paymentId: paymentId,
+      });
+
+      if (!updatedOrder) {
+        throw new Error('Order not found');
+      }
     }
 
     res.render('orderConfirmation', {

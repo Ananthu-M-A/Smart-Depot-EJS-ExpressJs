@@ -48,10 +48,12 @@
         <i class='bx  sidebarBtn'></i>
         <span class="dashboard">Dashboard</span>
       </div>
+      <form action="/home/search" method="GET">
       <div class="search-box">
-        <input type="text" placeholder="Search...">
-        <i class='bx bx-search'></i>
+        <input type="text" placeholder="Search..." name="searchInput">
+        <a href=""><i class='bx bx-search'></i></a>
       </div>
+      </form>
       <div class="profile-details bg-secondary">
        <a href="/adminHome/adminAccount" class="text-decoration-none">
         <img src="/productImage/<%= adminData.profileImageName %>" alt="">

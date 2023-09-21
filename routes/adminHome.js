@@ -37,9 +37,7 @@ router.get('/', requireAuth, async (req, res) => {
     let totalSales = 0;
     orders.forEach(order => {
       totalSales = order.total + totalSales;
-    });
-    console.log(currentDate, products,users,adminData,categories,orders,totalSales);
-    
+    });    
 
     res.render('adminHome', { admin : req.session.admin , products, users, categories, orders, totalSales, adminData});
     }
@@ -170,7 +168,6 @@ router.post('/updateProduct/:productId', requireAuth, upload.array('images', 4),
     const categoryId = await categoryData.findOne({productCategory: productCategory}, {_id: 1});
 
     const imageNames = req.files.map(file => file.filename);
-    console.log(imageNames);
 
     const productId = req.params.productId;
     const updatedProduct = {
@@ -249,7 +246,9 @@ router.get('/editProduct/:productId', requireAuth, async (req, res) => {
     const productId = req.params.productId;
     const products = await productData.findOne({_id: productId}).populate('productCategory');
     const categories = await categoryData.find({},{productCategory: 1, _id: 0});
-    res.render('editProduct', { admin : req.session.user , products , categories });
+    const adminData = await Admin.findOne();
+
+    res.render('editProduct', { admin : req.session.user , products , categories, adminData });
   } else {
     res.redirect('/adminLogin');
   }
@@ -301,21 +300,21 @@ router.post('/addCategory', requireAuth, async (req, res) => {
       productCategory,
     } = req.body;
 
-    const category = await categoryData.findOne({productCategory: productCategory},{_id: 1});
-
-    if(category._id)
+    const category = await categoryData.findOne({productCategory: productCategory});
+    
+    if(category)
     {
-      res.redirect('/adminHome');
+      return res.redirect('/adminHome');
     }
 
     const newCategory = new categoryData({
       productCategory: productCategory,
       blocked: false,
     });
-
     const result = await newCategory.save();
     res.redirect('/adminHome');
   } catch (error) {
+    console.log(error);
     res.render('adminHome', { error: 'Error fetching user data.' });
   }
 });
