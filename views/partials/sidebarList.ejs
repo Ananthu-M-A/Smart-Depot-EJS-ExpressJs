@@ -1,6 +1,6 @@
 <div class="sidebar bg-dark">
     <div class="col-lg-3 d-none d-lg-block text-center mt-3 mb-3">
-      <a href="/adminHome" class="text-decoration-none">
+      <a href="/admin" class="text-decoration-none">
         <img class="rounded" src="/images/smart-depot1.png" width="200" alt=""></a>
     </div>
     <ul class="nav-links">
@@ -35,7 +35,7 @@
         </a>
       </li>
       <li class="log_out">
-        <a href="/adminHome/logout">
+        <a href="/admin/logout">
           <i class='bx bx-log-out'></i>
           <span class="links_name">Log out</span>
         </a>
@@ -48,14 +48,14 @@
         <i class='bx  sidebarBtn'></i>
         <span class="dashboard">Dashboard</span>
       </div>
-      <form action="/home/search" method="GET">
+      <form action="/user/search" method="GET">
       <div class="search-box">
         <input type="text" placeholder="Search..." name="searchInput">
         <a href=""><i class='bx bx-search'></i></a>
       </div>
       </form>
       <div class="profile-details bg-secondary">
-       <a href="/adminHome/adminAccount" class="text-decoration-none">
+       <a href="/admin/adminAccount" class="text-decoration-none">
         <img src="/productImage/<%= adminData.profileImageName %>" alt="">
         <span class="admin_name"><%= adminData.fullName %></span>
       </a>

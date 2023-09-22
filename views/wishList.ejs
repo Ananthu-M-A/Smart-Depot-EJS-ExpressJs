@@ -8,7 +8,7 @@
         <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 300px">
             <h1 class="font-weight-semi-bold text-uppercase mb-3">WishList</h1>
             <div class="d-inline-flex">
-                <p class="m-0"><a href="/home">Home</a></p>
+                <p class="m-0"><a href="/user">Home</a></p>
                 <p class="m-0 px-2">-</p>
                 <p class="m-0">WishList</p>
             </div>
@@ -25,7 +25,7 @@
         <% wishlist.forEach(wish => { %>
         <div class="col-md-3">
           <div class="card mb-3">
-            <a href="/home/productDetails/<%= wish._id %>">
+            <a href="/user/productDetails/<%= wish._id %>">
                 <img src="/productImage/<%= wish.product.productImageNames[0] %>" class="card-img-top" id="productImageLarge" alt="Product Image"></a>
             <div class="card-body">
               <h5 class="card-title text-center"><%=wish.product.productName %></h5>
@@ -34,7 +34,7 @@
               <div class="container">
                 <div class="row text-center">
                     <div class="col-md-4">
-                        <form action="/home/cart/<%= wish.product._id %>" method="POST">
+                        <form action="/user/cart/<%= wish.product._id %>" method="POST">
                         <input type="text" name="quantity"
                         class="form-control bg-secondary text-center" value="1" hidden>
                             <button class="btn btn-primary"><img width="20vh" src="/images/cart.png"
@@ -42,10 +42,10 @@
                         </form>
                     </div>
                     <div class="col-md-4">
-                      <a href="/home/removeWishlistItem/<%= wish.product._id %>" class="btn btn-primary">X</i></a></td>
+                      <a href="/user/removeWishlistItem/<%= wish.product._id %>" class="btn btn-primary">X</i></a></td>
                     </div>
                     <div class="col-md-4">
-                        <a href="/home/productDetails/<%= wish.product._id %>" class="btn btn-primary">
+                        <a href="/user/productDetails/<%= wish.product._id %>" class="btn btn-primary">
                           <img width="20vh" src="/images/view.png" alt=""></a>
                     </div>
                 </div>

@@ -5,7 +5,7 @@
             <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 300px">
                 <h1 class="font-weight-semi-bold text-uppercase mb-3">Orders</h1>
                 <div class="d-inline-flex">
-                    <p class="m-0"><a href="/home">Home</a></p>
+                    <p class="m-0"><a href="/user">Home</a></p>
                     <p class="m-0 px-2">-</p>
                     <p class="m-0">Shopping Cart</p>
                 </div>
@@ -40,7 +40,7 @@
                                                 <% if (order.orderStatus === "Order Delivered" ){ %>
                                                 <% if ( order.returnOption === true ){ %>
                                                     <div class="col-md">
-                                                        <form action="/home/updateOrderStatus/<%= order._id %>" method="post">
+                                                        <form action="/user/updateOrderStatus/<%= order._id %>" method="post">
                                                         <button class="btn btn-outline-primary py-md-2 px-md-3">Return Order</button>
                                                         </form>
                                                     </div>
@@ -52,12 +52,12 @@
                                                 <% if (order.orderStatus !== "Items Returned" ){ %>
                                                 <% if (order.orderStatus !== "Order Closed" ){ %>
                                                 <div class="col-md">
-                                                    <a href="/home/cancelOrder/<%= order._id %>"
+                                                    <a href="/user/cancelOrder/<%= order._id %>"
                                                         class="btn btn-outline-primary py-md-2 px-md-3">Cancel Order</a>
                                                 </div>
                                                 <% }}}}}} %>
                                                 <div class="col-md">
-                                                    <a href="/home/orderDetail/<%= order._id %>"
+                                                    <a href="/user/orderDetail/<%= order._id %>"
                                                         class="btn btn-outline-primary py-md-2 px-md-3">Order Details</a>
                                                 </div>
                                         </div>

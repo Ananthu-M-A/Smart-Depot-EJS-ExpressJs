@@ -8,7 +8,7 @@ async function isUserBlocked(req, res, next) {
         {
             req.session.destroy();
             req.session.status = 'logged-out';
-            res.redirect('/login');
+            res.redirect('/userLogin');
         }
         next();
   } catch (error) {

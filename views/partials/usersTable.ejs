@@ -51,7 +51,7 @@ if (confirm(`Are you sure you want to make changes in block status of the user?`
   };
 
   try {
-    const response = await fetch(`/adminHome/userBlockStatus`, {
+    const response = await fetch(`/admin/userBlockStatus`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(userData),

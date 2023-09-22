@@ -18,7 +18,7 @@ const registerUserWithOTP = async (req, res) => {
 
     await user.save();
 
-    res.redirect('/login');
+    res.redirect('/userLogin');
   } catch (error) {
     console.error(error.message);
     res.redirect('/');

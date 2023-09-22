@@ -8,11 +8,11 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const razorpay = require('razorpay');
 
-const signupRouter = require('./routes/signup');
-const loginRouter = require('./routes/login');
+const userSignupRouter = require('./routes/userSignup');
+const userLoginRouter = require('./routes/userLogin');
 const adminLoginRouter = require('./routes/adminLogin');
-const homeRouter = require('./routes/home');
-const adminHomeRouter = require('./routes/adminHome');
+const userRouter = require('./routes/user');
+const adminRouter = require('./routes/admin');
 const paymentRouter = require('./routes/payment');
 
 mongoose.connect('mongodb://127.0.0.1:27017/smartDepot', {
@@ -41,11 +41,11 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'uploads')));
 
-app.use('/signup', signupRouter);
-app.use('/login', loginRouter);
+app.use('/userSignup', userSignupRouter);
+app.use('/userLogin', userLoginRouter);
 app.use('/adminLogin', adminLoginRouter);
-app.use('/home', homeRouter);
-app.use('/adminHome', adminHomeRouter);
+app.use('/user', userRouter);
+app.use('/admin', adminRouter);
 app.use('/payment',paymentRouter);
 
 app.use(function(req, res, next) {

@@ -45,7 +45,7 @@
                 <%= product.productStock %>
               </td>
               <td class="align-middle">
-                <a href="/adminHome/editProduct/<%= product._id %>">
+                <a href="/admin/editProduct/<%= product._id %>">
                   <img src="/images/update.png" alt="Update" class="btn-icon" id="btnEditProduct">
                 </a>
               </td>
@@ -88,7 +88,7 @@ if (confirm(`Are you sure you want to make changes in block status of the produc
   };
 
   try {
-    const response = await fetch(`/adminHome/productBlockStatus`, {
+    const response = await fetch(`/admin/productBlockStatus`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(userData),

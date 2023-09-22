@@ -7,7 +7,7 @@
                     <div class="col-lg-3 d-none d-lg-block">
                         <div class="filter-panel">
                             <!-- Filter Categories -->
-                            <form action="/home/filterProducts" method="GET">
+                            <form action="/user/filterProducts" method="POST">
                                 <div class="container-fluid">
                                     <div class="row m-0 btn shadow-none d-flex align-items-center justify-content-center bg-primary text-white w-100"
                                         style="height: 65px; margin-top: -1px; padding: 0 30px;">
@@ -15,7 +15,7 @@
                                             <h5 class="m-0">Filter Products</h5>
                                             <button class="bg-dark text-white ml-2 rounded-3 p-1 btn-outline-primary"
                                                 type="submit">Apply</button>
-                                            <a href="/home"
+                                            <a href="/user"
                                                 class="bg-dark text-white ml-2 rounded-3 p-1 btn-outline-primary"
                                                 type="submit" style="text-decoration: none;">Clear</a>
                                         </div>
@@ -117,18 +117,18 @@
                             </button>
                             <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
                                 <div class="navbar-nav mr-auto py-0">
-                                    <a href="/home" class="nav-item nav-link active">Home</a>
-                                    <a href="/home/orders" class="nav-item nav-link">Orders</a>
-                                    <a href="/home/account" class="nav-item nav-link">
+                                    <a href="/user" class="nav-item nav-link active">Home</a>
+                                    <a href="/user/orders" class="nav-item nav-link">Orders</a>
+                                    <a href="/user/account" class="nav-item nav-link">
                                         <%= users.fullname %>
                                     </a>
                                 </div>
                                 <div class="navbar-nav ml-auto py-0">
                                     <% if(!user) { %>
-                                        <a href="/login" class="nav-item nav-link">Login</a>
-                                        <a href="/signup" class="nav-item nav-link">Register</a>
+                                        <a href="/userLogin" class="nav-item nav-link">Login</a>
+                                        <a href="/userSignup" class="nav-item nav-link">Register</a>
                                         <% } else { %>
-                                            <a href="/home/logout" class="nav-item nav-link">Logout</a>
+                                            <a href="/user/logout" class="nav-item nav-link">Logout</a>
                                             <% } %>
                                 </div>
                             </div>
@@ -219,14 +219,14 @@
                         <% if(!product.blocked) { %>
                             <div class="col-md-3">
                                 <div class="card mb-3" id="card">
-                                    <a href="/home/productDetails/<%= product._id %>">
+                                    <a href="/user/productDetails/<%= product._id %>">
                                         <img src="/productImage/<%= product.productImageNames[0] %>"
                                             class="card-img-top" id="productImageLarge" alt="Product Image"></a>
                                     <div class="card-body">
                                         <div class="container border p-1 rounded-3">
                                             <div class="row text-center">
                                                 <div class="col-md-4">
-                                                    <form action="/home/cart/<%= product._id %>" method="POST">
+                                                    <form action="/user/cart/<%= product._id %>" method="POST">
                                                         <input type="text" name="quantity"
                                                             class="form-control bg-secondary text-center" value="1"
                                                             hidden>
@@ -235,12 +235,12 @@
                                                     </form>
                                                 </div>
                                                 <div class="col-md-4">
-                                                    <a href="/home/productDetails/<%= product._id %>"
+                                                    <a href="/user/productDetails/<%= product._id %>"
                                                         class="btn btn-primary rounded-3">
                                                         <img width="20vh" src="/images/view.png" alt=""></a>
                                                 </div>
                                                 <div class="col-md-4">
-                                                    <form action="/home/wishlist/<%= product._id %>" method="POST">
+                                                    <form action="/user/wishlist/<%= product._id %>" method="POST">
                                                         <button class="btn btn-primary rounded-3"><img width="20vh"
                                                                 src="/images/wishlist.png" alt=""></button>
                                                     </form>
@@ -323,14 +323,14 @@
                         <% if(!product.blocked) { %>
                             <div class="col-md-3">
                                 <div class="card mb-3" id="card">
-                                    <a href="/home/productDetails/<%= product._id %>">
+                                    <a href="/user/productDetails/<%= product._id %>">
                                         <img src="/productImage/<%= product.productImageNames[0] %>"
                                             class="card-img-top" id="productImageLarge" alt="Product Image"></a>
                                     <div class="card-body">
                                         <div class="container border p-1 rounded-3">
                                             <div class="row text-center">
                                                 <div class="col-md-4">
-                                                    <form action="/home/cart/<%= product._id %>" method="POST">
+                                                    <form action="/user/cart/<%= product._id %>" method="POST">
                                                         <input type="text" name="quantity"
                                                             class="form-control bg-secondary text-center" value="1"
                                                             hidden>
@@ -339,12 +339,12 @@
                                                     </form>
                                                 </div>
                                                 <div class="col-md-4">
-                                                    <a href="/home/productDetails/<%= product._id %>"
+                                                    <a href="/user/productDetails/<%= product._id %>"
                                                         class="btn btn-primary rounded-3">
                                                         <img width="20vh" src="/images/view.png" alt=""></a>
                                                 </div>
                                                 <div class="col-md-4">
-                                                    <form action="/home/wishlist/<%= product._id %>" method="POST">
+                                                    <form action="/user/wishlist/<%= product._id %>" method="POST">
                                                         <button class="btn btn-primary rounded-3"><img width="20vh"
                                                                 src="/images/wishlist.png" alt=""></button>
                                                     </form>
@@ -373,7 +373,7 @@
 
         <div id="pagination" class="text-center">
             <h5>Page No : <% for (let i=1; i <=totalPages; i++) { %>
-                    <a href="/home?page=<%= i %>" class="pagination-link <%= i === currentPage ? 'active' : '' %>">
+                    <a href="/user?page=<%= i %>" class="pagination-link <%= i === currentPage ? 'active' : '' %>">
                         <%= i %>
                     </a>
                     <% } %>
