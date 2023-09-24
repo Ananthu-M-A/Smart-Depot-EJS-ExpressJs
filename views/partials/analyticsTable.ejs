@@ -88,12 +88,12 @@
         </div>
       </div>
       <div class="top-sales box" id="topSales">
-        <div class="title">Top Seling Products</div>
+        <div class="title">Top Selling Products</div>
         <ul class="top-sales-details">
           <% products.forEach(product=> { %>
           <li>
           <a href="#">
-            <img src="/productImage/<%= product.productImageNames[0] %>" alt="">
+            <img src="/productImages/<%= product.productImageNames[0] %>" alt="">
             <span class="product"><%= product.productName %></span>
           </a>
           <span class="price">₹<%= product.productPrice %></span>

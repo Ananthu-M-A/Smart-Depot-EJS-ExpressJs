@@ -15,7 +15,7 @@
                                             <h5 class="m-0">Filter Products</h5>
                                             <button class="bg-dark text-white ml-2 rounded-3 p-1 btn-outline-primary"
                                                 type="submit">Apply</button>
-                                            <a href="/user"
+                                            <a href="/user/clearFilter"
                                                 class="bg-dark text-white ml-2 rounded-3 p-1 btn-outline-primary"
                                                 type="submit" style="text-decoration: none;">Clear</a>
                                         </div>
@@ -67,38 +67,33 @@
                                 <!-- Price Range -->
                                 <div class="filter-category">
                                     <h6 class="ml-3">Price Range</h6>
-                                    <ul id="filterSmart">
-                                        <li>
-                                            <label>
-                                                <input type="checkbox" name="priceRange" value="500">
-                                                Under ₹500
-                                            </label>
-                                        </li>
-                                        <li>
-                                            <label>
-                                                <input type="checkbox" name="priceRange" value="500-1000">
-                                                ₹500 - ₹1000
-                                            </label>
-                                        </li>
-                                        <li>
-                                            <label>
-                                                <input type="checkbox" name="priceRange" value="1000-2500">
-                                                ₹1000 - ₹2500
-                                            </label>
-                                        </li>
-                                        <li>
-                                            <label>
-                                                <input type="checkbox" name="priceRange" value="2500-5000">
-                                                ₹2500 - ₹5000
-                                            </label>
-                                        </li>
-                                        <li>
-                                            <label>
-                                                <input type="checkbox" name="priceRange" value="5000">
-                                                Above ₹5000
-                                            </label>
-                                        </li>
-                                    </ul>
+                                    <div class="container-fluid">
+                                        <div class="row">
+
+                                            <div class="col-md-6 input-group">
+                                                <select class="form-select" id="inputGroupSelect02" name="minPriceRange">
+                                                    <option value="0" selected>Min</option>
+                                                        <option value="250"> ₹250 </option>
+                                                        <option value="500"> ₹500 </option>
+                                                        <option value="1000"> ₹1000 </option>
+                                                        <option value="2000"> ₹2000 </option>
+                                                        <option value="5000"> ₹5000 </option>
+                                                        <option value="10000"> ₹10000 </option>       
+                                                </select>
+                                            </div>
+                                            <div class="col-md-6 input-group">
+                                                <select class="form-select" id="inputGroupSelect02" name="maxPriceRange">
+                                                    <option value="10000" selected>Max</option>
+                                                        <option value="250"> ₹250 </option>
+                                                        <option value="500"> ₹500 </option>
+                                                        <option value="1000"> ₹1000 </option>
+                                                        <option value="2000"> ₹2000 </option>
+                                                        <option value="5000"> ₹5000 </option>
+                                                        <option value="10000"> ₹10000 </option>       
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </form>
 
@@ -220,7 +215,7 @@
                             <div class="col-md-3">
                                 <div class="card mb-3" id="card">
                                     <a href="/user/productDetails/<%= product._id %>">
-                                        <img src="/productImage/<%= product.productImageNames[0] %>"
+                                        <img src="/productImages/<%= product.productImageNames[0] %>"
                                             class="card-img-top" id="productImageLarge" alt="Product Image"></a>
                                     <div class="card-body">
                                         <div class="container border p-1 rounded-3">
@@ -324,7 +319,7 @@
                             <div class="col-md-3">
                                 <div class="card mb-3" id="card">
                                     <a href="/user/productDetails/<%= product._id %>">
-                                        <img src="/productImage/<%= product.productImageNames[0] %>"
+                                        <img src="/productImages/<%= product.productImageNames[0] %>"
                                             class="card-img-top" id="productImageLarge" alt="Product Image"></a>
                                     <div class="card-body">
                                         <div class="container border p-1 rounded-3">
@@ -379,8 +374,6 @@
                     <% } %>
             </h5>
         </div>
-
-
-
+        
         <%-include('partials/bottombarUser.ejs')%>
             <%-include('partials/footer.ejs')%>

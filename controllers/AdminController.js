@@ -48,7 +48,9 @@ exports.loadHomePage = async (req, res) => {
       const users = await UserLoginData.find();
       const adminData = await Admin.findOne();
       const categories = await categoryData.find({},{productCategory: 1, _id: 0});
-      const orders = await orderData.find().populate('products.productId').exec();
+
+      const orders = await orderData.find().populate('products.productId').sort({ orderDate: -1 }).exec()
+      
       let totalSales = 0;
       orders.forEach(order => {
         totalSales = order.total + totalSales;
@@ -175,10 +177,13 @@ exports.updateProduct = async (req, res) => {
         productStock,
         productDescription,
       } = req.body;
-  
       const categoryId = await categoryData.findOne({productCategory: productCategory}, {_id: 1});
-  
-      const imageNames = req.files.map(file => file.filename);
+
+      let imageNames = req.files.map(file => file.filename);
+      if(imageNames.length === 0)
+      {
+        imageNames = undefined;
+      }
   
       const productId = req.params.productId;
       const updatedProduct = {
@@ -267,19 +272,19 @@ exports.loadEditProducts = async (req, res) => {
     }
 };
   
-exports.updateProduct = async (req, res) => {
-    try {
-      const productId = req.params.productId;
-      const updatedProductData = req.body;
+// exports.updateProduct = async (req, res) => {
+//     try {
+//       const productId = req.params.productId;
+//       const updatedProductData = req.body;
   
-      await productData.findByIdAndUpdate(productId,updatedProductData);
+//       await productData.findByIdAndUpdate(productId,updatedProductData);
   
-      res.redirect('/admin'); 
-    } catch (error) {
-      console.error(error);
-      res.status(500).send('Internal Server Error');
-    }
-};
+//       res.redirect('/admin'); 
+//     } catch (error) {
+//       console.error(error);
+//       res.status(500).send('Internal Server Error');
+//     }
+// };
   
 exports.updateProductBlockStatus =  async (req, res) => {
     try {

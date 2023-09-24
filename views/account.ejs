@@ -19,69 +19,73 @@
         <div class="container-fluid">
             <div class="nav nav-tabs justify-content-center border-secondary mb-4">
                 <a class="nav-item nav-link" data-toggle="tab" href="#tab-pane-1">User Detail</a>
-                <a class="nav-item nav-link" data-toggle="tab" href="#tab-pane-2">Account Settings</a>
-                <a class="nav-item nav-link" data-toggle="tab" href="#tab-pane-3">Delete Account</a>
+                <a class="nav-item nav-link" data-toggle="tab" href="#tab-pane-2">Update Detail</a>
+                <a class="nav-item nav-link" data-toggle="tab" href="#tab-pane-3">Account Settings</a>
+                <a class="nav-item nav-link" data-toggle="tab" href="#tab-pane-4">Delete Account</a>
             </div>
             <div class="tab-content">
-                <div class="tab-pane fade" id="tab-pane-2">
+                <div class="tab-pane fade" id="tab-pane-3">
                     <h4 class="font-weight-semi-bold mb-4 text-center">ACCOUNT SETTINGS</h4>
                     <h5 class="font-weight-semi-bold mb-4 text-center">Change Password</h5>
                     <div class="row">
                         <div class="col-md-4"></div>
                         <div class="col-md-4">
                             <form action="/user/changePassword" method="POST">
-                              <div class="mb-3">
-                                <label>Enter current password</label>
-                                <input type="password" id="password" name="currentPassword" class="form-control" required>
-                              </div>
-                              <div class="mb-3">
-                                <label>Enter new password</label>
-                                <input type="password" id="password" name="newPassword" class="form-control" required>
-                              </div>
-                              <div class="mb-3">
-                                <label>Confirm new password</label>
-                                <input type="password" id="password" name="newPassword2" class="form-control" required>
-                              </div>
-                              <div class="form-group mb-0 text-center">
-                                <button type="submit" class="btn btn-primary px-3">Save new password</button>
-                            </div>
+                                <div class="mb-3">
+                                    <label>Enter current password</label>
+                                    <input type="password" id="password" name="currentPassword" class="form-control"
+                                        required>
+                                </div>
+                                <div class="mb-3">
+                                    <label>Enter new password</label>
+                                    <input type="password" id="password" name="newPassword" class="form-control"
+                                        required>
+                                </div>
+                                <div class="mb-3">
+                                    <label>Confirm new password</label>
+                                    <input type="password" id="password" name="newPassword2" class="form-control"
+                                        required>
+                                </div>
+                                <div class="form-group mb-0 text-center">
+                                    <button type="submit" class="btn btn-primary px-3">Save new password</button>
+                                </div>
                             </form>
                         </div>
                         <div class="col-md-4"></div>
                     </div>
                 </div>
-                <div class="tab-pane fade" id="tab-pane-3">
+                <div class="tab-pane fade" id="tab-pane-4">
                     <h4 class="font-weight-semi-bold mb-4 text-center">DELETE ACCOUNT</h4>
                     <div class="row">
                         <div class="col-md-4"></div>
                         <div class="col-md-4">
-                        <form action="/user/deleteAccount" method="POST">
-                            <div class="mb-3">
-                                <label>Enter your primary email</label>
-                                <input class="form-control" name="userEmail" type="text" required>
-                            </div>
-                            <div class="mb-3">
-                                <label>Enter your current password</label>
-                                <input type="password"name="currentPassword" class="form-control" required>
-                            </div>
-                            <div class="form-group mb-0 text-center">
-                                <button type="submit" class="btn btn-primary px-3">Delete Account</button>
-                            </div>
-                        </form>
+                            <form action="/user/deleteAccount" method="POST">
+                                <div class="mb-3">
+                                    <label>Enter your primary email</label>
+                                    <input class="form-control" name="userEmail" type="text" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label>Enter your current password</label>
+                                    <input type="password" name="currentPassword" class="form-control" required>
+                                </div>
+                                <div class="form-group mb-0 text-center">
+                                    <button type="submit" class="btn btn-primary px-3">Delete Account</button>
+                                </div>
+                            </form>
                         </div>
                         <div class="col-md-4"></div>
                     </div>
                 </div>
-                <div class="container-fluid tab-pane fade" id="tab-pane-1">
+                <div class="container-fluid tab-pane fade" id="tab-pane-2">
                     <div class="row">
                         <div class="col-md-12">
                             <form action="/user/saveAddress" method="POST" enctype="multipart/form-data">
-                                <h4 class="font-weight-semi-bold mb-4 text-center">USER DETAILS</h4>
+                                <h4 class="font-weight-semi-bold mb-4 text-center">UPDATE DETAIL</h4>
                                 <div class="row">
                                     <div class="col-md-6 form-group">
                                         <img src="/profileImage/<%= address.profileImageName %>" width="100" alt="">
                                         <input type="file" name="image" accept="image/jpeg, image/png, image/gif">
-                                    </div>    
+                                    </div>
                                     <div class="col-md-6 form-group">
                                         <label>E-mail</label>
                                         <input class="form-control" name="userEmail" type="text"
@@ -133,18 +137,21 @@
                                     </div>
                                     <div class="col-md-6 form-group">
                                         <label>State</label>
-                                        <input class="form-control" name="userState" type="text" value="<%= address.userState %>">
+                                        <input class="form-control" name="userState" type="text"
+                                            value="<%= address.userState %>">
                                     </div>
                                     <div class="col-md-6 form-group">
                                         <label>ZIP Code</label>
-                                        <input class="form-control" name="userZIP" type="text" value="<%= address.userZIP %>">
+                                        <input class="form-control" name="userZIP" type="text"
+                                            value="<%= address.userZIP %>">
                                     </div>
                                     <div class="col-md-12 form-group">
                                         <div class="custom-control custom-checkbox">
                                             <input type="checkbox" class="custom-control-input" id="shipto">
-                                            <label class="custom-control-label" for="shipto" data-toggle="collapse" data-target="#shipping-address">Ship to different address</label>
+                                            <label class="custom-control-label" for="shipto" data-toggle="collapse"
+                                                data-target="#shipping-address">Ship to different address</label>
                                         </div>
-                                    </div>   
+                                    </div>
                                 </div>
 
                         </div>
@@ -155,7 +162,8 @@
                             <div class="row">
                                 <div class="col-md-6 form-group">
                                     <label>Name</label>
-                                    <input class="form-control" name="userName2" type="text" value="<%= address.userName2 %>">
+                                    <input class="form-control" name="userName2" type="text"
+                                        value="<%= address.userName2 %>">
                                 </div>
                                 <div class="col-md-6 form-group">
                                     <label>E-mail</label>
@@ -188,15 +196,18 @@
                                 </div>
                                 <div class="col-md-6 form-group">
                                     <label>City</label>
-                                    <input class="form-control" name="userCity2" type="text" value="<%= address.userCity2 %>">
+                                    <input class="form-control" name="userCity2" type="text"
+                                        value="<%= address.userCity2 %>">
                                 </div>
                                 <div class="col-md-6 form-group">
                                     <label>State</label>
-                                    <input class="form-control" name="userState2" type="text" value="<%= address.userState2 %>">
+                                    <input class="form-control" name="userState2" type="text"
+                                        value="<%= address.userState2 %>">
                                 </div>
                                 <div class="col-md-6 form-group">
                                     <label>ZIP Code</label>
-                                    <input class="form-control" name="userZIP2" type="text" value="<%= address.userZIP2 %>">
+                                    <input class="form-control" name="userZIP2" type="text"
+                                        value="<%= address.userZIP2 %>">
                                 </div>
                             </div>
                         </div>
@@ -206,8 +217,75 @@
                         </form>
                     </div>
                 </div>
+                <div class="container-fluid tab-pane fade" id="tab-pane-1">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h4 class="font-weight-semi-bold mb-4 text-center">USER DETAIL</h4>
+                            <div class="row">
+                                <div class="col-md-6 form-group">
+                                    <img src="/profileImage/<%= address.profileImageName %>" width="100" alt="">
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <label>E-mail</label>
+                                    <h5>
+                                        <%= address.userEmail %>
+                                    </h5>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <label>Name</label>
+                                    <h5>
+                                        <%= address.userName %>
+                                    </h5>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <label>Mobile No</label>
+                                    <h5>
+                                        <%= address.userMobileNo %>
+                                    </h5>
+                                </div>
+                            </div>
+                            <br>
+                            <br>
+                            <div class="row">
+                                <div class="col-md-6 form-group">
+                                    <h5 class="font-weight-semi-bold mb-4">Billing Address</h5>
+                                    <label>Alternate Mobile No</label>
+                                    <h5>
+                                        <%= address.alternateMobileNo %>
+                                    </h5>
+                                    <label>Address</label>
+                                    <h5>
+                                        <%= address.userAddressLine1 %> <br>
+                                        <%= address.userAddressLine2 %> <br>
+                                        <%= address.userCity %> <br>
+                                        <%= address.userState %> <br>
+                                        <%= address.userCountry %> <br>
+                                        <%= address.userZIP %>
+                                    </h5>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <h5 class="font-weight-semi-bold mb-4">Shipping Address</h5>
+                                    <label>Alternate Mobile No</label>
+                                    <h5>
+                                        <%= address.alternateMobileNo2 %>
+                                    </h5>
+                                    <label>Address</label>
+                                    <h5>
+                                        <%= address.userAddressLine12 %> <br>
+                                        <%= address.userAddressLine22 %> <br>
+                                        <%= address.userCity2 %> <br>
+                                        <%= address.userState2 %> <br>
+                                        <%= address.userCountry2 %> <br>
+                                        <%= address.userZIP2 %>
+                                    </h5>
+                                </div>
+                            </div>
+                            <br>
+                        </form>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
         </div>
         </div>
 
