@@ -20,6 +20,7 @@
             <div class="nav nav-tabs justify-content-center border-secondary mb-4">
                 <a class="nav-item nav-link" data-toggle="tab" href="#tab-pane-1">User Detail</a>
                 <a class="nav-item nav-link" data-toggle="tab" href="#tab-pane-2">Update Detail</a>
+                <a class="nav-item nav-link" data-toggle="tab" href="#tab-pane-5">Add Addresses</a>
                 <a class="nav-item nav-link" data-toggle="tab" href="#tab-pane-3">Account Settings</a>
                 <a class="nav-item nav-link" data-toggle="tab" href="#tab-pane-4">Delete Account</a>
             </div>
@@ -79,47 +80,54 @@
                 <div class="container-fluid tab-pane fade" id="tab-pane-2">
                     <div class="row">
                         <div class="col-md-12">
-                            <form action="/user/saveAddress" method="POST" enctype="multipart/form-data">
                                 <h4 class="font-weight-semi-bold mb-4 text-center">UPDATE DETAIL</h4>
+                                <h5 class="font-weight-semi-bold mb-4 text-center">Login Data</h5>
+                                <form action="/user/updateLoginData" method="POST" enctype="multipart/form-data">
                                 <div class="row">
                                     <div class="col-md-6 form-group">
-                                        <img src="/profileImage/<%= address.profileImageName %>" width="100" alt="">
+                                        <label>Profile Image</label>
+                                        <img src="/profileImage/<%= users.profileImageName %>" width="100" alt="" class="border">
                                         <input type="file" name="image" accept="image/jpeg, image/png, image/gif">
                                     </div>
                                     <div class="col-md-6 form-group">
                                         <label>E-mail</label>
                                         <input class="form-control" name="userEmail" type="text"
-                                            value="<%= address.userEmail %>">
+                                            value="<%= users.email %>" disabled>
                                     </div>
                                     <div class="col-md-6 form-group">
                                         <label>Name</label>
                                         <input class="form-control" name="userName" type="text"
-                                            value="<%= address.userName %>">
+                                            value="<%= users.fullname %>">
                                     </div>
                                     <div class="col-md-6 form-group">
                                         <label>Mobile No</label>
                                         <input class="form-control" name="userMobileNo" type="text"
-                                            value="<%= address.userMobileNo %>">
+                                            value="<%= users.mobile %>">
+                                    </div>
+                                    <div class="form-group mb-0 text-center">
+                                        <button type="submit" class="btn btn-primary px-3">Update</button>
                                     </div>
                                 </div>
+                                </form>
                                 <br>
                                 <br>
-                                <h5 class="font-weight-semi-bold mb-4 text-center">Billing Address</h5>
+                                <form action="/user/updateBillingAddress" method="POST" >
+                                <h5 class="font-weight-semi-bold mb-4 text-center">Current Billing Address</h5>
                                 <div class="row">
                                     <div class="col-md-6 form-group">
-                                        <label>Alternate Mobile No</label>
+                                         <label>Alternate Mobile No</label>
                                         <input class="form-control" name="alternateMobileNo" type="text"
-                                            value="<%= address.alternateMobileNo %>">
+                                            value="<%= billingAddress.alternateMobileNo %>">
                                     </div>
                                     <div class="col-md-6 form-group">
                                         <label>Address Line 1</label>
                                         <input class="form-control" name="userAddressLine1" type="text"
-                                            value="<%= address.userAddressLine1 %>">
+                                            value="<%= billingAddress.userAddressLine1 %>">
                                     </div>
                                     <div class="col-md-6 form-group">
                                         <label>Address Line 2</label>
                                         <input class="form-control" name="userAddressLine2" type="text"
-                                            value="<%= address.userAddressLine2 %>">
+                                            value="<%= billingAddress.userAddressLine2 %>">
                                     </div>
                                     <div class="col-md-6 form-group">
                                         <label>Country</label>
@@ -133,57 +141,56 @@
                                     <div class="col-md-6 form-group">
                                         <label>City</label>
                                         <input class="form-control" name="userCity" type="text"
-                                            value="<%= address.userCity %>">
+                                            value="<%= billingAddress.userCity %>">
                                     </div>
                                     <div class="col-md-6 form-group">
                                         <label>State</label>
                                         <input class="form-control" name="userState" type="text"
-                                            value="<%= address.userState %>">
+                                            value="<%= billingAddress.userState %>">
                                     </div>
                                     <div class="col-md-6 form-group">
                                         <label>ZIP Code</label>
                                         <input class="form-control" name="userZIP" type="text"
-                                            value="<%= address.userZIP %>">
-                                    </div>
-                                    <div class="col-md-12 form-group">
-                                        <div class="custom-control custom-checkbox">
-                                            <input type="checkbox" class="custom-control-input" id="shipto">
-                                            <label class="custom-control-label" for="shipto" data-toggle="collapse"
-                                                data-target="#shipping-address">Ship to different address</label>
-                                        </div>
+                                            value="<%= billingAddress.userZIP %>">
                                     </div>
                                 </div>
-
-                        </div>
+                                <div class="form-group mb-0 text-center">
+                                    <button type="submit" class="btn btn-primary px-3">Update</button>
+                                </div>
+                                </form>
+                            </div>
                         <br>
                         <br>
-                        <div class="col-md-12 collapse" id="shipping-address">
-                            <h5 class="font-weight-semi-bold mb-4 text-center">Shipping Address</h5>
+                        <div class="col-md-12" id="shipping-address">
+                            <br>
+                            <br>
+                            <form action="/user/updateShippingAddress" method="POST" >
+                            <h5 class="font-weight-semi-bold mb-4 text-center">Current Shipping Address</h5>
                             <div class="row">
                                 <div class="col-md-6 form-group">
                                     <label>Name</label>
                                     <input class="form-control" name="userName2" type="text"
-                                        value="<%= address.userName2 %>">
+                                        value="<%= shippingAddress.altName %>">
                                 </div>
                                 <div class="col-md-6 form-group">
                                     <label>E-mail</label>
                                     <input class="form-control" name="userEmail2" type="text"
-                                        value="<%= address.userEmail2 %>">
+                                        value="<%= shippingAddress.altEmail %>">
                                 </div>
                                 <div class="col-md-6 form-group">
                                     <label>Mobile No</label>
                                     <input class="form-control" name="alternateMobileNo2" type="text"
-                                        value="<%= address.alternateMobileNo2 %>">
+                                        value="<%= shippingAddress.altMobileNo %>">
                                 </div>
                                 <div class="col-md-6 form-group">
                                     <label>Address Line 1</label>
                                     <input class="form-control" name="userAddressLine12" type="text"
-                                        value="<%= address.userAddressLine12 %>">
+                                        value="<%= shippingAddress.altAddressLine1 %>">
                                 </div>
                                 <div class="col-md-6 form-group">
                                     <label>Address Line 2</label>
                                     <input class="form-control" name="userAddressLine22" type="text"
-                                        value="<%= address.userAddressLine22 %>">
+                                        value="<%= shippingAddress.altAddressLine2 %>">
                                 </div>
                                 <div class="col-md-6 form-group">
                                     <label>Country</label>
@@ -197,24 +204,24 @@
                                 <div class="col-md-6 form-group">
                                     <label>City</label>
                                     <input class="form-control" name="userCity2" type="text"
-                                        value="<%= address.userCity2 %>">
+                                        value="<%= shippingAddress.altCity %>">
                                 </div>
                                 <div class="col-md-6 form-group">
                                     <label>State</label>
                                     <input class="form-control" name="userState2" type="text"
-                                        value="<%= address.userState2 %>">
+                                        value="<%= shippingAddress.altState %>">
                                 </div>
                                 <div class="col-md-6 form-group">
                                     <label>ZIP Code</label>
                                     <input class="form-control" name="userZIP2" type="text"
-                                        value="<%= address.userZIP2 %>">
-                                </div>
+                                        value="<%= shippingAddress.altZIP %>">
+                                </div>  
                             </div>
+                            <div class="form-group mb-0 text-center">
+                                <button type="submit" class="btn btn-primary px-3">Update</button>
+                            </div>
+                            </form>
                         </div>
-                        <div class="form-group mb-0 text-center">
-                            <button type="submit" class="btn btn-primary px-3">Save</button>
-                        </div>
-                        </form>
                     </div>
                 </div>
                 <div class="container-fluid tab-pane fade" id="tab-pane-1">
@@ -223,24 +230,25 @@
                             <h4 class="font-weight-semi-bold mb-4 text-center">USER DETAIL</h4>
                             <div class="row">
                                 <div class="col-md-6 form-group">
-                                    <img src="/profileImage/<%= address.profileImageName %>" width="100" alt="">
+                                    <label>Profile Image</label>
+                                    <img src="/profileImage/<%= users.profileImageName %>" width="100" alt="">
                                 </div>
                                 <div class="col-md-6 form-group">
                                     <label>E-mail</label>
                                     <h5>
-                                        <%= address.userEmail %>
+                                        <%= users.email %>
                                     </h5>
                                 </div>
                                 <div class="col-md-6 form-group">
                                     <label>Name</label>
                                     <h5>
-                                        <%= address.userName %>
+                                        <%= users.fullname %>
                                     </h5>
                                 </div>
                                 <div class="col-md-6 form-group">
                                     <label>Mobile No</label>
                                     <h5>
-                                        <%= address.userMobileNo %>
+                                        <%= users.mobile %>
                                     </h5>
                                 </div>
                             </div>
@@ -248,40 +256,143 @@
                             <br>
                             <div class="row">
                                 <div class="col-md-6 form-group">
-                                    <h5 class="font-weight-semi-bold mb-4">Billing Address</h5>
+                                    <h5 class="font-weight-semi-bold mb-4">Primary Billing Address</h5>
                                     <label>Alternate Mobile No</label>
                                     <h5>
-                                        <%= address.alternateMobileNo %>
+                                        <%= billingAddress.alternateMobileNo %>
                                     </h5>
                                     <label>Address</label>
                                     <h5>
-                                        <%= address.userAddressLine1 %> <br>
-                                        <%= address.userAddressLine2 %> <br>
-                                        <%= address.userCity %> <br>
-                                        <%= address.userState %> <br>
-                                        <%= address.userCountry %> <br>
-                                        <%= address.userZIP %>
+                                        <%= billingAddress.userAddressLine1 %> <br>
+                                        <%= billingAddress.userAddressLine2 %> <br>
+                                        <%= billingAddress.userCity %> <br>
+                                        <%= billingAddress.userState %> <br>
+                                        <%= billingAddress.userCountry %> <br>
+                                        <%= billingAddress.userZIP %>
                                     </h5>
                                 </div>
                                 <div class="col-md-6 form-group">
-                                    <h5 class="font-weight-semi-bold mb-4">Shipping Address</h5>
+                                    <h5 class="font-weight-semi-bold mb-4">Primary Shipping Address</h5>
                                     <label>Alternate Mobile No</label>
                                     <h5>
-                                        <%= address.alternateMobileNo2 %>
+                                        <%= shippingAddress.altMobileNo %>
                                     </h5>
                                     <label>Address</label>
                                     <h5>
-                                        <%= address.userAddressLine12 %> <br>
-                                        <%= address.userAddressLine22 %> <br>
-                                        <%= address.userCity2 %> <br>
-                                        <%= address.userState2 %> <br>
-                                        <%= address.userCountry2 %> <br>
-                                        <%= address.userZIP2 %>
+                                        <%= shippingAddress.altAddressLine1 %> <br>
+                                        <%= shippingAddress.altAddressLine2 %> <br>
+                                        <%= shippingAddress.altCity %> <br>
+                                        <%= shippingAddress.altState %> <br>
+                                        <%= shippingAddress.altCountry %> <br>
+                                        <%= shippingAddress.altZIP %>
                                     </h5>
                                 </div>
                             </div>
                             <br>
                         </form>
+                        </div> 
+                    </div>
+                </div>
+                <div class="container-fluid tab-pane fade" id="tab-pane-5">
+                    <div class="row">
+                        <div class="col-md-12">
+                                <h4 class="font-weight-semi-bold mb-4 text-center">ADD ADDRESSES</h4>
+                                <form action="/user/addBillingAddress" method="POST" >
+                                <h5 class="font-weight-semi-bold mb-4 text-center">Billing Address</h5>
+                                <div class="row">
+                                    <div class="col-md-6 form-group">
+                                         <label>Alternate Mobile No</label>
+                                        <input class="form-control" name="alternateMobileNo" type="text">
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label>Address Line 1</label>
+                                        <input class="form-control" name="userAddressLine1" type="text">
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label>Address Line 2</label>
+                                        <input class="form-control" name="userAddressLine2" type="text">
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label>Country</label>
+                                        <select class="custom-select" name="userCountry">
+                                            <option selected>India</option>
+                                            <option>United States</option>
+                                            <option>China</option>
+                                            <option>Sreelanka</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label>City</label>
+                                        <input class="form-control" name="userCity" type="text">
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label>State</label>
+                                        <input class="form-control" name="userState" type="text">
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label>ZIP Code</label>
+                                        <input class="form-control" name="userZIP" type="text">
+                                    </div>
+                                </div>
+                                <div class="form-group mb-0 text-center">
+                                    <button type="submit" class="btn btn-primary px-3">Add Address</button>
+                                </div>
+                                </form>
+                            </div>
+                        <br>
+                        <br>
+                        <div class="col-md-12" id="shipping-address">
+                            <br>
+                            <br>
+                            <form action="/user/addShippingAddress" method="POST" >
+                            <h5 class="font-weight-semi-bold mb-4 text-center">Shipping Address</h5>
+                            <div class="row">
+                                <div class="col-md-6 form-group">
+                                    <label>Name</label>
+                                    <input class="form-control" name="userName2" type="text">
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <label>E-mail</label>
+                                    <input class="form-control" name="userEmail2" type="text">
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <label>Mobile No</label>
+                                    <input class="form-control" name="alternateMobileNo2" type="text">
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <label>Address Line 1</label>
+                                    <input class="form-control" name="userAddressLine12" type="text">
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <label>Address Line 2</label>
+                                    <input class="form-control" name="userAddressLine22" type="text">
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <label>Country</label>
+                                    <select class="custom-select" name="userCountry2">
+                                        <option selected>India</option>
+                                        <option>United States</option>
+                                        <option>China</option>
+                                        <option>Sreelanka</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <label>City</label>
+                                    <input class="form-control" name="userCity2" type="text">
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <label>State</label>
+                                    <input class="form-control" name="userState2" type="text">
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <label>ZIP Code</label>
+                                    <input class="form-control" name="userZIP2" type="text">
+                                </div>  
+                            </div>
+                            <div class="form-group mb-0 text-center">
+                                <button type="submit" class="btn btn-primary px-3">Add Address</button>
+                            </div>
+                            </form>
                         </div>
                     </div>
                 </div>

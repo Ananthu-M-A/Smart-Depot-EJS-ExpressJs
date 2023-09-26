@@ -18,11 +18,14 @@ const user = mongoose.Schema({
     type: String,
     required: true,
   },
+  profileImageName: {
+    type: String,
+  },
   blocked: {
     type: Boolean,
-    required: true,
+    default: false,
   },
 });
 
-const UserLoginData = mongoose.model('userLoginData', user);
-module.exports = UserLoginData;
+const userLoginData = mongoose.model('userLoginData', user);
+module.exports = userLoginData;

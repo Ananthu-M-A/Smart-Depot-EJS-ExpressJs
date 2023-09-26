@@ -33,13 +33,13 @@
                 <div class="col-md-6 pb-4">
                     <div class="position-relative bg-secondary text-white mb-2 py-5 px-5">
                         <h5>Shipping Details</h5>
-                        <p class="text-uppercase text-primary mb-3">Name : <%= order.address.userName%></p>
-                    <p class=" text-dark">Address : <%= order.address.userAddressLine1
-                                    +", "+ order.address.userAddressLine2 +" , "+ order.address.userState +" , "+
-                         order.address.userCountry +" , "+ order.address.userZIP %></p>
-                    <p class=" text-dark">Mobile : <%= order.address.userMobileNo %>
+                        <p class="text-uppercase text-primary mb-3">Name : <%= order.shippingAddress.altName%></p>
+                    <p class=" text-dark">Address : <%= order.shippingAddress.altAddressLine1
+                                    +", "+ order.shippingAddress.altAddressLine2 +" , "+ order.shippingAddress.altState +" , "+
+                                    order.shippingAddress.altCountry +"-"+ order.shippingAddress.altZIP %></p>
+                    <p class=" text-dark">Mobile : <%= order.shippingAddress.altMobileNo %>
                         </p>
-                    <p class=" text-dark">Email : <%= order.address.userEmail %>
+                    <p class=" text-dark">Email : <%= order.shippingAddress.altEmail %>
                     </p>
                     </div>
                 </div>
@@ -60,13 +60,13 @@
                             </thead>
                             <tbody>
                                 <% let i=1 ; %>
-                                    <% products.products.forEach(product=> { %>
+                                    <% order.products.forEach(product=> { %>
                                         <tr>
                                             <td>
                                                 <%= i %>
                                             </td>
                                             <td>
-                                                <%= product.productId.productName %>
+                                                <%= product.productName %>
                                             </td>
                                             <td>
                                                 <%= product.productId.productPrice %>

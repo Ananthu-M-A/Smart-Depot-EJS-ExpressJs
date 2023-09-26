@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const order = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'UserLoginData',
+    ref: 'userLoginData',
     required: true,
   },
   products: [
@@ -35,16 +35,15 @@ const order = new mongoose.Schema({
     type: String,
     required: true,
   },
-  address: {
-    userName: { type: String, required: true },
-    userEmail: { type: String, required: true },
-    userMobileNo: { type: String, required: true },
-    userAddressLine1: { type: String, required: true },
-    userAddressLine2: { type: String },
-    userCountry: { type: String, required: true },
-    userCity: { type: String, required: true },
-    userState: { type: String, required: true },
-    userZIP: { type: String, required: true },
+  billingAddress: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'billingAddressData',
+    required: true,
+  },
+  shippingAddress: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'shippingAddressData',
+    required: true,
   },
   orderStatus: {
     type: String,

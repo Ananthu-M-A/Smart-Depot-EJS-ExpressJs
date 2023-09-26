@@ -48,12 +48,12 @@
                 </form>
             </div>
             <div class="col-lg-3 col-6 text-right">
+                <a href="/user/account" class="btn" id="profileicon">
+                    <img src="/profileImage/<%= users.profileImageName %>" class="rounded-3" id="profileiconimg" alt="">
+                </a>
                 <a href="/user/wishlist" class="btn border rounded-3" id="topicon">
                     <i class="fas fa-heart text-primary"></i>
                     <span class="badge"><%= countWishlist %></span>
-                </a>
-                <a href="/user/account" class="btn" id="profileicon">
-                    <img src="/profileImage/<%= address.profileImageName %>" class="rounded-3" id="profileiconimg" alt="">
                 </a>
                 <a href="/user/cart" class="btn border rounded-3" id="topicon">
                     <i class="fas fa-shopping-cart text-primary"></i>

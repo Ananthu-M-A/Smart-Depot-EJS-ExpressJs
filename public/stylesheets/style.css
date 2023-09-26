@@ -17,11 +17,19 @@ body, html {
   margin-top: 15vh;
 }
 
+#offer-table{
+  margin-top: 15vh;
+}
+
 #btnAddProduct{
   background-color: black;
 }
 
 #productDelete,#btnEditProduct{
+  height: 4vh;
+}
+
+#offerButtons{
   height: 4vh;
 }
 

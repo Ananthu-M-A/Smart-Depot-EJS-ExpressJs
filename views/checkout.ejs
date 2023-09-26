@@ -15,136 +15,131 @@
         <!-- Page Header End -->
 
 
-        <!-- Checkout Start -->
-        <form id="paymentForm" action="/user/placeOrder/<%= subTotal %>/<%= total %>" method="post">
-            <div class="container-fluid pt-5">
-                <div class="row px-xl-5">
-                    <div class="col-lg-6">
-                        <div class="card-header bg-secondary border-0 mb-5">
-                            <h4 class="font-weight-semi-bold m-0">Billing Address</h4>
-                        </div>
-                        <div class="mb-4">
-                            <div class="card-body">
-                                <div class="form-group">
-                                    <div class="custom-control custom-radio">
-                                        <% address.forEach(billAddress=> { %>
-                                            <input type="radio" class="custom-control-input" name="billingAddress"
-                                                id="cod" value="addressId" checked>
-                                            <label class="custom-control-label" for="cod">
-                                                <h5>
-                                                    <%= billAddress.userEmail %> <br>
-                                                        <%= billAddress.userMobileNo %> <br>
-                                                            <%= billAddress.userName %>, <br>
-                                                                <%= billAddress.userAddressLine1 %>, <br>
-                                                                    <%= billAddress.userAddressLine2 %>, <br>
-                                                                        <%= billAddress.userCity %>, <%=
-                                                                                billAddress.userState %>,
-                                                                                <%= billAddress.userCountry %> - <%=
-                                                                                        billAddress.userZIP %>
-                                                </h5>
-                                            </label>
-                                        <% }); %>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="mb-4">
-                            <div class="card-header bg-secondary border-0 mb-5">
-                                <h4 class="font-weight-semi-bold m-0">Billing Address</h4>
-                            </div>
-                            <div class="card-body">
-                                <div class="form-group">
-                                    <div class="custom-control custom-radio">
-                                        <% address.forEach(billAddress=> { %>
-                                            <input type="radio" class="custom-control-input" name="billingAddress"
-                                                id="cod" value="addressId" checked>
-                                            <label class="custom-control-label" for="cod">
-                                                <h5>
-                                                    <%= billAddress.userEmail %> <br>
-                                                        <%= billAddress.userMobileNo %> <br>
-                                                            <%= billAddress.userName %>, <br>
-                                                                <%= billAddress.userAddressLine1 %>, <br>
-                                                                    <%= billAddress.userAddressLine2 %>, <br>
-                                                                        <%= billAddress.userCity %>, <%=
-                                                                                billAddress.userState %>,
-                                                                                <%= billAddress.userCountry %> - <%=
-                                                                                        billAddress.userZIP %>
-                                                </h5>
-                                            </label>
-                                            <% }); %>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
+<!-- Checkout Start -->
+<form id="paymentForm" action="/user/placeOrder/<%= subTotal %>/<%= total %>" method="post">
+    <div class="container-fluid pt-5">
+        <div class="row px-xl-5">
+            <div class="col-lg-6">
+                <div class="mb-4 border rounded-3">
+                    <div class="card-header bg-secondary border-0 mb-5 rounded-3">
+                        <h4 class="font-weight-semi-bold m-0">Billing Address</h4>
                     </div>
-                    <div class="col-lg-6">
-                        <div class="card border-secondary mb-5">
-                            <div class="card-header bg-secondary border-0">
-                                <h4 class="font-weight-semi-bold m-0">Order Total</h4>
-                            </div>
-                            <div class="card-body">
-                                <h5 class="font-weight-medium mb-3">Products</h5>
-                                <% cartItems.forEach(cartItem=> { %>
-                                    <div class="d-flex justify-content-between">
-                                        <p>
-                                            <%= cartItem.productId.productName %>(<%= cartItem.productQuantity %>)
-                                        </p>
-                                        <p>₹<%= cartItem.productId.productPrice %>
-                                        </p>
-                                    </div>
-                                    <% }); %>
-    
-                                        <hr class="mt-0">
-                                        <div class="d-flex justify-content-between mb-3 pt-1">
-                                            <h6 class="font-weight-medium">Subtotal</h6>
-                                            <h6 class="font-weight-medium">₹<%= subTotal %>
-                                            </h6>
-                                        </div>
-                                        <div class="d-flex justify-content-between">
-                                            <h6 class="font-weight-medium">Discount</h6>
-                                            <h6 class="font-weight-medium">₹0</h6>
-                                        </div>
-                            </div>
-                            <div class="card-footer border-secondary bg-transparent">
-                                <div class="d-flex justify-content-between mt-2">
-                                    <h5 class="font-weight-bold">Total</h5>
-                                    <h5 class="font-weight-bold" name="amount">₹<%= total %>
+                    <div class="card-body">
+                        <% billingAddress.forEach(address=> { %>
+                        <div class="form-group scrollable">
+                            <div class="custom-control custom-radio">
+                                <input type="radio" class="custom-control-input" name="billingAddress" id="bill_<%= address.billingAddressId %>" value="<%= address._id %>" checked>
+                                <label class="custom-control-label" for="bill_<%= address.billingAddressId %>">
+                                    <h5>
+                                        <%= address.customerId.email %> <br>
+                                        <%= address.alternateMobileNo %> <br>
+                                        <%= address.customerId.fullname %>, <br>
+                                        <%= address.userAddressLine1 %>, <br>
+                                        <%= address.userAddressLine2 %>, <br>
+                                        <%= address.userCity %>, <%= address.userState %>,
+                                        <%= address.userCountry %> - <%= address.userZIP %>
                                     </h5>
-                                </div>
+                                </label>
                             </div>
                         </div>
-                        <div class="card border-secondary mb-5">
-                            <div class="card-header bg-secondary border-0">
-                                <h4 class="font-weight-semi-bold m-0">Payment</h4>
-                            </div>
-                            <div class="card-body">
-                                <div class="form-group">
-                                    <div class="custom-control custom-radio">
-                                        <input type="radio" class="custom-control-input" name="paymentMethod" id="cod"
-                                            value="COD" checked>
-                                        <label class="custom-control-label" for="cod">Cash-On-Delivery</label>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="custom-control custom-radio">
-                                        <input type="radio" class="custom-control-input" name="paymentMethod" id="online"
-                                            value="Online">
-                                        <label class="custom-control-label" for="online">Online Payment (RazorPay)</label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card-footer border-secondary bg-transparent">
-                                <button class="btn btn-lg btn-block btn-primary font-weight-bold my-3 py-3">Place
-                                    Order</button>
+                        <% }); %>
+                    </div>
+                </div>
+                <br>
+                <div class="mb-4 border rounded-3">
+                    <div class="card-header bg-secondary border-0 mb-5 rounded-3">
+                        <h4 class="font-weight-semi-bold m-0">Shipping Address</h4>
+                    </div>
+                    <div class="card-body">
+                        <% shippingAddress.forEach(address=> { %>
+                        <div class="form-group">
+                            <div class="custom-control custom-radio">
+                                <input type="radio" class="custom-control-input" name="shippingAddress" id="ship_<%= address.shippingAddressId %>" value="<%= address._id %>" checked>
+                                <label class="custom-control-label" for="ship_<%= address.shippingAddressId %>">
+                                    <h5>
+                                        <%= address.altEmail %> <br>
+                                        <%= address.altMobileNo %> <br>
+                                        <%= address.altName %>, <br>
+                                        <%= address.altAddressLine1 %>, <br>
+                                        <%= address.altAddressLine2 %>, <br>
+                                        <%= address.altCity %>, <%= address.altState %>,
+                                        <%= address.altCountry %> - <%= address.altZIP %>
+                                    </h5>
+                                </label>
                             </div>
                         </div>
+                        <% }); %>
                     </div>
                 </div>
             </div>
+            <div class="col-lg-6">
+                <div class="card border-secondary mb-5 ">
+                    <div class="card-header bg-secondary border-0 rounded-3">
+                        <h4 class="font-weight-semi-bold m-0">Order Total</h4>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="font-weight-medium mb-3">Products</h5>
+                        <% cartItems.forEach(cartItem=> { %>
+                            <div class="d-flex justify-content-between">
+                                <p>
+                                    <%= cartItem.productId.productName %>(<%= cartItem.productQuantity %>)
+                                </p>
+                                <p>₹<%= cartItem.productId.productPrice %>
+                                </p>
+                            </div>
+                            <% }); %>
+
+                                <hr class="mt-0">
+                                <div class="d-flex justify-content-between mb-3 pt-1">
+                                    <h6 class="font-weight-medium">Subtotal</h6>
+                                    <h6 class="font-weight-medium">₹<%= subTotal %>
+                                    </h6>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <h6 class="font-weight-medium">Discount</h6>
+                                    <h6 class="font-weight-medium">₹0</h6>
+                                </div>
+                    </div>
+                    <div class="card-footer border-secondary bg-transparent">
+                        <div class="d-flex justify-content-between mt-2">
+                            <h5 class="font-weight-bold">Total</h5>
+                            <h5 class="font-weight-bold" name="amount">₹<%= total %>
+                            </h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="card border-secondary mb-5">
+                    <div class="card-header bg-secondary border-0 rounded-3">
+                        <h4 class="font-weight-semi-bold m-0">Payment</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <div class="custom-control custom-radio">
+                                <input type="radio" class="custom-control-input" name="paymentMethod" id="cod"
+                                    value="COD" checked>
+                                <label class="custom-control-label" for="cod">Cash-On-Delivery</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="custom-control custom-radio">
+                                <input type="radio" class="custom-control-input" name="paymentMethod" id="online"
+                                    value="Online">
+                                <label class="custom-control-label" for="online">Online Payment (RazorPay)</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer border-secondary bg-transparent">
+                        <button class="btn btn-lg btn-block btn-primary font-weight-bold my-3 py-3">Place
+                            Order</button>
+                    </div>
+                </div>
+
             </div>
-        </form>
-        <!-- Checkout End -->
+        </div>
+    </div>
+</form>
+<!-- Checkout End -->
+
 
 
         <%-include('partials/bottombarUser.ejs')%>

@@ -22,7 +22,11 @@ router.get('/cancelOrder/:orderId', requireAuth, isUserBlocked, UserController.c
 router.get('/returnOrder/:orderId', requireAuth, isUserBlocked, UserController.returnOrder);
 router.get('/orderDetail/:orderId', requireAuth, isUserBlocked, UserController.loadOrderDetail);
 router.get('/account', requireAuth, isUserBlocked, UserController.loadAccount);
-router.post('/saveAddress', requireAuth, uploadProfileImage.single('image'), UserController.saveAddress);
+router.post('/updateLoginData', requireAuth, uploadProfileImage.single('image'), UserController.updateLoginData);
+router.post('/addBillingAddress', requireAuth, UserController.addBillingAddress);
+router.post('/addShippingAddress', requireAuth, UserController.addShippingAddress);
+router.post('/updateBillingAddress', requireAuth, UserController.updateBillingAddress);
+router.post('/updateShippingAddress', requireAuth, UserController.updateShippingAddress);
 router.post('/changePassword', requireAuth, UserController.changePassword);
 router.post('/deleteAccount', requireAuth, UserController.deleteAccount);
 router.post('/cart/:productId', requireAuth, UserController.addToCart);

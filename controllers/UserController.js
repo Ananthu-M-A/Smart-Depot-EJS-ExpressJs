@@ -8,22 +8,24 @@ const fs = require('fs');
 const mongoose = require('mongoose');
 const { ObjectId } = require('mongoose').Types;
 const { error } = require('console');
+const easyinvoice = require('easyinvoice');
 
 
 const productData = require('../models/productModel');
 const categoryData = require('../models/categoryModel');
 const cartData = require('../models/cartModel');
-const addressData = require('../models/addressModel');
-const UserLoginData = require('../models/userModel');
+const billingAddressData = require('../models/billingAddressModel');
+const shippingAddressData = require('../models/shippingAddressModel');
+const userLoginData = require('../models/userModel');
 const wishlistData = require('../models/wishlistModel');
+const productOfferData = require('../models/productOfferModel');
+const categoryOfferData = require('../models/categoryOfferData');
 const orderData = require('../models/orderModel');
-const easyinvoice = require('easyinvoice');
-
 
 const networkTime = require('../middlewares/networkTime');
 
 const transporter = require('../controllers/userOtpVerification');
-
+const session = require('express-session');
 
 async function getFilteredProducts(filter, page, itemsPerPage, req) {
   const startIndex = (page - 1) * itemsPerPage;
@@ -43,7 +45,9 @@ async function getFilteredProducts(filter, page, itemsPerPage, req) {
   const categories = await categoryData.find();
   const countCart = await cartData.countDocuments({ customerId: req.session.user });
   const countWishlist = await wishlistData.countDocuments({ customerId: req.session.user });
-  const users = await UserLoginData.findById(req.session.user);
+  const users = await userLoginData.findById(req.session.user);
+  const productOffer = await productOfferData.find();
+  const categoryOffer = await categoryOfferData.find();
 
   return {
     paginatedProducts,
@@ -51,6 +55,8 @@ async function getFilteredProducts(filter, page, itemsPerPage, req) {
     users,
     countCart,
     countWishlist,
+    productOffer,
+    categoryOffer,
     totalPages: Math.ceil(count / itemsPerPage), // Calculate totalPages based on count
   };
 }
@@ -66,7 +72,7 @@ exports.loadSignupPage = (req, res) => {
 
 exports.signup = async (req, res) => {
   const { fullname, email, mobile, password } = req.body;
-  const user = await UserLoginData.findOne({ email });
+  const user = await userLoginData.findOne({ email });
 
   if (user) {
     return res.status(400).send('You already have an account');
@@ -120,33 +126,16 @@ exports.verifyOtp = async (req, res) => {
     const { fullname, email, mobile, password } = storedUserData;
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const registerUserWithOTP = new UserLoginData({
+    const registerUserWithOTP = new userLoginData({
       fullname,
       email,
       mobile,
       password: hashedPassword,
-      blocked: false,
     });
 
     try {
       await registerUserWithOTP.save();
       req.session.userData = null;
-      console.log(registerUserWithOTP._id);
-
-      const address = new addressData({
-        customerId: registerUserWithOTP._id,
-        userName: fullname,
-        userEmail: email,
-        userMobileNo: mobile,
-        alternateMobileNo: "Nil",
-        userAddressLine1: "Nil",
-        userAddressLine2: "Nil",
-        userCountry: "Nil",
-        userCity: "Nil",
-        userState: "Nil",
-        userZIP: "Nil",
-      });
-      const result = await address.save();
 
       res.render('login');
     } catch (error) {
@@ -181,7 +170,7 @@ exports.loadForgotPasswordPage = async (req, res) => {
 
 exports.forgotPassword = async (req, res, next) => {
   const { email } = req.body;
-  const user = await UserLoginData.findOne({ email });
+  const user = await userLoginData.findOne({ email });
 
   if (!user) {
     return res.status(400).send('User not found');
@@ -234,7 +223,7 @@ exports.addNewPassword = async (req, res) => {
     const { password, confirmPassword } = req.body;
     if (password === confirmPassword) {
       const hashedPassword = await bcrypt.hash(password, 10);
-      const updatePasswordWithOTP = await UserLoginData.findOneAndUpdate({ email: email }, { password: hashedPassword });
+      const updatePasswordWithOTP = await userLoginData.findOneAndUpdate({ email: email }, { password: hashedPassword });
       if (updatePasswordWithOTP.nModified !== 0) {
         req.session.userData = null;
         res.render('login');
@@ -251,7 +240,7 @@ exports.addNewPassword = async (req, res) => {
 exports.login = async (req, res, next) => {
   const { email, password } = req.body;
   try {
-    const user = await UserLoginData.findOne({ email });
+    const user = await userLoginData.findOne({ email });
 
     if (!user) {
       return res.status(400).send('User not found');
@@ -278,11 +267,10 @@ exports.loadHomePage = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const filter = req.session.filter || {};
 
-    const { paginatedProducts, categories, users, countCart, countWishlist, totalPages } =
+    const { paginatedProducts, categories, users, countCart, countWishlist, productOffer,
+      categoryOffer, totalPages } =
       await getFilteredProducts(filter, page, itemsPerPage, req);
-
-    const address = await addressData.findOne({ customerId: req.session.user });
-
+    
     res.render('home', {
       user: req.session.user,
       products: paginatedProducts,
@@ -290,9 +278,12 @@ exports.loadHomePage = async (req, res) => {
       users,
       countCart,
       countWishlist,
+      productOffer,
+      categoryOffer,
       totalPages,
       currentPage: page,
-      address,
+      productOffer,
+      categoryOffer
     });
 
   } catch (error) {
@@ -326,19 +317,14 @@ exports.searchProducts = async (req, res) => {
       ],
     }).populate('productCategory');
 
-    console.log(products);
+
     const categories = await categoryData.find();
-    console.log(categories);
     const countCart = await cartData.find({ customerId: req.session.user }).countDocuments({});
     const countWishlist = await wishlistData.findOne({ customerId: req.session.user }).countDocuments({});
-    console.log(countCart, countWishlist);
 
-    const users = await UserLoginData.findById(req.session.user);
-    console.log(users);
+    const users = await userLoginData.findById(req.session.user);
 
-    const address = await addressData.findOne({ customerId: req.session.user });
-
-    res.render('home', { user: req.session.user, products, categories, users, countCart, countWishlist, address, totalPages: 4, currentPage: 1 });
+    res.render('home', { user: req.session.user, products, categories, users, countCart, countWishlist, totalPages: 4, currentPage: 1 });
   } catch (error) {
     res.render('home', { error: 'Error searching products.' });
   }
@@ -379,9 +365,7 @@ exports.filterProducts = async (req, res) => {
       countWishlist,
       totalPages,
     } = await getFilteredProducts(filter, page, itemsPerPage, req);
-
-    const address = await addressData.findOne({ customerId: req.session.user });
-
+    
     res.render('home', {
       user: req.session.user,
       products: paginatedProducts,
@@ -391,7 +375,6 @@ exports.filterProducts = async (req, res) => {
       countWishlist,
       totalPages,
       currentPage: page,
-      address,
     });
 
   } catch (error) {
@@ -401,13 +384,12 @@ exports.filterProducts = async (req, res) => {
 
 exports.clearFilter = async (req, res) => {
   try {
-    console.log(req.session.filter);
+
     req.session.filter = {
       categories: [],
       minPrice: 0,
       maxPrice: 10000,
     };
-    console.log(req.session.filter);
     res.redirect('/user')
   } catch (error) {
     console.log(error);
@@ -423,8 +405,8 @@ exports.loadProductDetail = async (req, res) => {
 
     const productId = req.params.productId;
     const fetchedProduct = await productData.findById(productId);
-    const address = await addressData.findOne({ customerId: req.session.user });
-    res.render('productDetail', { user: req.session.user, product: fetchedProduct, countCart, countWishlist, address });
+    const users = await userLoginData.findById(req.session.user);
+    res.render('productDetail', { user: req.session.user, product: fetchedProduct, countCart, countWishlist, users });
   } catch (error) {
     res.render('home', { error: 'Error fetching product data.' });
   }
@@ -439,8 +421,8 @@ exports.loadCart = async (req, res) => {
       .populate('productId')
       .exec();
     const productQuantity = req.body.quantity;
-    const address = await addressData.findOne({ customerId: req.session.user });
-    res.render('cart', { user: req.session.user, productQuantity, cartItems, countCart, countWishlist, address });
+    const users = await userLoginData.findById(req.session.user);
+    res.render('cart', { user: req.session.user, productQuantity, cartItems, countCart, countWishlist, users });
   } catch (error) {
     res.render('cart', { error: 'Error fetching product data.' });
   }
@@ -463,9 +445,9 @@ exports.loadWishlist = async (req, res) => {
     const wishlist = await wishlistData.find({ customerId: customerId }).populate('product');
     const countCart = await cartData.find({ customerId }).countDocuments({});
     const countWishlist = await wishlistData.findOne({ customerId: req.session.user }).countDocuments({});
-    const address = await addressData.findOne({ customerId: req.session.user });
-
-    res.render('wishlist', { user: customerId, wishlist, countCart, countWishlist, address });
+    const users = await userLoginData.findById(customerId);
+    
+    res.render('wishlist', { user: customerId, wishlist, countCart, countWishlist, users });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal Server Error' });
@@ -476,7 +458,6 @@ exports.removeWishlistItem = async (req, res) => {
   try {
     const productId = req.params.productId;
     const customerId = req.session.user;
-    console.log(productId, customerId);
 
     const result = await wishlistData.deleteOne({ customerId: customerId });
 
@@ -511,11 +492,11 @@ exports.loadOrders = async (req, res) => {
         }
       }
     }
-    const address = await addressData.findOne({ customerId: req.session.user });
-
+    const users = await userLoginData.findById(userId);
+    
     orderData.find().sort({ orderDate: -1 }).exec()
       .then((orders) => {
-        res.render('order', { user: userId, orders: orders, countCart, countWishlist, address });
+        res.render('order', { user: userId, orders: orders, countCart, countWishlist, users });
       })
       .catch((err) => {
         console.error('Error loading orders:', err);
@@ -560,52 +541,74 @@ exports.returnOrder = async (req, res) => {
 
 exports.loadOrderDetail = async (req, res) => {
   try {
-    const countCart = await cartData.find({ customerId: req.session.user }).countDocuments({});
-    const countWishlist = await wishlistData.findOne({ customerId: req.session.user }).countDocuments({});
-
-    const userId = req.session.user;
+    const customerId = req.session.user;
+    const countCart = await cartData.find({ customerId: customerId }).countDocuments({});
+    const countWishlist = await wishlistData.findOne({ customerId: customerId }).countDocuments({});
     const orderId = req.params.orderId;
-    const order = await orderData.findOne({ _id: orderId });
+    const users = await userLoginData.findById(customerId);
+    const order = await orderData.findById(orderId)
+    .populate('userId')
+    .populate('products.productId')
+    .populate('billingAddress')
+    .populate('shippingAddress')
+    .exec();
 
-    const products = await orderData.findById(orderId)
-      .populate('products.productId').exec();
-    const address = await addressData.findOne({ customerId: req.session.user });
 
     if (!order) {
       return res.status(404).send('Order not found');
     }
 
-    res.render('orderDetail', { user: userId, order, products, countCart, countWishlist, address });
+    res.render('orderDetail', { user: customerId, order, countCart, countWishlist, users});
   } catch (error) {
+    console.log(error);
     res.render('orderDetail', { error: 'Error fetching product data.' });
   }
 };
 
 exports.loadAccount = async (req, res) => {
   try {
-    const countCart = await cartData.find({ customerId: req.session.user }).countDocuments({});
-    const countWishlist = await wishlistData.findOne({ customerId: req.session.user }).countDocuments({});
+    const customerId = req.session.user;
+    const countCart = await cartData.find({ customerId: customerId }).countDocuments({});
+    const countWishlist = await wishlistData.findOne({ customerId: customerId }).countDocuments({});
 
-    const userId = req.session.user;
-    const address = await addressData.findOne({ customerId: userId });
+    const billingAddress = await billingAddressData.findOne({customerId: customerId});
+    const shippingAddress = await shippingAddressData.findOne({customerId: customerId});
+    const users = await userLoginData.findById(customerId);
 
-    const users = await UserLoginData.findById(userId);
-    res.render('account', { user: userId, users, address, countCart, countWishlist });
+    res.render('account', { user: customerId, users, countCart, countWishlist, billingAddress, shippingAddress });
   } catch (error) {
     res.render('account', { error: 'Error fetching product data.' });
   }
 };
 
-exports.saveAddress = async (req, res) => {
+exports.updateLoginData = async (req, res) => {
   try {
     const customerId = req.session.user;
     const imageName = req.file.filename;
-    const addressId = await addressData.findOne({ customerId: customerId }, { _id: 1 });
+    if(!imageName)
+    { imageName = undefined; }
+    const userData = {
+      fullName: req.body.userName,
+      mobile: req.body.userMobileNo,
+      profileImageName: imageName,
+    }
+    if(userData){
+      await userLoginData.findByIdAndUpdate(customerId, userData, {upsert: true} );
+    }
 
-    const address = {
-      userName: req.body.userName,
-      userEmail: req.body.userEmail,
-      userMobileNo: req.body.userMobileNo,
+    res.redirect('/user/account');
+  } catch (error) {
+    console.log(error);
+    res.render('home', { error: 'Error fetching product data.' });
+  }
+};
+
+exports.addBillingAddress = async (req, res) => {
+  try {
+    const customerId = req.session.user;
+    const billingAddressId = await billingAddressData.findOne({ customerId: customerId }, { _id: 1 });
+    const billingAddress = new billingAddressData({
+      customerId: customerId,
       alternateMobileNo: req.body.alternateMobileNo,
       userAddressLine1: req.body.userAddressLine1,
       userAddressLine2: req.body.userAddressLine2,
@@ -613,24 +616,96 @@ exports.saveAddress = async (req, res) => {
       userCity: req.body.userCity,
       userState: req.body.userState,
       userZIP: req.body.userZIP,
-      userName2: req.body.userName2,
-      userEmail2: req.body.userEmail2,
-      alternateMobileNo2: req.body.alternateMobileNo2,
-      userAddressLine12: req.body.userAddressLine12,
-      userAddressLine22: req.body.userAddressLine22,
-      userCountry2: req.body.userCountry2,
-      userCity2: req.body.userCity2,
-      userState2: req.body.userState2,
-      userZIP2: req.body.userZIP2,
-      profileImageName: imageName,
+    });
+    if(billingAddress)
+    {
+      // await billingAddressData.findByIdAndUpdate(billingAddressId, billingAddress, {upsert: true});
+      await billingAddress.save();
     }
-    const result = await addressData.findByIdAndUpdate(addressId, address);
     res.redirect('/user/account');
   } catch (error) {
     console.log(error);
     res.render('home', { error: 'Error fetching product data.' });
   }
-};
+}
+
+exports.updateBillingAddress = async (req, res) => {
+  try {
+    const customerId = req.session.user;
+    const billingAddressId = await billingAddressData.findOne({ customerId: customerId }, { _id: 1 });
+    const billingAddress = {
+      alternateMobileNo: req.body.alternateMobileNo,
+      userAddressLine1: req.body.userAddressLine1,
+      userAddressLine2: req.body.userAddressLine2,
+      userCountry: req.body.userCountry,
+      userCity: req.body.userCity,
+      userState: req.body.userState,
+      userZIP: req.body.userZIP,
+    };
+    if(billingAddress)
+    {
+      await billingAddressData.findByIdAndUpdate(billingAddressId, billingAddress);
+    }
+    res.redirect('/user/account');
+  } catch (error) {
+    console.log(error);
+    res.render('home', { error: 'Error fetching product data.' });
+  }
+}
+
+exports.addShippingAddress = async (req, res) => {
+  try {
+    const customerId = req.session.user;
+    const shippingAddressId = await shippingAddressData.findOne({ customerId: customerId }, { _id: 1 });
+    const shippingAddress = new shippingAddressData({
+      customerId: customerId,
+      altName: req.body.userName2,
+      altEmail: req.body.userEmail2,
+      altMobileNo: req.body.alternateMobileNo2,
+      altAddressLine1: req.body.userAddressLine12,
+      altAddressLine2: req.body.userAddressLine22,
+      altCountry: req.body.userCountry2,
+      altCity: req.body.userCity2,
+      altState: req.body.userState2,
+      altZIP: req.body.userZIP2,
+    });
+    if(shippingAddress)
+    {
+      // await shippingAddressData.findByIdAndUpdate(shippingAddressId, shippingAddress, {upsert: true});
+      await shippingAddress.save();
+    }
+    res.redirect('/user/account');
+  } catch (error) {
+    console.log(error);
+    res.render('home', { error: 'Error fetching product data.' });
+  }
+}
+
+exports.updateShippingAddress = async (req, res) => {
+  try {
+    const customerId = req.session.user;
+    const shippingAddressId = await shippingAddressData.findOne({ customerId: customerId }, { _id: 1 });
+    const shippingAddress = {
+      altName: req.body.userName2,
+      altEmail: req.body.userEmail2,
+      altMobileNo: req.body.alternateMobileNo2,
+      altAddressLine1: req.body.userAddressLine12,
+      altAddressLine2: req.body.userAddressLine22,
+      altCountry: req.body.userCountry2,
+      altCity: req.body.userCity2,
+      altState: req.body.userState2,
+      altZIP: req.body.userZIP2,
+    };
+    if(shippingAddress)
+    {
+      await shippingAddressData.findByIdAndUpdate(shippingAddressId, shippingAddress);
+    }
+    res.redirect('/user/account');
+  } catch (error) {
+    console.log(error);
+    res.render('home', { error: 'Error fetching product data.' });
+  }
+}
 
 exports.changePassword = async (req, res) => {
   try {
@@ -641,12 +716,12 @@ exports.changePassword = async (req, res) => {
     }
 
     const customerId = req.session.user;
-    const user = await UserLoginData.findOne({ _id: customerId }, { password: 1 });
+    const user = await userLoginData.findOne({ _id: customerId }, { password: 1 });
     const passwordMatch = await bcrypt.compare(currentPassword, user.password);
 
     if (passwordMatch) {
       const hashedNewPassword = await bcrypt.hash(newPassword, 10);
-      const updatePassword = await UserLoginData.findOneAndUpdate({ _id: customerId }, { password: hashedNewPassword });
+      const updatePassword = await userLoginData.findOneAndUpdate({ _id: customerId }, { password: hashedNewPassword });
 
       if (updatePassword.nModified !== 0) {
         return res.redirect('/user/account');
@@ -662,16 +737,18 @@ exports.changePassword = async (req, res) => {
   }
 };
 
+
+
 exports.deleteAccount = async (req, res) => {
   try {
     const { userEmail, currentPassword } = req.body;
-    const user = await UserLoginData.findOne({ email: userEmail }, { password: 1 });
+    const user = await userLoginData.findOne({ email: userEmail }, { password: 1 });
     if (!user) {
       res.redirect('/user/logout');
     }
     const passwordMatch = await bcrypt.compare(currentPassword, user.password);
     if (passwordMatch) {
-      const deleteAccount = await UserLoginData.deleteOne({ email: userEmail });
+      const deleteAccount = await userLoginData.deleteOne({ email: userEmail });
       res.redirect('/userSignup')
     } else {
       res.redirect('/user/logout');
@@ -771,7 +848,6 @@ exports.addToWishlist = async (req, res) => {
     const productId = req.params.productId;
 
     const wishlist = await wishlistData.findOne({ customerId: customerId });
-    console.log(wishlist);
 
     if (!wishlist) {
       console.log('wishlist not exists');
@@ -804,13 +880,19 @@ exports.loadCheckout = async (req, res) => {
     const countWishlist = await wishlistData.findOne({ customerId: req.session.user }).countDocuments({});
 
     const customerId = req.session.user;
-    const address = await addressData.find({ customerId: customerId });
+    const billingAddress = await billingAddressData.find({customerId: customerId})
+    .populate('customerId').exec();
+    const shippingAddress = await shippingAddressData.find({customerId: customerId})
+    .populate('customerId').exec();
+
+
     const subTotal = parseFloat(req.params.subTotal);
     const total = parseFloat(req.params.total);
+    const users = await userLoginData.findById(customerId);
     const cartItems = await cartData.find({ customerId: customerId })
       .populate('productId')
       .exec();
-    res.render('checkout', { user: customerId, address, cartItems, subTotal, total, countCart, countWishlist });
+    res.render('checkout', { user: customerId, users, billingAddress, shippingAddress, cartItems, subTotal, total, countCart, countWishlist });
   } catch (error) {
     res.render('checkout', { error: 'Error fetching product data.' });
   }
@@ -836,18 +918,6 @@ exports.updateReturnStatus = async (req, res) => {
 
 exports.placeOrder = async (req, res) => {
   try {
-    const address = {
-      userName: req.body.userName,
-      userEmail: req.body.userEmail,
-      userMobileNo: req.body.userMobileNo,
-      userAddressLine1: req.body.userAddressLine1,
-      userAddressLine2: req.body.userAddressLine2,
-      userCountry: req.body.userCountry,
-      userCity: req.body.userCity,
-      userState: req.body.userState,
-      userZIP: req.body.userZIP,
-    };
-
     const subTotal = parseFloat(req.params.subTotal);
     const discount = 0.00;
     const total = subTotal + discount;
@@ -867,7 +937,8 @@ exports.placeOrder = async (req, res) => {
       total: total,
       orderDate: currentDate,
       paymentMethod: req.body.paymentMethod,
-      address: address,
+      billingAddress:req.body.billingAddress,
+      shippingAddress:req.body.shippingAddress,
       paymentStatus: false,
     });
 
@@ -893,7 +964,9 @@ exports.loadOrderConfirmation = async (req, res) => {
     const orderId = req.session.orderId;
     const customerId = req.session.user;
     const countCart = await cartData.countDocuments({ customerId: customerId });
-    const address = await addressData.findOne({ customerId: customerId });
+    const users = await userLoginData.findById(customerId);
+    const billingAddress =await billingAddressData.findOne({customerId: customerId});
+    const shippingAddress =await shippingAddressData.findOne({customerId: customerId});
 
     const clearCartResult = await cartData.deleteMany({ customerId: customerId });
     console.log(`Successfully deleted ${clearCartResult.deletedCount} documents from the cart.`);
@@ -917,7 +990,9 @@ exports.loadOrderConfirmation = async (req, res) => {
       orderId,
       countCart,
       countWishlist,
-      address,
+      billingAddress,
+      shippingAddress,
+      users,
     });
   } catch (error) {
     console.error(error);
@@ -938,7 +1013,13 @@ exports.logout = async (req, res) => {
 exports.downloadInvoice = async (req, res) => {
   try {
     const orderId = req.params.orderId;
-    const order = await orderData.findById(orderId).populate('products.productId').exec();
+    const order = await orderData.findById(orderId)
+    .populate('userId')
+    .populate('products.productId')
+    .populate('billingAddress')
+    .populate('shippingAddress')
+    .exec();
+
     const currentDate = moment(networkTime.date).format('YYYY-MM-DD HH:mm:ss');
     const products = order.products.map((product) => ({
       "quantity": product.productQuantity,
@@ -964,17 +1045,17 @@ exports.downloadInvoice = async (req, res) => {
       "background": "https://public.easyinvoice.cloud/img/watermark-draft.jpg",
       "sender": {
         "company": "SMART DEPOT",
-        "address": "SM Street, Kozhikode, India",
-        "zip": "444444",
+        "address": "Park Centre, SM Street",
+        "zip": "LIC, Mananchira",
         "city": "Kozhikode",
-        "country": "India"
+        "country": "India - 444444"
       },
       "client": {
-        "company": order.address.userName,
-        "address": order.address.userAddressLine1 + order.address.userAddressLine1,
-        "zip": order.address.userZIP,
-        "city": order.address.userCity,
-        "country": "India",
+        "company": order.userId.fullname,
+        "address": order.billingAddress.userAddressLine1 +", "+ order.billingAddress.userAddressLine2,
+        "city": order.billingAddress.userState,
+        "country": "India - "+ order.billingAddress.userZIP,
+        "zip": order.billingAddress.userCity,
       },
       "information": {
         "number": orderId,
@@ -1024,89 +1105,3 @@ exports.downloadInvoice = async (req, res) => {
     res.status(500).send('An error occurred');
   }  
 }
-
-// exports.downloadInvoice1 = async (req, res) => {
-
-//   const orderId = req.params.orderId;
-//   const order = await orderData.findById(orderId).populate('products.productId').exec();
-//   const currentDate = moment(networkTime.date).format('YYYY-MM-DD HH:mm:ss');
-
-//   const invoiceData = {
-//     invoiceNumber: orderId,
-//     invoiceDate: currentDate,
-//     orderDate: order.orderDate,
-//     billingAddress: {
-//       name: order.address.userFirstName + " " + order.address.userLastName,
-//       address: order.address.userAddressLine1 + order.address.userAddressLine1,
-//       city: order.address.userCity,
-//       state: order.address.userState,
-//       zip: order.address.userZIP,
-//       email: order.address.userEmail,
-//     },
-//     orderItems: order.products,
-//     subtotal: order.total,
-//     taxRate: 0.08,
-//     taxAmount: (order.total * 0.08 / 100),
-//     totalAmount: (order.total + (order.total * 0.08 / 100)),
-//   };
-
-//   // Create a new PDF document
-//   const doc = new PDFDocument();
-
-//   // Set response headers to indicate a PDF file
-//   res.setHeader('Content-Type', 'application/pdf');
-//   res.setHeader('Content-Disposition', 'attachment; filename="smart-dept-invoice.pdf"');
-
-//   // Pipe the PDF document to the response stream
-//   doc.pipe(res);
-
-//   // Add content to the PDF (customize formatting and styling as needed)
-//   doc.fontSize(12);
-
-//   // Invoice header
-//   doc.text('SMART-DEPOT PURCHASE INVOICE', { align: 'center', fontSize: '20' });
-//   doc.moveDown();
-//   doc.text(`Invoice Number: ${invoiceData.invoiceNumber}`, { align: 'right' });
-//   doc.text(`Invoice Date: ${invoiceData.invoiceDate}`, { align: 'right' });
-//   doc.text(`Order Date: ${invoiceData.orderDate}`, { align: 'right' });
-
-//   // Billing address
-//   doc.moveDown();
-//   doc.text('Bill To:');
-//   doc.text(invoiceData.billingAddress.name);
-//   doc.text(invoiceData.billingAddress.address);
-//   doc.text(`${invoiceData.billingAddress.city}, ${invoiceData.billingAddress.state} ${invoiceData.billingAddress.zip}`);
-//   doc.text(`Email: ${invoiceData.billingAddress.email}`);
-
-//   // Order items table
-//   doc.moveDown(2);
-//   doc.text('Product', 100, doc.y);
-//   doc.text('Quantity', 300, doc.y, { width: 60, align: 'right' });
-//   doc.text('Unit Price', 400, doc.y, { width: 100, align: 'right' });
-//   doc.text('Item Total', 0, doc.y, { align: 'right' });
-
-//   doc.moveDown();
-//   let subTotal = 0;
-//   invoiceData.orderItems.forEach((product) => {
-//     doc.text(product.productId.productName, 100, doc.y);
-//     doc.text(product.productQuantity, 300, doc.y, { width: 60, align: 'right' });
-//     doc.text(`₹ ${product.productPrice}`, 400, doc.y, { width: 100, align: 'right' });
-//     doc.text(`₹ ${product.productQuantity * product.productPrice}`, 0, doc.y, { align: 'right' });
-//     doc.moveDown();
-//     subTotal = subTotal + (product.productQuantity * product.productPrice);
-//   });
-//   doc.moveDown(2);
-//   doc.text('Subtotal:', 400, doc.y, { width: 100, align: 'right' });
-//   doc.text(`₹ ${subTotal.toFixed(2)}`, 0, doc.y, { align: 'right' });
-//   doc.moveDown();
-//   doc.text(`Tax (${(invoiceData.taxRate * 100).toFixed(2)}%):`, 400, doc.y, { width: 100, align: 'right' });
-//   doc.text(`₹ ${invoiceData.taxAmount.toFixed(2)}`, 0, doc.y, { align: 'right' });
-
-//   doc.moveDown();
-//   doc.text('Total:', 400, doc.y, { width: 100, align: 'right' });
-//   doc.text(`₹ ${invoiceData.totalAmount.toFixed(2)}`, 0, doc.y, { align: 'right' });
-
-//   // Finalize the PDF and send it to the client
-//   doc.end();
-// };
-

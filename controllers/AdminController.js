@@ -5,10 +5,13 @@ const sharp = require('sharp');
 let mongoose = require('mongoose');
 
 const productData = require('../models/productModel');
-const UserLoginData = require('../models/userModel');
+const userLoginData = require('../models/userModel');
 const categoryData = require('../models/categoryModel');
 const Admin = require('../models/adminModel');
 const orderData = require('../models/orderModel');
+const productOfferData = require('../models/productOfferModel');
+const categoryOfferData = require('../models/categoryOfferData');
+
 
 const networkTime = require('../middlewares/networkTime');
 
@@ -45,20 +48,28 @@ exports.loadHomePage = async (req, res) => {
     try {
       const currentDate = moment().format('YYYY-MM-DD HH:mm:ss');
       const products = await productData.find().populate('productCategory');
-      const users = await UserLoginData.find();
+      const users = await userLoginData.find();
       const adminData = await Admin.findOne();
-      const categories = await categoryData.find({},{productCategory: 1, _id: 0});
+      const categories = await categoryData.find();
+      const productOffers = await productOfferData.find().populate('productId');
+      const categoryOffers = await categoryOfferData.find().populate('categoryId')
 
-      const orders = await orderData.find().populate('products.productId').sort({ orderDate: -1 }).exec()
-      
+      // const orders = await orderData.find().populate('products.productId').sort({ orderDate: -1 }).exec()
+      const orders = await orderData.find()
+      .populate('userId')
+      .populate('products.productId')
+      .populate('billingAddress')
+      .populate('shippingAddress')
+      .sort({ orderDate : -1 })
+      .exec();
       let totalSales = 0;
       orders.forEach(order => {
         totalSales = order.total + totalSales;
       });    
-  
-      res.render('adminHome', { admin : req.session.admin , products, users, categories, orders, totalSales, adminData});
+      res.render('adminHome', { admin : req.session.admin , products, users, categories, orders, totalSales, adminData, productOffers, categoryOffers});
       }
     catch (error) {
+      console.log(error);
       res.render('adminHome', { error: 'Error fetching user data.' });
     }
 };
@@ -212,13 +223,13 @@ exports.updateProduct = async (req, res) => {
 exports.updateUserBlockStatus = async (req, res) => {
     try {
       let result;
-      const blockStatus = await UserLoginData.findOne({ _id: req.body.id }, { blocked: 1, _id: 0 });
+      const blockStatus = await userLoginData.findOne({ _id: req.body.id }, { blocked: 1, _id: 0 });
       if (blockStatus.blocked === true) {
         
-        result = await UserLoginData.findByIdAndUpdate(req.body.id, { blocked: false });
+        result = await userLoginData.findByIdAndUpdate(req.body.id, { blocked: false });
       }
       else {
-        result = await UserLoginData.findByIdAndUpdate(req.body.id, { blocked: true });
+        result = await userLoginData.findByIdAndUpdate(req.body.id, { blocked: true });
       }
   
       if (result.nModified === 0) {
@@ -351,6 +362,46 @@ exports.updateCategoryBlockStatus =  async (req, res) => {
       res.status(500).json({ message: 'Error toggling category block status', error: error.message });
     }
 };
+
+exports.applyProductOffer = async(req, res) => {
+  try {
+    const { productId, productDiscount, productOfferStart, productOfferEnd } = req.body;
+    const startDate = moment(productOfferStart).format('YYYY-MM-DD');
+    const endDate = moment(productOfferEnd).format('YYYY-MM-DD');
+
+    const productOffer = await productOfferData({
+      productId: productId, 
+      discount: productDiscount, 
+      startDate: startDate, 
+      endDate: endDate,
+    });
+    await productOffer.save();
+    res.redirect('/admin')
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: 'Error toggling category block status', error: error.message });
+  }
+}
+
+exports.applyCategoryOffer = async(req, res) => {
+  try {
+    const { categoryId, categoryDiscount, categoryOfferStart, categoryOfferEnd } = req.body;
+    const startDate = moment(categoryOfferStart).format('YYYY-MM-DD');
+    const endDate = moment(categoryOfferEnd).format('YYYY-MM-DD');
+    const categoryOffer = await categoryOfferData({
+      categoryId: categoryId, 
+      discount: categoryDiscount, 
+      startDate: startDate, 
+      endDate: endDate
+    });
+
+    await categoryOffer.save();
+    res.redirect('/admin')
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: 'Error toggling category block status', error: error.message });
+  }
+}
   
 exports.logout =  async(req, res) => {
     try {

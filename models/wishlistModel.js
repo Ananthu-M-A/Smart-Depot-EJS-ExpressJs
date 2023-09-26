@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const wishlistSchema = mongoose.Schema({
   customerId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'UserLoginData',
+    ref: 'userLoginData',
     required: true,
   },
   product: {

@@ -23,6 +23,9 @@ router.get('/editProduct/:productId', requireAuth, AdminController.loadEditProdu
 router.patch('/productBlockStatus', requireAuth, AdminController.updateProductBlockStatus);
 router.post('/addCategory', requireAuth, AdminController.addCategory);
 router.patch('/categoryBlockStatus', requireAuth, AdminController.updateCategoryBlockStatus);
+router.post('/applyProductOffer', requireAuth, AdminController.applyProductOffer);
+router.post('/applyCategoryOffer', requireAuth, AdminController.applyCategoryOffer);
+
 router.get('/logout', AdminController.logout);
 
 module.exports = router;

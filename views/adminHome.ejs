@@ -26,6 +26,10 @@
       <%- include('partials/categoriesTable.ejs', { categories: categories }) %>
     </div>
 
+    <div id="offersTable" style="display: none;">
+      <%- include('partials/offersTable.ejs') %>
+    </div>
+
     <div id="analyticsTable">
       <%- include('partials/analyticsTable.ejs') %>
     </div>
@@ -39,11 +43,13 @@
         const orders = document.getElementById('orders');
         const users = document.getElementById('users');
         const categories = document.getElementById('categories');
+        const offers = document.getElementById('offers');
         const analyticsTable = document.getElementById('analyticsTable');
         const productsTable = document.getElementById('productsTable');
         const ordersTable = document.getElementById('ordersTable');
         const usersTable = document.getElementById('usersTable');
         const categoriesTable = document.getElementById('categoriesTable');
+        const offersTable = document.getElementById('offersTable');
         const btnAddCategory = document.getElementById('btnAddCategory');
         const addCategory = document.getElementById('addCategory');
 
@@ -53,6 +59,7 @@
       ordersTable.style.display = 'none';
       usersTable.style.display = 'none';
       categoriesTable.style.display = 'none';
+      offersTable.style.display = 'none';
       addCategory.style.display = 'block';
     });
 
@@ -62,6 +69,7 @@
           ordersTable.style.display = 'none';
           usersTable.style.display = 'none';
           categoriesTable.style.display = 'none';
+          offersTable.style.display = 'none';
           addCategory.style.display = 'none';
         });
 
@@ -71,6 +79,7 @@
           ordersTable.style.display = 'none';
           usersTable.style.display = 'none';
           categoriesTable.style.display = 'none';
+          offersTable.style.display = 'none';
           addCategory.style.display = 'none';
         });
 
@@ -80,6 +89,7 @@
           ordersTable.style.display = 'block';
           usersTable.style.display = 'none';
           categoriesTable.style.display = 'none';
+          offersTable.style.display = 'none';
           addCategory.style.display = 'none';
         });
 
@@ -89,6 +99,7 @@
           ordersTable.style.display = 'none';
           usersTable.style.display = 'block';
           categoriesTable.style.display = 'none';
+          offersTable.style.display = 'none';
           addCategory.style.display = 'none';
         });
 
@@ -98,6 +109,17 @@
           ordersTable.style.display = 'none';
           usersTable.style.display = 'none';
           categoriesTable.style.display = 'block';
+          offersTable.style.display = 'none';
+          addCategory.style.display = 'none';
+        });
+
+        offers.addEventListener('click', () => {
+          analyticsTable.style.display = 'none';
+          productsTable.style.display = 'none';
+          ordersTable.style.display = 'none';
+          usersTable.style.display = 'none';
+          categoriesTable.style.display = 'none';
+          offersTable.style.display = 'block';
           addCategory.style.display = 'none';
         });
 

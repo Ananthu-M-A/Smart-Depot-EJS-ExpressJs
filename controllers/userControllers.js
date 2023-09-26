@@ -7,7 +7,7 @@ const registerUserWithOTP = async (req, res) => {
     const otp = generateOTP();
     sendOTP(email, otp);
 
-    const user = new UserLoginData({
+    const user = new userLoginData({
       fullname,
       email,
       mobile,
