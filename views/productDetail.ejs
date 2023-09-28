@@ -48,7 +48,7 @@
                 <div class="col-lg-4 pb-5 border text-center">
                     <form action="/user/cart/<%= product._id %>" method="POST">
                         <p class="font-weight-semi-bold mb-4 ml-0">
-                            <%= product.productCategory %> >
+                            <%= product.productCategory.productCategory %> >
                         </p>
                         <h3 class="font-weight-semi-bold">
                             <%= product.productName %>
@@ -59,7 +59,23 @@
                             <small class="pt-1">4.5</small>
                             <small class="fas fa-star"></small>
                         </div>
-                        <h3 class="font-weight-semi-bold mb-4">₹<%= product.productPrice %>/-</h3>
+                        <div class="row text-primary mr-2">
+                            <div class="col-md-3">
+                            </div>
+                            <div class="col-md-6 text-center">
+                                <h3 class="font-weight-semi-bold mb-4">₹<%= product.productPrice %></h3>
+                                <img class="btn-icon mt-1" id="offerButtons" src="/images/offer.png" alt="">
+                                <% if(offer !== 0){ %>
+                                <%= offer %>% OFF
+                                <%} else {%>
+                                <%= "Not Eligible" %>
+                                <% } %>
+                                <img class="btn-icon mt-1" id="offerButtons" src="/images/offer.png" alt="">
+                            </div>
+                            <div class="col-md-3"> 
+                            </div>
+                        </div>
+                        <br>
                         <div>
                             <div class="d-flex justify-content-center">
                                 <a class="btn">

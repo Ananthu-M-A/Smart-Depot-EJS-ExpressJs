@@ -18,14 +18,13 @@ const billingAddressData = require('../models/billingAddressModel');
 const shippingAddressData = require('../models/shippingAddressModel');
 const userLoginData = require('../models/userModel');
 const wishlistData = require('../models/wishlistModel');
-const productOfferData = require('../models/productOfferModel');
-const categoryOfferData = require('../models/categoryOfferData');
 const orderData = require('../models/orderModel');
 
 const networkTime = require('../middlewares/networkTime');
 
 const transporter = require('../controllers/userOtpVerification');
 const session = require('express-session');
+const { log } = require('util');
 
 async function getFilteredProducts(filter, page, itemsPerPage, req) {
   const startIndex = (page - 1) * itemsPerPage;
@@ -46,8 +45,6 @@ async function getFilteredProducts(filter, page, itemsPerPage, req) {
   const countCart = await cartData.countDocuments({ customerId: req.session.user });
   const countWishlist = await wishlistData.countDocuments({ customerId: req.session.user });
   const users = await userLoginData.findById(req.session.user);
-  const productOffer = await productOfferData.find();
-  const categoryOffer = await categoryOfferData.find();
 
   return {
     paginatedProducts,
@@ -55,8 +52,6 @@ async function getFilteredProducts(filter, page, itemsPerPage, req) {
     users,
     countCart,
     countWishlist,
-    productOffer,
-    categoryOffer,
     totalPages: Math.ceil(count / itemsPerPage), // Calculate totalPages based on count
   };
 }
@@ -267,8 +262,7 @@ exports.loadHomePage = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const filter = req.session.filter || {};
 
-    const { paginatedProducts, categories, users, countCart, countWishlist, productOffer,
-      categoryOffer, totalPages } =
+    const { paginatedProducts, categories, users, countCart, countWishlist, totalPages } =
       await getFilteredProducts(filter, page, itemsPerPage, req);
     
     res.render('home', {
@@ -278,12 +272,8 @@ exports.loadHomePage = async (req, res) => {
       users,
       countCart,
       countWishlist,
-      productOffer,
-      categoryOffer,
       totalPages,
       currentPage: page,
-      productOffer,
-      categoryOffer
     });
 
   } catch (error) {
@@ -363,6 +353,8 @@ exports.filterProducts = async (req, res) => {
       users,
       countCart,
       countWishlist,
+      productOffer,
+      categoryOffer,
       totalPages,
     } = await getFilteredProducts(filter, page, itemsPerPage, req);
     
@@ -375,6 +367,8 @@ exports.filterProducts = async (req, res) => {
       countWishlist,
       totalPages,
       currentPage: page,
+      productOffer,
+      categoryOffer,
     });
 
   } catch (error) {
@@ -402,11 +396,23 @@ exports.loadProductDetail = async (req, res) => {
   try {
     const countCart = await cartData.find({ customerId: req.session.user }).countDocuments({});
     const countWishlist = await wishlistData.findOne({ customerId: req.session.user }).countDocuments({});
-
-    const productId = req.params.productId;
-    const fetchedProduct = await productData.findById(productId);
+    const user = await userLoginData.findById(req.session.user ,{offerApplied: 1, _id: 0});
+    let offer;
+    const productId = req.query.productId;
+    const categoryId = req.query.categoryId;
+    const fetchedProduct = await productData.findById(productId).populate('productCategory');
+    if(user.offerApplied === true){
+      offer = 0;
+    } else if(fetchedProduct.offerStatus === "Active"){
+      offer = fetchedProduct.offerValue;
+    } else if(fetchedProduct.productCategory.offerStatus === "Active") {
+      offer = fetchedProduct.productCategory.offerValue;
+    } else {
+      offer = 0;
+    }
     const users = await userLoginData.findById(req.session.user);
-    res.render('productDetail', { user: req.session.user, product: fetchedProduct, countCart, countWishlist, users });
+
+    res.render('productDetail', { user: req.session.user, product: fetchedProduct, countCart, countWishlist, users , offer });
   } catch (error) {
     res.render('home', { error: 'Error fetching product data.' });
   }
@@ -416,13 +422,15 @@ exports.loadCart = async (req, res) => {
   try {
     const countCart = await cartData.find({ customerId: req.session.user }).countDocuments({});
     const countWishlist = await wishlistData.findOne({ customerId: req.session.user }).countDocuments({});
-
     const cartItems = await cartData.find({ customerId: req.session.user })
       .populate('productId')
+      .populate('categoryId')
+      .populate('customerId')
       .exec();
+    const categories = await categoryData.find({ offerStatus: "Active" });
     const productQuantity = req.body.quantity;
     const users = await userLoginData.findById(req.session.user);
-    res.render('cart', { user: req.session.user, productQuantity, cartItems, countCart, countWishlist, users });
+    res.render('cart', { user: req.session.user, productQuantity, cartItems, countCart, countWishlist, users, categories });
   } catch (error) {
     res.render('cart', { error: 'Error fetching product data.' });
   }
@@ -768,8 +776,8 @@ exports.addToCart = async (req, res) => {
 
     const cartProduct = await cartData.findOne({
       customerId: customerId,
-      productId: productId
-    });
+      productId: productId,
+    }); 
 
     if (cartProduct) {
       const updatedQuantity = parseFloat(productQuantity) + parseFloat(cartProduct.productQuantity);
@@ -783,6 +791,7 @@ exports.addToCart = async (req, res) => {
       const cartItems = new cartData({
         customerId: customerId,
         productId: productId,
+        categoryId: products.productCategory,
         productQuantity: productQuantity,
         productPrice: products.productPrice,
         createdTime: currentDate,
@@ -891,6 +900,8 @@ exports.loadCheckout = async (req, res) => {
     const users = await userLoginData.findById(customerId);
     const cartItems = await cartData.find({ customerId: customerId })
       .populate('productId')
+      .populate('categoryId')
+      .populate('customerId')
       .exec();
     res.render('checkout', { user: customerId, users, billingAddress, shippingAddress, cartItems, subTotal, total, countCart, countWishlist });
   } catch (error) {
@@ -918,18 +929,48 @@ exports.updateReturnStatus = async (req, res) => {
 
 exports.placeOrder = async (req, res) => {
   try {
+    const currentDate = moment(networkTime.date).format('YYYY-MM-DD HH:mm:ss');
     const subTotal = parseFloat(req.params.subTotal);
     const discount = 0.00;
     const total = subTotal + discount;
 
-    const cartItems = await cartData.find({ customerId: req.session.user }).populate('productId').exec();
-    const orderProducts = cartItems.map((cartItem) => ({
-      productId: cartItem.productId._id,
-      productQuantity: cartItem.productQuantity,
-      productPrice: cartItem.productPrice
-    }));
+    const cartItems = await cartData.find({ customerId: req.session.user })
+    .populate('productId')
+    .populate('categoryId')
+    .populate('customerId')
+    .exec();
+    
+    const orderProducts = cartItems.map((cartItem) => {
+      let offerName, offerValue;
+      if(cartItem.customerId.offerApplied === true)
+      {
+        offerName = "No Offer Applied";
+        offerValue = 0;
+      }
+      else if(cartItem.productId.offerStatus === "Active")
+      { offerName = cartItem.productId.offerName;
+        offerValue = cartItem.productId.offerValue;
+      }
+      else if(cartItem.categoryId.offerStatus === "Active")
+      { offerName = cartItem.categoryId.offerName; 
+        offerValue = cartItem.categoryId.offerValue;
+      }
+      else
+      { 
+        offerName = "No Offer Applied";
+        offerValue = 0;
+      }
+      
+      let offerPrice = cartItem.productPrice - (cartItem.productPrice * (offerValue / 100)) || cartItem.productPrice;
 
-    const currentDate = moment(networkTime.date).format('YYYY-MM-DD HH:mm:ss');
+      return {
+        productId: cartItem.productId._id,
+        productQuantity: cartItem.productQuantity,
+        productPrice: cartItem.productPrice,
+        offerName: offerName,
+        offerPrice: offerPrice,
+      };
+    });
 
     const order = new orderData({
       userId: req.session.user,
@@ -971,6 +1012,9 @@ exports.loadOrderConfirmation = async (req, res) => {
     const clearCartResult = await cartData.deleteMany({ customerId: customerId });
     console.log(`Successfully deleted ${clearCartResult.deletedCount} documents from the cart.`);
     const countWishlist = await wishlistData.countDocuments({ customerId: customerId });
+    const currentDate = moment(networkTime.date).format('YYYY-MM-DD');
+
+    const offerApplied = await userLoginData.findByIdAndUpdate(customerId,{offerApplied: true, offerAppliedDate: currentDate},{upsert:true});
 
     if (req.session.paymentMethod === "Online") {
       const paymentId = req.query.id;
@@ -1025,11 +1069,11 @@ exports.downloadInvoice = async (req, res) => {
       "quantity": product.productQuantity,
       "description": product.productId.productName,
       "tax-rate": 0,
-      "price": product.productPrice,
+      "price": product.offerPrice || product.productPrice,
     }));
     let totalPrice = 0;
     order.products.forEach((product) => {
-      totalPrice += product.productPrice * product.productQuantity;
+      totalPrice += (product.offerPrice || product.productPrice) * product.productQuantity;
     });
     let total = totalPrice.toString();
 

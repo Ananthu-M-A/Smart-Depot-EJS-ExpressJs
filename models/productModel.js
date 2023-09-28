@@ -37,6 +37,24 @@ const product = mongoose.Schema({
   blocked: {
     type: Boolean,
     required: true,
+  },
+  offerName: {
+    type: String,
+  },
+  offerType: {
+    type: String,
+  },
+  offerValue: {
+    type: Number,
+  },
+  offerStart: {
+    type: String
+  },
+  offerEnd: {
+    type: String,
+  },
+  offerStatus: {
+    type: String,
   }
 });
 

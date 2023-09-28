@@ -33,6 +33,10 @@ body, html {
   height: 4vh;
 }
 
+#offerButton{
+  height: 3.5vh;
+}
+
 #thumbnailImg{
   height: 10vh;
 }

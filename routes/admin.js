@@ -19,13 +19,10 @@ router.post('/updateProduct/:productId', requireAuth, uploadProductImages.array(
 router.patch('/userBlockStatus', requireAuth, AdminController.updateUserBlockStatus);
 router.patch('/updateOrderStatus', requireAuth, AdminController.updateOrderStatus);
 router.get('/editProduct/:productId', requireAuth, AdminController.loadEditProducts);
-// router.post('/updateProduct/:productId', requireAuth, AdminController.updateProduct);
 router.patch('/productBlockStatus', requireAuth, AdminController.updateProductBlockStatus);
 router.post('/addCategory', requireAuth, AdminController.addCategory);
 router.patch('/categoryBlockStatus', requireAuth, AdminController.updateCategoryBlockStatus);
-router.post('/applyProductOffer', requireAuth, AdminController.applyProductOffer);
-router.post('/applyCategoryOffer', requireAuth, AdminController.applyCategoryOffer);
-
+router.post('/applyOffer', requireAuth, AdminController.applyOffer);
 router.get('/logout', AdminController.logout);
 
 module.exports = router;

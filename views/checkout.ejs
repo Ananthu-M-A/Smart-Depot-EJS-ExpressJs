@@ -79,12 +79,27 @@
                     </div>
                     <div class="card-body">
                         <h5 class="font-weight-medium mb-3">Products</h5>
+                        <% let offer;%>
                         <% cartItems.forEach(cartItem=> { %>
+                            <% if(cartItem.customerId.offerApplied === true){ %>
+                            <% offer = 0; %>
+                            <% } if(cartItem.productId.offerStatus === "Active" && cartItem.productId.offerValue){ %>
+                            <% offer = cartItem.productId.offerValue; %>
+                            <% } else if(cartItem.categoryId.offerStatus === "Active" && cartItem.categoryId.offerValue) { %>
+                            <% offer = cartItem.categoryId.offerValue; %>
+                            <% } else { %>
+                            <% offer = 0; %>
+                            <% } %>
+                            <% let offerPrice = cartItem.productId.productPrice - (( cartItem.productId.productPrice * offer ) / 100 );  %>
+                            
                             <div class="d-flex justify-content-between">
                                 <p>
                                     <%= cartItem.productId.productName %>(<%= cartItem.productQuantity %>)
                                 </p>
-                                <p>₹<%= cartItem.productId.productPrice %>
+                                <% if(cartItem.customerId.offerApplied === true){ %>
+                                <% offerPrice = cartItem.productId.productPrice; %>
+                                <% } %>
+                                <p>₹<%= offerPrice * cartItem.productQuantity %>
                                 </p>
                             </div>
                             <% }); %>

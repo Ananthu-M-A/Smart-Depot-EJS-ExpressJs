@@ -66,17 +66,17 @@
                                                 <%= i %>
                                             </td>
                                             <td>
-                                                <%= product.productName %>
+                                                <%= product.productId.productName %>
                                             </td>
                                             <td>
-                                                <%= product.productId.productPrice %>
+                                                <%= product.offerPrice || product.productId.productPrice %>(<%= product.productId.productPrice %>)
                                             </td>
                                             <td>
                                                 <%= product.productQuantity %>
                                             </td>
-                                            <% let total=product.productId.productPrice * product.productQuantity ; %>
+                                            <% let subTotal= (product.offerPrice || product.productId.productPrice) * product.productQuantity ; %>
                                                 <td>
-                                                    <%= total %>
+                                                    <%= subTotal %>
                                                 </td>
                                         </tr>
                                         <% i++; }); %>

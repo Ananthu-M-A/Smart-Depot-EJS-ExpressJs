@@ -9,8 +9,6 @@ const userLoginData = require('../models/userModel');
 const categoryData = require('../models/categoryModel');
 const Admin = require('../models/adminModel');
 const orderData = require('../models/orderModel');
-const productOfferData = require('../models/productOfferModel');
-const categoryOfferData = require('../models/categoryOfferData');
 
 
 const networkTime = require('../middlewares/networkTime');
@@ -51,8 +49,8 @@ exports.loadHomePage = async (req, res) => {
       const users = await userLoginData.find();
       const adminData = await Admin.findOne();
       const categories = await categoryData.find();
-      const productOffers = await productOfferData.find().populate('productId');
-      const categoryOffers = await categoryOfferData.find().populate('categoryId')
+      const offerProducts = await productData.find({offerType: "Product Offer"}).sort({ offerStart : -1 });
+      const offerCategories = await categoryData.find({offerType: "Category Offer"}).sort({ offerStart : -1 });
 
       // const orders = await orderData.find().populate('products.productId').sort({ orderDate: -1 }).exec()
       const orders = await orderData.find()
@@ -66,7 +64,7 @@ exports.loadHomePage = async (req, res) => {
       orders.forEach(order => {
         totalSales = order.total + totalSales;
       });    
-      res.render('adminHome', { admin : req.session.admin , products, users, categories, orders, totalSales, adminData, productOffers, categoryOffers});
+      res.render('adminHome', { admin : req.session.admin , products, users, categories, orders, totalSales, adminData, offerCategories, offerProducts});
       }
     catch (error) {
       console.log(error);
@@ -243,7 +241,9 @@ exports.updateUserBlockStatus = async (req, res) => {
   
 exports.updateOrderStatus =  async (req, res) => {
     try {
+      console.log('1');
       const userData = req.body;
+      console.log(userData);
       const result = await orderData.findByIdAndUpdate( userData.orderId , { orderStatus : userData.orderStatus } );
   
       if(userData.orderStatus === "Order Delivered")
@@ -261,6 +261,7 @@ exports.updateOrderStatus =  async (req, res) => {
       }
       res.json({ message: 'Order status updated successfully' });
     } catch (error) {
+      console.log(error);
       res.status(500).json({ message: 'Error updating order status', error: error.message });
     }
 };
@@ -283,20 +284,7 @@ exports.loadEditProducts = async (req, res) => {
     }
 };
   
-// exports.updateProduct = async (req, res) => {
-//     try {
-//       const productId = req.params.productId;
-//       const updatedProductData = req.body;
-  
-//       await productData.findByIdAndUpdate(productId,updatedProductData);
-  
-//       res.redirect('/admin'); 
-//     } catch (error) {
-//       console.error(error);
-//       res.status(500).send('Internal Server Error');
-//     }
-// };
-  
+ 
 exports.updateProductBlockStatus =  async (req, res) => {
     try {
       let result;
@@ -363,45 +351,40 @@ exports.updateCategoryBlockStatus =  async (req, res) => {
     }
 };
 
-exports.applyProductOffer = async(req, res) => {
+exports.applyOffer = async(req, res) => {
   try {
-    const { productId, productDiscount, productOfferStart, productOfferEnd } = req.body;
-    const startDate = moment(productOfferStart).format('YYYY-MM-DD');
-    const endDate = moment(productOfferEnd).format('YYYY-MM-DD');
+    const { offerName, productId, categoryId, offerValue, offerStart, offerEnd } = req.body;
+    const startDate = moment(offerStart).format('YYYY-MM-DD');
+    const endDate = moment(offerEnd).format('YYYY-MM-DD');
 
-    const productOffer = await productOfferData({
-      productId: productId, 
-      discount: productDiscount, 
-      startDate: startDate, 
-      endDate: endDate,
-    });
-    await productOffer.save();
+    if(productId){
+      const productOffer = {
+      offerName: offerName, 
+      offerType: "Product Offer", 
+      offerValue: offerValue,
+      offerStart: startDate, 
+      offerEnd: endDate,
+      offerStatus: "Active"
+    };
+    const result = await productData.findOneAndUpdate({_id: productId},productOffer,{upsert: true});
+    } else if(categoryId) {
+      const categoryOffer = {
+      offerName: offerName, 
+      offerType: "Category Offer", 
+      offerValue: offerValue,
+      offerStart: startDate, 
+      offerEnd: endDate,
+      offerStatus: "Active"
+    };
+    const result = await categoryData.findOneAndUpdate({_id: categoryId},categoryOffer,{upsert: true});
+    }
     res.redirect('/admin')
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: 'Error toggling category block status', error: error.message });
+    res.status(500).json({ message: 'Error applying offer', error: error.message });
   }
 }
 
-exports.applyCategoryOffer = async(req, res) => {
-  try {
-    const { categoryId, categoryDiscount, categoryOfferStart, categoryOfferEnd } = req.body;
-    const startDate = moment(categoryOfferStart).format('YYYY-MM-DD');
-    const endDate = moment(categoryOfferEnd).format('YYYY-MM-DD');
-    const categoryOffer = await categoryOfferData({
-      categoryId: categoryId, 
-      discount: categoryDiscount, 
-      startDate: startDate, 
-      endDate: endDate
-    });
-
-    await categoryOffer.save();
-    res.redirect('/admin')
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: 'Error toggling category block status', error: error.message });
-  }
-}
   
 exports.logout =  async(req, res) => {
     try {

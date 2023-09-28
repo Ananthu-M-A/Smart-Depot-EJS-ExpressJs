@@ -1,99 +1,77 @@
 <div class="container">
     <div class="row">
-        <div class="nav nav-tabs justify-content-center border-secondary mb-4" id="admin-table">
-            <a class="nav-item nav-link" data-toggle="tab" href="#tab-pane-1">Product Offer</a>
-            <a class="nav-item nav-link" data-toggle="tab" href="#tab-pane-2">Category Offer</a>
-        </div>
-        <div class="tab-content">
-            <div class="col-md tab-pane fade" id="tab-pane-1">
-                <form action="/admin/applyProductOffer" method="POST">
+        <div>
+            <div class="col-md" id="admin-table">
                 <table class="table text-center">
                     <thead>
                         <tr>
-                            <th scope="col">Product Name</th>
-                            <th scope="col">Discount(%)</th>
+                            <th scope="col">Offer Name</th>
+                            <th scope="col">Product</th>
+                            <th scope="col">Value</th>
                             <th scope="col">Start Date</th>
                             <th scope="col">End Date</th>
-                            <th scope="col">Apply/Delete</th>
+                            <th scope="col">Apply/Status</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <% productOffers.forEach(offer => { %>
+                        <form action="/admin/applyOffer" method="POST">
                         <tr class="text-center">
-                            <td><%= offer.productId.productName %></td>
-                            <td><%= offer.discount %></td>
-                            <td><%= offer.startDate %></td>
-                            <td><%= offer.endDate %></td>
-                            <td><a href=""><i class="fa fa-times" id="offerButtons"></i></a></td>
-                        </tr>
-                        <% }) %>
-                        <tr class="text-center">
+                            <td><input class="w-75 mt-1 text-center" type="text" name="offerName" placeholder="Product" required></td>
                             <td>
-                                <div>
-                                    <div>
-                                        <select class="custom-select text-center" name="productId">
-                                        <% products.forEach(product => { %>
-                                          <option value="<%= product._id %>" <%= 'selectedProduct' === product.productName ? "selected" : "" %>><%= product.productName %></option>
-                                          <% }) %>
-                                        </select>
-                                    </div>
-                              </div>
+                                <select class="custom-select text-center" name="productId">
+                                    <% products.forEach(product => { %>
+                                      <option value="<%= product._id %>" <%= 'selectedProduct' === product.productName ? "selected" : "" %>><%= product.productName %></option>
+                                      <% }) %>
+                                </select>
                             </td>
-                            <td><input class="w-50 mt-1" type="text" name="productDiscount" required></td>
-                            <td><input class="w-75 mt-1" type="date" name="productOfferStart" required></td>
-                            <td><input class="w-75 mt-1" type="date" name="productOfferEnd" required></td>
+                            <td><input class="w-50 mt-1 text-center" type="text" name="offerValue" required></td>
+                            <td><input class="w-75 mt-1" type="date" name="offerStart" required></td>
+                            <td><input class="w-75 mt-1" type="date" name="offerEnd" required></td>
                             <td><button class="border-0 bg-white">
                                 <img class="btn-icon mt-1" id="offerButtons" src="/images/offer.png" alt="">
                             </button></td>
-                        </tr>     
-                    </tbody>
-                </table>
-                </form>
-            </div>
-            <div class="col-md tab-pane fade" id="tab-pane-2">
-                <form action="/admin/applyCategoryOffer" method="POST">
-                <table class="table text-center">
-                    <thead>
-                        <tr>
-                            <th scope="col">Category Name</th>
-                            <th scope="col">Discount(%)</th>
-                            <th scope="col">Start Date</th>
-                            <th scope="col">End Date</th>
-                            <th scope="col">Apply/Delete</th>
                         </tr>
-                    </thead>
-                    <tbody>
-                        <% categoryOffers.forEach(offer => { %>
+                        </form>
+                        <form action="/admin/applyOffer" method="POST">
                         <tr class="text-center">
-                            <td><%= offer.categoryId.productCategory %></td>
-                            <td><%= offer.discount %></td>
-                            <td><%= offer.startDate %></td>
-                            <td><%= offer.endDate %></td>
-                            <td><a href=""><i class="fa fa-times" id="offerButtons"></i></a></td>
-                        </tr>
-                        <% }) %>
-                        <tr class="text-center">
+                            <td><input class="w-75 mt-1 text-center" type="text" name="offerName" placeholder="Category" required></td>
                             <td>
-                                <div>
-                                    <div>
-                                        <select class="custom-select text-center" name="categoryId">
-                                        <% categories.forEach(category => { %>
-                                          <option value="<%= category._id %>" <%= 'selectedProduct' === category.productCategory ? "selected" : "" %>><%= category.productCategory %></option>
-                                          <% }) %>
-                                        </select>
-                                    </div>
-                              </div>
+                                <select class="custom-select text-center" name="categoryId">
+                                    <% categories.forEach(category => { %>
+                                      <option value="<%= category._id %>" <%= 'selectedProduct' === category.productCategory ? "selected" : "" %>><%= category.productCategory %></option>
+                                    <% }) %>
+                                </select>
                             </td>
-                            <td><input class="w-50 mt-1" type="text" name="categoryDiscount" required></td>
-                            <td><input class="w-75 mt-1" type="date" name="categoryOfferStart" required></td>
-                            <td><input class="w-75 mt-1" type="date" name="categoryOfferEnd" required></td>
+                            <td><input class="w-50 mt-1 text-center" type="text" name="offerValue" required></td>
+                            <td><input class="w-75 mt-1" type="date" name="offerStart" required></td>
+                            <td><input class="w-75 mt-1" type="date" name="offerEnd" required></td>
                             <td><button class="border-0 bg-white">
                                 <img class="btn-icon mt-1" id="offerButtons" src="/images/offer.png" alt="">
                             </button></td>
-                        </tr>     
+                        </tr> 
+                        </form>
+                        <% offerProducts.forEach(product => { %>
+                            <tr class="text-center">
+                                <td><%= product.offerName %></td>
+                                <td><%= product.productName %></td>
+                                <td><%= product.offerValue %></td>
+                                <td><%= product.offerStart %></td>
+                                <td><%= product.offerEnd %></td>
+                                <td><%= product.offerStatus %></td>
+                            </tr>
+                        <% }) %>  
+                        <% offerCategories.forEach(category => { %>
+                            <tr class="text-center">
+                                <td><%= category.offerName %></td>
+                                <td><%= category.productCategory %></td>
+                                <td><%= category.offerValue %></td>
+                                <td><%= category.offerStart %></td>
+                                <td><%= category.offerEnd %></td>
+                                <td><%= category.offerStatus %></td>
+                            </tr>
+                        <% }) %>  
                     </tbody>
                 </table>
-                </form>
             </div>
         </div>
     </div>

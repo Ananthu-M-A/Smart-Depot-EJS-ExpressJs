@@ -26,17 +26,29 @@
                         <tr>
                             <th>Products</th>
                             <th>Price(₹)</th>
+                            <th>Offer(₹)</th>
                             <th>Quantity</th>
                             <th>Total(₹)</th>
                             <th>Remove</th>
                         </tr>
                     </thead>
                     <tbody class="align-middle">
-                        <% let subTotal = 0 %>
-                        <% cartItems.forEach(cartItem => { %>  
+                        <% let offer, subTotal = 0; %>
+                        <% cartItems.forEach(cartItem => { %>
+                            <% if(cartItem.customerId.offerApplied === true){ %>
+                            <% offer = 0; %>
+                            <% } else if(cartItem.productId.offerStatus === "Active" && cartItem.productId.offerValue){ %>
+                            <% offer = cartItem.productId.offerValue; %>
+                            <% } else if(cartItem.categoryId.offerStatus === "Active" && cartItem.categoryId.offerValue) { %>
+                            <% offer = cartItem.categoryId.offerValue; %>
+                            <% } else { %>
+                            <% offer = 0; %>
+                            <% } %>
+                            <% let offerPrice = cartItem.productId.productPrice - (( cartItem.productId.productPrice * offer ) / 100 );  %>
                             <tr>
                             <td class="align-middle"><img src="img/product-1.jpg" alt="" style="width: 50px;"><%= cartItem.productId.productName %></td>
                             <td class="align-middle" id="itemPrice"><%= cartItem.productId.productPrice %></td>
+                            <td class="align-middle" id="itemPrice"><%= offerPrice %></td>
                             <td class="align-middle text-center">
                                 <div class="d-flex justify-content-center">
                                     <form action="/user/changeQuantity/<%= cartItem.productId._id %>/<%= cartItem.productQuantity-1 %>" method="POST">
@@ -54,7 +66,7 @@
                                     </form>
                                 </div>
                             </td>
-                            <% let itemTotal = cartItem.productId.productPrice*cartItem.productQuantity %>
+                            <% let itemTotal = offerPrice * cartItem.productQuantity %>
                             <% subTotal = subTotal + itemTotal %>
                             <td class="align-middle"><input type="text" id="itemTotal" name="itemTotal"
                                 class="form-control bg-secondary text-center w-100 bg-transparent" style="width: 4vw; height: 8vh;" 

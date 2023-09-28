@@ -12,7 +12,7 @@ router.get('/', requireAuth, isUserBlocked, UserController.loadHomePage);
 router.get('/search', requireAuth, isUserBlocked, UserController.searchProducts);
 router.post('/filterProducts', requireAuth, isUserBlocked, UserController.filterProducts);
 router.get('/clearFilter', requireAuth, isUserBlocked, UserController.clearFilter);
-router.get('/productDetails/:productId', requireAuth, isUserBlocked, UserController.loadProductDetail);
+router.get('/productDetails', requireAuth, isUserBlocked, UserController.loadProductDetail);
 router.get('/cart', requireAuth, isUserBlocked, UserController.loadCart);
 router.get('/removeCartItem/:productId', requireAuth, isUserBlocked, UserController.removeCartItem);
 router.get('/wishlist', requireAuth, isUserBlocked, UserController.loadWishlist);

@@ -25,6 +25,13 @@ const user = mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  offerApplied: {
+    type: Boolean,
+    default: false
+  },
+  offerAppliedDate: {
+    type: String,
+  }
 });
 
 const userLoginData = mongoose.model('userLoginData', user);

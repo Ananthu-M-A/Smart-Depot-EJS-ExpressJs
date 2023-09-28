@@ -86,12 +86,12 @@
                                               <%= product.productId.productName %>
                                           </td>
                                           <td>
-                                              <%= product.productPrice %>
+                                              <%= product.offerPrice %>
                                           </td>
                                           <td>
                                               <%= product.productQuantity %>
                                           </td>
-                                          <% let total=product.productPrice * product.productQuantity ; %>
+                                          <% let total = product.offerPrice * product.productQuantity ; %>
                                               <td>
                                                   <%= total %>
                                               </td>
@@ -171,7 +171,7 @@
       };
   
       try {
-        const response = await fetch(`/adminHome/updateOrderStatus`, {
+        const response = await fetch(`/admin/updateOrderStatus`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(userData),

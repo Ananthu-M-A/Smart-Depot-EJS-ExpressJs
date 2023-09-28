@@ -21,6 +21,12 @@ const order = new mongoose.Schema({
         type: Number,
         required: true,
       },
+      offerName: {
+        type: String,
+      },
+      offerPrice: {
+        type: Number,
+      }
     },
   ],
   total: {

@@ -230,7 +230,7 @@
                                                     </form>
                                                 </div>
                                                 <div class="col-md-4">
-                                                    <a href="/user/productDetails/<%= product._id %>"
+                                                    <a href="/user/productDetails?productId=<%= product._id %>&categoryId=<%= product.productCategory._id %>"
                                                         class="btn btn-primary rounded-3">
                                                         <img width="20vh" src="/images/view.png" alt=""></a>
                                                 </div>
@@ -254,24 +254,17 @@
                                             <div class="col-md-6">
                                                 <p class="card-text">Price: <%= product.productPrice %></p>
                                             </div>
-                                            <% productOffer.forEach(offer1 => { %>
-                                            <% categoryOffer.forEach(offer2 => { %>
-                                            <% if ((offer1.productId && product._id &&
-                                            (offer1.productId.toString() === product._id.toString()))) { %>
                                             <div class="col-md-5 border bg-secondary text-center">
-                                            <strong><%= offer1.discount %></strong>
-                                            <img class="btn-icon" id="offerButtons" src="/images/offer.png" alt=""> 
+                                            <strong>
+                                                    <% if(product.offerStatus === "Active") { %>
+                                                    <%= product.offerValue + "% OFF" %>
+                                                    <% } else if(product.productCategory.offerStatus === "Active") { %>
+                                                    <%= product.productCategory.offerValue + "% OFF" %>
+                                                    <% } else { %>
+                                                    <%= "No Offer" %>
+                                                    <% } %>
+                                            </strong>
                                             </div>
-                                            <% } else if (offer2.categoryId && product.productCategory &&
-                                            (offer2.categoryId.toString() === product.productCategory._id.toString()))  { %>
-                                            <div class="col-md-5 border bg-secondary text-center">
-                                            <strong><%= offer2.discount %></strong>
-                                            <img class="btn-icon" id="offerButtons" src="/images/offer.png" alt=""> 
-                                            </div>
-                                            <% } %>
-                                            <% }); %>
-                                            <% }); %>
-                                            <div class="col-md-1"></div>
                                         </div>     
                                         <!-- Add other product details as needed -->
 
@@ -355,7 +348,7 @@
                                                     </form>
                                                 </div>
                                                 <div class="col-md-4">
-                                                    <a href="/user/productDetails/<%= product._id %>"
+                                                    <a href="/user/productDetails?productId=<%= product._id %>&categoryId=<%= product.productCategory._id %>"
                                                         class="btn btn-primary rounded-3">
                                                         <img width="20vh" src="/images/view.png" alt=""></a>
                                                 </div>
@@ -379,25 +372,18 @@
                                             <div class="col-md-6">
                                                 <p class="card-text">Price: <%= product.productPrice %></p>
                                             </div>
-                                            <% productOffer.forEach(offer1 => { %>
-                                            <% categoryOffer.forEach(offer2 => { %>
-                                            <% if ((offer1.productId && product._id &&
-                                            (offer1.productId.toString() === product._id.toString()))) { %>
                                             <div class="col-md-5 border bg-secondary text-center">
-                                            <strong><%= offer1.discount %></strong>
-                                            <img class="btn-icon" id="offerButtons" src="/images/offer.png" alt=""> 
+                                            <strong>
+                                                <% if(product.offerStatus === "Active") { %>
+                                                <%= product.offerValue + "% OFF" %>
+                                                <% } else if(product.productCategory.offerStatus === "Active") { %>
+                                                <%= product.productCategory.offerValue + "% OFF" %>
+                                                <% } else { %>
+                                                <%= "No Offer" %>
+                                                <% } %>
+                                            </strong>
                                             </div>
-                                            <% } else if (offer2.categoryId && product.productCategory &&
-                                            (offer2.categoryId.toString() === product.productCategory._id.toString()))  { %>
-                                            <div class="col-md-5 border bg-secondary text-center">
-                                            <strong><%= offer2.discount %></strong>
-                                            <img class="btn-icon" id="offerButtons" src="/images/offer.png" alt=""> 
-                                            </div>
-                                            <% } %>
-                                            <% }); %>
-                                            <% }); %>
-                                            <div class="col-md-1"></div>
-                                        </div>                                    
+                                        </div>     
                                     </div>
                                 </div>
                             </div>
