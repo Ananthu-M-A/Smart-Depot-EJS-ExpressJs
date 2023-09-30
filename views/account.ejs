@@ -82,7 +82,7 @@
                         <div class="col-md-12">
                                 <h4 class="font-weight-semi-bold mb-4 text-center">UPDATE DETAIL</h4>
                                 <h5 class="font-weight-semi-bold mb-4 text-center">Login Data</h5>
-                                <form action="/user/updateLoginData" method="POST" enctype="multipart/form-data">
+                                <form action="/user/updateLoginData" method="POST" enctype="multipart/form-data" id="signupForm" onsubmit="return validateForm()">
                                 <div class="row">
                                     <div class="col-md-6 form-group">
                                         <label>Profile Image</label>
@@ -91,18 +91,18 @@
                                     </div>
                                     <div class="col-md-6 form-group">
                                         <label>E-mail</label>
-                                        <input class="form-control" name="userEmail" type="text"
+                                        <input class="form-control" name="userEmail" type="email" id="email"
                                             value="<%= users.email %>" disabled>
                                     </div>
                                     <div class="col-md-6 form-group">
                                         <label>Name</label>
                                         <input class="form-control" name="userName" type="text"
-                                            value="<%= users.fullname %>">
+                                            value="<%= users.fullname %>" id="name">
                                     </div>
                                     <div class="col-md-6 form-group">
                                         <label>Mobile No</label>
                                         <input class="form-control" name="userMobileNo" type="text"
-                                            value="<%= users.mobile %>">
+                                            value="<%= users.mobile %>" id="mobile">
                                     </div>
                                     <div class="form-group mb-0 text-center">
                                         <button type="submit" class="btn btn-primary px-3">Update</button>

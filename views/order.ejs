@@ -49,13 +49,14 @@
                                                 <% if (order.orderStatus !== "Items Shipped" ){ %>
                                                 <% if (order.orderStatus !== "Order Delivered" ){ %>
                                                 <% if (order.orderStatus !== "Return Initiated"){ %>
-                                                <% if (order.orderStatus !== "Items Returned" ){ %>
+                                                <% if (order.orderStatus !== "Return Verified & Refund Initiated"){ %>
+                                                <% if (order.orderStatus !== "Items Returned & Refunded" ){ %>
                                                 <% if (order.orderStatus !== "Order Closed" ){ %>
                                                 <div class="col-md">
                                                     <a href="/user/cancelOrder/<%= order._id %>"
                                                         class="btn btn-outline-primary py-md-2 px-md-3">Cancel Order</a>
                                                 </div>
-                                                <% }}}}}} %>
+                                                <% }}}}}}} %>
                                                 <div class="col-md">
                                                     <a href="/user/orderDetail/<%= order._id %>"
                                                         class="btn btn-outline-primary py-md-2 px-md-3">Order Details</a>

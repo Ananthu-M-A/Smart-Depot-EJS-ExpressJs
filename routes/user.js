@@ -19,7 +19,6 @@ router.get('/wishlist', requireAuth, isUserBlocked, UserController.loadWishlist)
 router.get('/removeWishlistItem/:productId', requireAuth, isUserBlocked, UserController.removeWishlistItem);
 router.get('/orders', requireAuth, isUserBlocked, UserController.loadOrders);
 router.get('/cancelOrder/:orderId', requireAuth, isUserBlocked, UserController.cancelOrder);
-router.get('/returnOrder/:orderId', requireAuth, isUserBlocked, UserController.returnOrder);
 router.get('/orderDetail/:orderId', requireAuth, isUserBlocked, UserController.loadOrderDetail);
 router.get('/account', requireAuth, isUserBlocked, UserController.loadAccount);
 router.post('/updateLoginData', requireAuth, uploadProfileImage.single('image'), UserController.updateLoginData);

@@ -5,11 +5,10 @@
     <div class="col-md-4"></div>
     <div class="col-md-4 bg-light p-5 rounded text-center">
       <h1 class="mb-3">SIGN UP</h1>
-
-      <form method="POST" action="/userSignup" class="text-center text-light">
+      <form method="POST" action="/userSignup" class="text-center text-light" id="signupForm" onsubmit="return validateForm()">
         <div class="mb-3">
           <label for="name" class="form-label text-dark">Full Name</label>
-          <input type="name" class="form-control bg-light" id="name" name="fullname" aria-describedby="emailHelp"
+          <input type="text" class="form-control bg-light" id="name" name="fullname" aria-describedby="emailHelp"
             required>
         </div>
         <div class="mb-3">
@@ -19,13 +18,12 @@
         </div>
         <div class="mb-3">
           <label for="number" class="form-label text-dark">Mobile Number</label>
-          <input type="text" id="mobile" name="mobile" class="form-control bg-light" required>
+          <input type="tel" id="mobile" name="mobile" class="form-control bg-light" required>
         </div>
         <div class="mb-3">
           <label for="password" class="form-label text-dark">Password</label>
           <input type="password" id="password" name="password" class="form-control bg-light" required>
         </div>
-    
         <div class="container">
           <div class="row">
             <div class="col-md-12">
@@ -41,3 +39,4 @@
 </div>
 
   <%-include('partials/footer.ejs')%>
+

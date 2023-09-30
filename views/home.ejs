@@ -12,16 +12,11 @@
                                     <div class="row m-0 btn shadow-none d-flex align-items-center justify-content-center bg-primary text-white w-100"
                                         style="height: 65px; margin-top: -1px; padding: 0 30px;">
                                         <div class="col-md">
-                                            <h5 class="m-0">Filter Products</h5>
-                                            <button class="bg-dark text-white ml-2 rounded-3 p-1 btn-outline-primary"
-                                                type="submit">Apply</button>
-                                            <a href="/user/clearFilter"
-                                                class="bg-dark text-white ml-2 rounded-3 p-1 btn-outline-primary"
-                                                type="submit" style="text-decoration: none;">Clear</a>
+                                            <h4 class="m-0">Filter Products</h4>
                                         </div>
                                     </div>
                                 </div>
-
+                                <br>
                                 <div class="filter-category">
                                     <h6 class="ml-3">Category</h6>
                                     <ul id="filterSmart">
@@ -95,6 +90,19 @@
                                         </div>
                                     </div>
                                 </div>
+                                <br>
+                                <div class="container-fluid">
+                                    <div class="row m-0 btn shadow-none d-flex align-items-center justify-content-center bg-primary text-white w-100"
+                                        style="height: 65px; margin-top: -1px; padding: 0 30px;">
+                                        <div class="col-md">
+                                            <button class="bg-dark text-white ml-2 rounded-3 p-1 btn-outline-primary"
+                                                type="submit">Apply</button>
+                                            <a href="/user/clearFilter"
+                                                class="bg-dark text-white ml-2 rounded-3 p-1 btn-outline-primary"
+                                                type="submit" style="text-decoration: none;">Clear</a>
+                                        </div>
+                                    </div>
+                                </div>
                             </form>
 
                         </div>
@@ -112,7 +120,7 @@
                             </button>
                             <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
                                 <div class="navbar-nav mr-auto py-0">
-                                    <a href="/user" class="nav-item nav-link active">Home</a>
+                                    <a href="/user/clearFilter" class="nav-item nav-link active">Home</a>
                                     <a href="/user/orders" class="nav-item nav-link">Orders</a>
                                     <a href="/user/account" class="nav-item nav-link">
                                         <%= users.fullname %>
@@ -214,9 +222,16 @@
                         <% if(!product.blocked) { %>
                             <div class="col-md-3">
                                 <div class="card mb-3" id="card">
-                                    <a href="/user/productDetails/<%= product._id %>">
-                                        <img src="/productImages/<%= product.productImageNames[0] %>"
-                                            class="card-img-top" id="productImageLarge" alt="Product Image"></a>
+                                    <div class="div" id="out-of-stock">
+                                        <a href="/user/productDetails?productId=<%= product._id %>&categoryId=<%= product.productCategory._id %>">
+                                          <div class="image-container">
+                                            <img src="/productImages/<%= product.productImageNames[0] %>" class="cardImgTop" id="productImageLarge" alt="Product Image">
+                                            <% if(product.productStock === 0) { %>
+                                              <strong class="text-danger text-center out-of-stock w-100">Sold Out</strong>
+                                            <% } %>
+                                          </div>
+                                        </a>
+                                      </div>                                                                        
                                     <div class="card-body">
                                         <div class="container border p-1 rounded-3">
                                             <div class="row text-center">

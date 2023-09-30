@@ -241,9 +241,7 @@ exports.updateUserBlockStatus = async (req, res) => {
   
 exports.updateOrderStatus =  async (req, res) => {
     try {
-      console.log('1');
       const userData = req.body;
-      console.log(userData);
       const result = await orderData.findByIdAndUpdate( userData.orderId , { orderStatus : userData.orderStatus } );
   
       if(userData.orderStatus === "Order Delivered")
@@ -254,6 +252,22 @@ exports.updateOrderStatus =  async (req, res) => {
   
         const result2 = await orderData.findOneAndUpdate({ _id: userData.orderId },
           { deliveredDate: deliveredDate },{ upsert: true, new: true });
+      }
+
+      if(userData.orderStatus === "Return Verified & Refund Initiated")
+      {
+        const orderedProducts = await orderData.findOne({ _id: userData.orderId }, 'products.productId products.productQuantity');
+        const order = await orderData.findOne({ _id: userData.orderId});
+    
+        for (const orderedProducts of order.products) {
+          const productId = orderedProducts.productId;
+          const productQuantity = orderedProducts.productQuantity;
+          const product = await productData.findOne({ _id: productId });
+            product.productStock += productQuantity;
+            await product.save();
+            console.log(`Product ${product.productName} stock increased by ${productQuantity}.`);
+        }
+        console.log('Product stock updated successfully for all ordered products.');
       }
   
       if (result.nModified === 0) {

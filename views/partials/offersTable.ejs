@@ -5,8 +5,8 @@
                 <table class="table text-center">
                     <thead>
                         <tr>
-                            <th scope="col">Offer Name</th>
-                            <th scope="col">Product</th>
+                            <th scope="col">Offers</th>
+                            <th scope="col">Applied For</th>
                             <th scope="col">Value</th>
                             <th scope="col">Start Date</th>
                             <th scope="col">End Date</th>
@@ -50,6 +50,18 @@
                             </button></td>
                         </tr> 
                         </form>
+                        <form action="/admin/applyOffer" method="POST">
+                            <tr class="text-center">
+                                <td><input class="w-75 mt-1 text-center" type="text" name="offerName" placeholder="Coupon" required></td>
+                                <td><h6 class="mt-2" name="coupon" value="couponId">Coupons</h6></td>
+                                <td><input class="w-50 mt-1 text-center" type="text" name="offerValue" required></td>
+                                <td><input class="w-75 mt-1" type="date" name="offerStart" required></td>
+                                <td><input class="w-75 mt-1" type="date" name="offerEnd" required></td>
+                                <td><button class="border-0 bg-white">
+                                    <img class="btn-icon mt-1" id="offerButtons" src="/images/offer.png" alt="">
+                                </button></td>
+                            </tr> 
+                            </form>    
                         <% offerProducts.forEach(product => { %>
                             <tr class="text-center">
                                 <td><%= product.offerName %></td>

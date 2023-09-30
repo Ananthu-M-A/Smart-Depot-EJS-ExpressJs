@@ -257,6 +257,37 @@ exports.login = async (req, res, next) => {
 
 exports.loadHomePage = async (req, res) => {
   try {
+    // const products = await productData.find({},{offerStatus: 1, offerStart:1, offerEnd: 1, _id: 0 });
+    // const currentDate = new Date(moment(networkTime.date));
+    // products.forEach(product =>{
+    //   if(product.offerStatus === "Active"){
+    //     const lastDate = new Date(product.offerEnd);
+    //     const startDate = new Date(product.offerStart);
+    //     if((currentDate - lastDate) / (1000 * 60 * 60 * 24) > 0)
+    //     { product.offerStatus = "Expired"; }
+    //     if((startDate - currentDate) / (1000 * 60 * 60 * 24) > 0)
+    //     { product.offerStatus = "Active"; }
+    //   } else if(product.offerStatus === "Expired"){
+    //     const lastDate = new Date(product.offerEnd);
+    //     const startDate = new Date(product.offerStart);
+    //     if((currentDate - lastDate) / (1000 * 60 * 60 * 24) > 0)
+    //     { product.offerStatus = "Expired"; }
+    //     if((startDate - currentDate) / (1000 * 60 * 60 * 24) > 0)
+    //     { product.offerStatus = "Active"; }
+    //   } else {
+    //     console.log("Something Wrong"); 
+    //   }
+
+    // });
+    // if(users.offerApplied){
+    //   const daysDiff = (currentDate - date) / (1000 * 60 * 60 * 24);
+    //   if (daysDiff > 30) {
+    //     const result = await userLoginData.findOneAndUpdate({_id: req.session.user}, { offerApplied: false, offerAppliedDate: "" }, { new: true });
+    //     if (!result) {
+    //       return res.status(404).json({ message: 'Offer applied status not updated' });
+    //     }
+    //   }
+    // }
     res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
     const itemsPerPage = 4;
     const page = parseInt(req.query.page) || 1;
@@ -288,25 +319,28 @@ exports.searchProducts = async (req, res) => {
     res.redirect('/user');
   }
   try {
-    const products = await productData.find({
+    let products = await productData.find({
       $or: [
         { productName: { $regex: query, $options: 'i' } },
         { productBrand: { $regex: query, $options: 'i' } },
         { productQuality: { $regex: query, $options: 'i' } },
         { productDescription: { $regex: query, $options: 'i' } },
-        // {
-        //   productCategory: {
-        //     $in: await productData.distinct('_id', {
-        //       productCategory: { $regex: query, $options: 'i' },
-        //     }),
-        //   },
-        // },
         {
-          productPrice: { $eq: parseFloat(query) }, // Assuming query is a string representing a number
+          productCategory: { 
+            $in: await categoryData.distinct('_id', {
+              productCategory: { $regex: query, $options: 'i' },
+            }),
+          },
         },
       ],
     }).populate('productCategory');
 
+    if (products.length === 0 && typeof(query) === Number) {
+      console.log(parseFloat(query));
+      products = await productData.find({
+        productPrice: { $lte: parseFloat(query) },
+      });
+    }
 
     const categories = await categoryData.find();
     const countCart = await cartData.find({ customerId: req.session.user }).countDocuments({});
@@ -316,6 +350,7 @@ exports.searchProducts = async (req, res) => {
 
     res.render('home', { user: req.session.user, products, categories, users, countCart, countWishlist, totalPages: 4, currentPage: 1 });
   } catch (error) {
+    console.log(error);
     res.render('home', { error: 'Error searching products.' });
   }
 };
@@ -377,31 +412,84 @@ exports.filterProducts = async (req, res) => {
 };
 
 exports.clearFilter = async (req, res) => {
-  try {
-
-    req.session.filter = {
-      categories: [],
-      minPrice: 0,
-      maxPrice: 10000,
-    };
-    res.redirect('/user')
-  } catch (error) {
-    console.log(error);
-  }
-
-};
+    try {
+      const categoryNames = [];
+      const minPriceRange = 0;
+      const maxPriceRange = 10000;
+  
+      req.session.filter = {
+        categories: categoryNames,
+        minPrice: minPriceRange,
+        maxPrice: maxPriceRange,
+      };
+  
+  
+      const filter = {};
+  
+      if (categoryNames.length > 0) {
+        const categoryIds = await categoryData.find({ productCategory: { $in: categoryNames } }).distinct('_id');
+        filter.productCategory = { $in: categoryIds };
+      }
+  
+      if (!isNaN(minPriceRange) && !isNaN(maxPriceRange)) {
+        filter.productPrice = { $gte: minPriceRange, $lte: maxPriceRange };
+      }
+  
+      const itemsPerPage = 4;
+      const page = parseInt(req.query.page) || 1;
+  
+      const {
+        paginatedProducts,
+        categories,
+        users,
+        countCart,
+        countWishlist,
+        productOffer,
+        categoryOffer,
+        totalPages,
+      } = await getFilteredProducts(filter, page, itemsPerPage, req);
+      
+      res.render('home', {
+        user: req.session.user,
+        products: paginatedProducts,
+        categories,
+        users,
+        countCart,
+        countWishlist,
+        totalPages,
+        currentPage: page,
+        productOffer,
+        categoryOffer,
+      });
+  
+    } catch (error) {
+      res.render('home', { error: 'Error fetching product data.' });
+    }
+  };
 
 
 exports.loadProductDetail = async (req, res) => {
   try {
     const countCart = await cartData.find({ customerId: req.session.user }).countDocuments({});
     const countWishlist = await wishlistData.findOne({ customerId: req.session.user }).countDocuments({});
-    const user = await userLoginData.findById(req.session.user ,{offerApplied: 1, _id: 0});
+    const users = await userLoginData.findById(req.session.user);
     let offer;
     const productId = req.query.productId;
     const categoryId = req.query.categoryId;
     const fetchedProduct = await productData.findById(productId).populate('productCategory');
-    if(user.offerApplied === true){
+    if(users.offerApplied){
+      const currentDate = new Date(moment(networkTime.date));
+      const date = new Date(users.offerAppliedDate);
+      const daysDiff = (currentDate - date) / (1000 * 60 * 60 * 24);
+      if (daysDiff > 30) {
+        const result = await userLoginData.findOneAndUpdate({_id: req.session.user}, { offerApplied: false, offerAppliedDate: "" }, { new: true });
+        if (!result) {
+          return res.status(404).json({ message: 'Offer applied status not updated' });
+        }
+      }
+    }
+
+    if(users.offerApplied){
       offer = 0;
     } else if(fetchedProduct.offerStatus === "Active"){
       offer = fetchedProduct.offerValue;
@@ -410,7 +498,6 @@ exports.loadProductDetail = async (req, res) => {
     } else {
       offer = 0;
     }
-    const users = await userLoginData.findById(req.session.user);
 
     res.render('productDetail', { user: req.session.user, product: fetchedProduct, countCart, countWishlist, users , offer });
   } catch (error) {
@@ -524,28 +611,34 @@ exports.cancelOrder = async (req, res) => {
     const orderId = req.params.orderId;
     const updatedOrder = { orderStatus: "Order Cancelled" };
     const result = await orderData.findByIdAndUpdate(orderId, updatedOrder, { new: true });
+
+    if(result)
+    {
+      const orderedProducts = await orderData.findOne({ _id: orderId }, 'products.productId products.productQuantity');
+      const order = await orderData.findOne({ _id: orderId});
+  
+      for (const orderedProducts of order.products) {
+        const productId = orderedProducts.productId;
+        const productQuantity = orderedProducts.productQuantity;
+        const product = await productData.findOne({ _id: productId });
+          product.productStock += productQuantity;
+          await product.save();
+          console.log(`Product ${product.productName} stock increased by ${productQuantity}.`);
+      }
+      console.log('Product stock updated successfully for all ordered products.');
+    }
+
+    if (result.nModified === 0) {
+      return res.status(404).json({ message: 'Order status not updated' });
+    }
+
     const orders = await orderData.find({ userId: userId });
-    res.render('order', { user: userId, orders: orders, countCart, countWishlist });
+    res.redirect('/user/orders');
   } catch (error) {
     res.render('order', { error: 'Error fetching product data.' });
   }
 };
 
-exports.returnOrder = async (req, res) => {
-  try {
-    const countCart = await cartData.find({ customerId: req.session.user }).countDocuments({});
-    const countWishlist = await wishlistData.findOne({ customerId: req.session.user }).countDocuments({});
-
-    const userId = req.session.user;
-    const orderId = req.params.orderId;
-    const updatedOrder = { orderStatus: "Return Initiated" };
-    const result = await orderData.findByIdAndUpdate(orderId, updatedOrder, { new: true });
-    const orders = await orderData.find({ userId: userId });
-    res.render('order', { user: userId, orders: orders, countCart, countWishlist });
-  } catch (error) {
-    res.render('order', { error: 'Error fetching product data.' });
-  }
-};
 
 exports.loadOrderDetail = async (req, res) => {
   try {
@@ -572,6 +665,7 @@ exports.loadOrderDetail = async (req, res) => {
     res.render('orderDetail', { error: 'Error fetching product data.' });
   }
 };
+
 
 exports.loadAccount = async (req, res) => {
   try {
@@ -778,16 +872,24 @@ exports.addToCart = async (req, res) => {
       customerId: customerId,
       productId: productId,
     }); 
-
+    
     if (cartProduct) {
       const updatedQuantity = parseFloat(productQuantity) + parseFloat(cartProduct.productQuantity);
+      if(products.productStock < updatedQuantity)
+      {
+        return res.redirect("/user/cart");
+      }
       const updatedProduct = { productQuantity: updatedQuantity };
       const result = await cartData.findByIdAndUpdate(cartProduct._id, updatedProduct, { new: true });
       if (!result) {
         return res.render('home', { error: 'Product not found.' });
       }
-      res.redirect('/user/cart');
+      return res.redirect('/user/cart');
     } else {
+      if(products.productStock < productQuantity)
+      {
+        return res.redirect("/user/cart");
+      }
       const cartItems = new cartData({
         customerId: customerId,
         productId: productId,
@@ -797,11 +899,11 @@ exports.addToCart = async (req, res) => {
         createdTime: currentDate,
       });
       const result = await cartItems.save();
-      res.redirect('/user/cart');
+      return res.redirect('/user/cart');
     }
   } catch (error) {
     console.error('Error adding product to cart: ', error);
-    res.render('cart', { error: 'Error adding product to cart.' });
+    return res.render('cart', { error: 'Error adding product to cart.' });
   }
 };
 
@@ -809,8 +911,10 @@ exports.changeQuantity = async (req, res) => {
   try {
     const customerId = req.session.user;
     const { productId, productQuantity } = req.params;
+    const product = await productData.findOne({_id: productId},{productStock:1,_id:0});
+    console.log(product.productStock);
 
-    if (parseFloat(productQuantity) < 1) {
+    if (parseFloat(productQuantity) < 1 || product.productStock < parseFloat(productQuantity)) {
       res.redirect('/user/cart');
     }
 
@@ -821,6 +925,7 @@ exports.changeQuantity = async (req, res) => {
       customerId: customerId,
       productId: productId
     });
+
 
     if (cartProduct) {
       const updatedQuantity = parseFloat(productQuantity);
@@ -1007,7 +1112,24 @@ exports.loadOrderConfirmation = async (req, res) => {
     const countCart = await cartData.countDocuments({ customerId: customerId });
     const users = await userLoginData.findById(customerId);
     const billingAddress =await billingAddressData.findOne({customerId: customerId});
-    const shippingAddress =await shippingAddressData.findOne({customerId: customerId});
+    const shippingAddress =await shippingAddressData.findOne({customerId: customerId});    
+    
+    const orderedProducts = await orderData.findOne({ _id: orderId }, 'products.productId products.productQuantity');
+    const order = await orderData.findOne({ _id: orderId });
+
+    for (const orderedProducts of order.products) {
+      const productId = orderedProducts.productId;
+      const productQuantity = orderedProducts.productQuantity;
+      const product = await productData.findOne({ _id: productId });
+      if (product.productStock >= productQuantity) {
+        product.productStock -= productQuantity;
+        await product.save();
+        console.log(`Product ${product.productName} stock decreased by ${productQuantity}.`);
+      } else {
+        console.log(`Not enough stock available for product ${product.productName}.`);
+      }
+    }
+    console.log('Product stock updated successfully for all ordered products.');
 
     const clearCartResult = await cartData.deleteMany({ customerId: customerId });
     console.log(`Successfully deleted ${clearCartResult.deletedCount} documents from the cart.`);

@@ -21,6 +21,33 @@ body, html {
   margin-top: 15vh;
 }
 
+#out-of-stock {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+  .image-container {
+    position: relative;
+  }
+  
+  .cardImgTop {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .out-of-stock {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    top: 100%;
+    left: 50%;
+    color: #fff;
+    padding: 2px;
+    z-index: 1;
+    border: 2px solid #000000;
+  }
+  
+
 #btnAddProduct{
   background-color: black;
 }

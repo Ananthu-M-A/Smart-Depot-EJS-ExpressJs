@@ -90,7 +90,11 @@
                         </div>
 
                         <p class="font-weight-semi-bold mb-4">
+                            <% if(product.productStock === 0){ %>
+                            <strong class="text-danger">Out of Stock</strong>
+                            <% } else { %>
                             <%= product.productStock %> items left
+                            <% } %>
                         </p>
                         <div class="container">
                             <button class="btn btn-primary">Add To Cart<i class="fa fa-shopping-cart mr-1"></i></button>

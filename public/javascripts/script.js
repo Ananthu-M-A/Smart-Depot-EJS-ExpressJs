@@ -107,3 +107,37 @@
   });
 
 })(jQuery); // End of use strict
+
+
+  function validateForm() {
+
+    let fullNameInput = document.getElementById("name");
+    let emailInput = document.getElementById("email");
+    let mobileInput = document.getElementById("mobile");
+    let passwordInput = document.getElementById("password");
+    let fullName = fullNameInput.value;
+    let email = emailInput.value;
+    let mobile = mobileInput.value;
+    let password = passwordInput.value;
+
+    let emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+    let mobilePattern = /^\d{10}$/;
+    let isValid = true;
+    if (fullName === "") {
+      isValid = false;
+      alert("Name is required");
+    }
+    if (!emailPattern.test(email)) {
+      isValid = false;
+      alert("Invalid Email Address");
+    }
+    if (!mobilePattern.test(mobile)) {
+      isValid = false;
+      alert("Invalid Mobile Number (10 digits required)");
+    }
+    if (password === "") {
+      isValid = false;
+      alert("Password is required");
+    }
+    return isValid;
+  }

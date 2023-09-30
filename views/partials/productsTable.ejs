@@ -42,7 +42,11 @@
                 <%= product.productPrice %>
               </td>
               <td class="align-middle">
+                <% if(product.productStock === 0){ %>
+                <strong class="text-danger">Out of Stock</strong>
+                <% } else { %>
                 <%= product.productStock %>
+                <% } %>
               </td>
               <td class="align-middle">
                 <a href="/admin/editProduct/<%= product._id %>">

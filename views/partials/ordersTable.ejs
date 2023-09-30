@@ -145,7 +145,8 @@
                         <option value="Items Shipped" <%= order.orderStatus === "Items Shipped" ? "selected" : "" %>>Items Shipped</option>
                         <option value="Order Delivered" <%= order.orderStatus === "Order Delivered" ? "selected" : "" %>>Order Delivered</option>
                         <option value="Return Initiated" <%= order.orderStatus === "Return Initiated" ? "selected" : "" %>>Return Initiated</option>
-                        <option value="Items Returned" <%= order.orderStatus === "Items Returned" ? "selected" : "" %>>Items Returned</option>
+                        <option value="Return Verified & Refund Initiated" <%= order.orderStatus === "Return Verified & Refund Initiated" ? "selected" : "" %>>Return Verified & Refund Initiated</option>
+                        <option value="Items Returned & Refunded" <%= order.orderStatus === "Items Returned & Refunded" ? "selected" : "" %>>Items Returned & Refunded</option>
                         <option value="Order Closed" <%= order.orderStatus === "Order Closed" ? "selected" : "" %>>Order Closed</option>
                         <option value="Order Cancelled" <%= order.orderStatus === "Order Cancelled" ? "selected" : "" %>>Order Cancelled</option>
                       </select>
