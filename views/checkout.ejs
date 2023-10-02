@@ -16,7 +16,7 @@
 
 
 <!-- Checkout Start -->
-<form id="paymentForm" action="/user/placeOrder/<%= subTotal %>/<%= total %>" method="post">
+<form id="paymentForm" action="/user/placeOrder/<%= subTotal %>/<%= total %>/<%= discount %>" method="post">
     <div class="container-fluid pt-5">
         <div class="row px-xl-5">
             <div class="col-lg-6">
@@ -112,7 +112,7 @@
                                 </div>
                                 <div class="d-flex justify-content-between">
                                     <h6 class="font-weight-medium">Discount</h6>
-                                    <h6 class="font-weight-medium">₹0</h6>
+                                    <h6 class="font-weight-medium">₹<%= discount %></h6>
                                 </div>
                     </div>
                     <div class="card-footer border-secondary bg-transparent">

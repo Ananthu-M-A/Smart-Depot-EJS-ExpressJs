@@ -53,7 +53,7 @@
                         <form action="/admin/applyOffer" method="POST">
                             <tr class="text-center">
                                 <td><input class="w-75 mt-1 text-center" type="text" name="offerName" placeholder="Coupon" required></td>
-                                <td><h6 class="mt-2" name="coupon" value="couponId">Coupons</h6></td>
+                                <td><h6 class="mt-2">Coupons</h6></td>
                                 <td><input class="w-50 mt-1 text-center" type="text" name="offerValue" required></td>
                                 <td><input class="w-75 mt-1" type="date" name="offerStart" required></td>
                                 <td><input class="w-75 mt-1" type="date" name="offerEnd" required></td>
@@ -80,6 +80,16 @@
                                 <td><%= category.offerStart %></td>
                                 <td><%= category.offerEnd %></td>
                                 <td><%= category.offerStatus %></td>
+                            </tr>
+                        <% }) %>  
+                        <% offerCoupons.forEach(coupon => { %>
+                            <tr class="text-center">
+                                <td><%= coupon.offerName %></td>
+                                <td><%= coupon.couponCode %></td>
+                                <td><%= coupon.offerValue %></td>
+                                <td><%= coupon.offerStart %></td>
+                                <td><%= coupon.offerEnd %></td>
+                                <td><%= coupon.offerStatus %></td>
                             </tr>
                         <% }) %>  
                     </tbody>

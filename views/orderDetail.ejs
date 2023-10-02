@@ -60,6 +60,7 @@
                             </thead>
                             <tbody>
                                 <% let i=1 ; %>
+                                <% let realTolal = 0; %>
                                     <% order.products.forEach(product=> { %>
                                         <tr>
                                             <td>
@@ -75,15 +76,21 @@
                                                 <%= product.productQuantity %>
                                             </td>
                                             <% let subTotal= (product.offerPrice || product.productId.productPrice) * product.productQuantity ; %>
+                                            <% realTolal = realTolal + subTotal; %>
                                                 <td>
                                                     <%= subTotal %>
+                                                    <%  %>
                                                 </td>
                                         </tr>
                                         <% i++; }); %>
                                         <tr class="font-weight-bold">
                                             <td></td>
                                             <td></td>
-                                            <td></td>
+                                            <td>
+                                                <% if(realTolal !== order.total) { %>
+                                                <h6 class="mt-1"><%= "Coupon offer applied to total ₹" + realTolal %></h6>
+                                                <% } %>
+                                            </td>
                                             <td><h5>Total</h5></td>
                                             <td>
                                                 ₹<%= order.total %>/-
@@ -92,7 +99,7 @@
                             </tbody>
                         </table>
                         <div class="col-md">
-                            <a href="/user/downloadInvoice/<%= order._id %>"
+                            <a href="/user/downloadInvoice/<%= order._id %>/<%= order.total %>"
                                 class="btn btn-outline-primary py-md-2 px-md-3">
                                 Download Invoice<img width="20vh" src="/images/pdfdownload.png" alt=""></a>
                         </div>

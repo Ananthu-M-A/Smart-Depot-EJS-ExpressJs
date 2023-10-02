@@ -78,9 +78,9 @@
                 </table>
             </div>
             <div class="col-lg-4">
-                <form class="mb-5" action="">
+                <form class="mb-5" action="/user/applyOffer" method="POST">
                     <div class="input-group">
-                        <input type="text" class="form-control p-4" placeholder="Coupon Code">
+                        <input type="text" name="couponCode" class="form-control p-4" placeholder="Coupon Code">
                         <div class="input-group-append">
                             <button class="btn btn-primary">Apply Coupon</button>
                         </div>
@@ -95,18 +95,29 @@
                             <h6 class="font-weight-medium">Subtotal</h6>
                             <h6 class="font-weight-medium"><%= subTotal %></h6>
                         </div>
+                        <% let discount; %>
+                        <% if(couponOffer) { %>
+                        <% discount = couponOffer*subTotal/100; %>
+                        <% } else { %>
+                        <% discount = 0; %>
+                        <% } %>
                         <div class="d-flex justify-content-between">
                             <h6 class="font-weight-medium">Discount</h6>
-                            <h6 class="font-weight-medium">0</h6>
+                            <h6 class="font-weight-medium"><%= discount %></h6>
                         </div>
                     </div>
-                    <% let total = subTotal + 0 %>
+                    <% let total; %>
+                    <% if(discount) { %>
+                    <% total = subTotal - discount; %>
+                    <% } else { %>
+                    <% total = subTotal; %>
+                    <% } %>
                     <div class="card-footer border-secondary bg-transparent">
                         <div class="d-flex justify-content-between mt-2">
                             <h5 class="font-weight-bold">Total</h5>
                             <h5 class="font-weight-bold">₹<%= total %></h5>
                         </div>
-                        <form action="/user/checkout/<%= subTotal %>/<%= total %>" method="POST">
+                        <form action="/user/checkout/<%= subTotal %>/<%= total %>/<%= discount %>" method="POST">
                             <button class="btn btn-block btn-primary my-3 py-3">Proceed To Checkout</button>
                         </form>                        
                         <a href="/user" class="btn btn-block btn-primary my-3 py-3">Continue Shopping</a>

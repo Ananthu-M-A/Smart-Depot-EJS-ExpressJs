@@ -7,11 +7,13 @@ let mongoose = require('mongoose');
 const productData = require('../models/productModel');
 const userLoginData = require('../models/userModel');
 const categoryData = require('../models/categoryModel');
+const couponOfferData = require('../models/couponOfferModel');
 const Admin = require('../models/adminModel');
 const orderData = require('../models/orderModel');
 
 
 const networkTime = require('../middlewares/networkTime');
+const { log } = require('console');
 
 exports.loadLoginPage = function (req, res) {
     if(!req.session.admin || req.session.adminStatus !== 'logged-in'){
@@ -51,6 +53,8 @@ exports.loadHomePage = async (req, res) => {
       const categories = await categoryData.find();
       const offerProducts = await productData.find({offerType: "Product Offer"}).sort({ offerStart : -1 });
       const offerCategories = await categoryData.find({offerType: "Category Offer"}).sort({ offerStart : -1 });
+      const offerCoupons = await couponOfferData.find({offerType: "Coupon Offer"}).sort({ offerStart : -1 });
+
 
       // const orders = await orderData.find().populate('products.productId').sort({ orderDate: -1 }).exec()
       const orders = await orderData.find()
@@ -64,7 +68,7 @@ exports.loadHomePage = async (req, res) => {
       orders.forEach(order => {
         totalSales = order.total + totalSales;
       });    
-      res.render('adminHome', { admin : req.session.admin , products, users, categories, orders, totalSales, adminData, offerCategories, offerProducts});
+      res.render('adminHome', { admin : req.session.admin , products, users, categories, orders, totalSales, adminData, offerCategories, offerProducts, offerCoupons});
       }
     catch (error) {
       console.log(error);
@@ -85,7 +89,13 @@ exports.loadAccount = async (req, res) => {
 
 exports.updateAccount = async (req, res) => {
     try {
-      const imageName = req.file.filename;
+      const imageName = req.file;
+
+      if(imageName)
+      {
+        imageName =  req.file.filename;
+      }
+
       const adminData = {
         fullName: req.body.adminName,
         mobileNo: req.body.adminMobileNo,
@@ -391,6 +401,27 @@ exports.applyOffer = async(req, res) => {
       offerStatus: "Active"
     };
     const result = await categoryData.findOneAndUpdate({_id: categoryId},categoryOffer,{upsert: true});
+    } else if(!productId && !categoryId) {
+      const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+      let couponCode = '';
+    
+      for (let i = 0; i < 8; i++) {
+        const randomIndex = Math.floor(Math.random() * 8);
+        couponCode += characters[randomIndex];
+      }
+
+      const hashedCouponCode = await bcrypt.hash(couponCode, 10);
+      const couponOffer = await couponOfferData({
+        offerName: offerName, 
+        offerType: "Coupon Offer",
+        couponCode: "SMDPT" + couponCode,
+        hashedCouponCode: hashedCouponCode,
+        offerValue: offerValue,
+        offerStart: startDate, 
+        offerEnd: endDate,
+        offerStatus: "Active"
+      });
+      const result = await couponOffer.save();
     }
     res.redirect('/admin')
   } catch (error) {

@@ -82,7 +82,7 @@
                         <div class="col-md-12">
                                 <h4 class="font-weight-semi-bold mb-4 text-center">UPDATE DETAIL</h4>
                                 <h5 class="font-weight-semi-bold mb-4 text-center">Login Data</h5>
-                                <form action="/user/updateLoginData" method="POST" enctype="multipart/form-data" id="signupForm" onsubmit="return validateForm()">
+                                <form action="/user/updateLoginData" method="POST" enctype="multipart/form-data">
                                 <div class="row">
                                     <div class="col-md-6 form-group">
                                         <label>Profile Image</label>
@@ -94,15 +94,15 @@
                                         <input class="form-control" name="userEmail" type="email" id="email"
                                             value="<%= users.email %>" disabled>
                                     </div>
-                                    <div class="col-md-6 form-group">
+                                    <div class="col-md-6 form-group">email
                                         <label>Name</label>
                                         <input class="form-control" name="userName" type="text"
-                                            value="<%= users.fullname %>" id="name">
+                                        value="<%= users.fullname %>" id="name">
                                     </div>
                                     <div class="col-md-6 form-group">
                                         <label>Mobile No</label>
-                                        <input class="form-control" name="userMobileNo" type="text"
-                                            value="<%= users.mobile %>" id="mobile">
+                                        <input class="form-control" name="userMobileNo" type="tel" pattern="[0-9]{10}"
+                                            title="Enter a valid mobile number" value="<%= users.mobile %>" id="mobile">
                                     </div>
                                     <div class="form-group mb-0 text-center">
                                         <button type="submit" class="btn btn-primary px-3">Update</button>
@@ -116,8 +116,8 @@
                                 <div class="row">
                                     <div class="col-md-6 form-group">
                                          <label>Alternate Mobile No</label>
-                                        <input class="form-control" name="alternateMobileNo" type="text"
-                                            value="<%= billingAddress.alternateMobileNo %>">
+                                        <input class="form-control" name="alternateMobileNo" type="text" pattern="[0-9]{10}"
+                                            title="Enter valid mobile number" value="<%= billingAddress.alternateMobileNo %>">
                                     </div>
                                     <div class="col-md-6 form-group">
                                         <label>Address Line 1</label>
@@ -150,8 +150,8 @@
                                     </div>
                                     <div class="col-md-6 form-group">
                                         <label>ZIP Code</label>
-                                        <input class="form-control" name="userZIP" type="text"
-                                            value="<%= billingAddress.userZIP %>">
+                                        <input class="form-control" name="userZIP" type="text" pattern="[0-9]{6}"
+                                        title="Enter valid PIN code"  value="<%= billingAddress.userZIP %>">
                                     </div>
                                 </div>
                                 <div class="form-group mb-0 text-center">
@@ -179,8 +179,8 @@
                                 </div>
                                 <div class="col-md-6 form-group">
                                     <label>Mobile No</label>
-                                    <input class="form-control" name="alternateMobileNo2" type="text"
-                                        value="<%= shippingAddress.altMobileNo %>">
+                                    <input class="form-control" name="alternateMobileNo2" type="text" pattern="[0-9]{10}"
+                                    title="Enter a valid mobile number" value="<%= shippingAddress.altMobileNo %>">
                                 </div>
                                 <div class="col-md-6 form-group">
                                     <label>Address Line 1</label>
@@ -213,8 +213,8 @@
                                 </div>
                                 <div class="col-md-6 form-group">
                                     <label>ZIP Code</label>
-                                    <input class="form-control" name="userZIP2" type="text"
-                                        value="<%= shippingAddress.altZIP %>">
+                                    <input class="form-control" name="userZIP2" type="text" pattern="[0-9]{6}"
+                                    title="Enter valid PIN code" value="<%= shippingAddress.altZIP %>">
                                 </div>  
                             </div>
                             <div class="form-group mb-0 text-center">
@@ -302,7 +302,8 @@
                                 <div class="row">
                                     <div class="col-md-6 form-group">
                                          <label>Alternate Mobile No</label>
-                                        <input class="form-control" name="alternateMobileNo" type="text">
+                                        <input class="form-control" name="alternateMobileNo" type="tel" pattern="[0-9]{10}"
+                                        title="Enter a valid mobile number">
                                     </div>
                                     <div class="col-md-6 form-group">
                                         <label>Address Line 1</label>
@@ -331,7 +332,8 @@
                                     </div>
                                     <div class="col-md-6 form-group">
                                         <label>ZIP Code</label>
-                                        <input class="form-control" name="userZIP" type="text">
+                                        <input class="form-control" name="userZIP" type="tel" pattern="[0-9]{6}"
+                                        title="Enter valid PIN code">
                                     </div>
                                 </div>
                                 <div class="form-group mb-0 text-center">
@@ -353,11 +355,12 @@
                                 </div>
                                 <div class="col-md-6 form-group">
                                     <label>E-mail</label>
-                                    <input class="form-control" name="userEmail2" type="text">
+                                    <input class="form-control" name="userEmail2" type="email" aria-describedby="emailHelp">
                                 </div>
                                 <div class="col-md-6 form-group">
                                     <label>Mobile No</label>
-                                    <input class="form-control" name="alternateMobileNo2" type="text">
+                                    <input class="form-control" name="alternateMobileNo2" type="tel" pattern="[0-9]{10}"
+                                    title="Enter a valid mobile number">
                                 </div>
                                 <div class="col-md-6 form-group">
                                     <label>Address Line 1</label>
@@ -386,7 +389,8 @@
                                 </div>
                                 <div class="col-md-6 form-group">
                                     <label>ZIP Code</label>
-                                    <input class="form-control" name="userZIP2" type="text">
+                                    <input class="form-control" name="userZIP2" type="tel" pattern="[0-9]{6}"
+                                    title="Enter valid PIN code">
                                 </div>  
                             </div>
                             <div class="form-group mb-0 text-center">

@@ -18,6 +18,7 @@ const billingAddressData = require('../models/billingAddressModel');
 const shippingAddressData = require('../models/shippingAddressModel');
 const userLoginData = require('../models/userModel');
 const wishlistData = require('../models/wishlistModel');
+const couponOfferData = require('../models/couponOfferModel');
 const orderData = require('../models/orderModel');
 
 const networkTime = require('../middlewares/networkTime');
@@ -257,37 +258,46 @@ exports.login = async (req, res, next) => {
 
 exports.loadHomePage = async (req, res) => {
   try {
-    // const products = await productData.find({},{offerStatus: 1, offerStart:1, offerEnd: 1, _id: 0 });
-    // const currentDate = new Date(moment(networkTime.date));
-    // products.forEach(product =>{
-    //   if(product.offerStatus === "Active"){
-    //     const lastDate = new Date(product.offerEnd);
-    //     const startDate = new Date(product.offerStart);
-    //     if((currentDate - lastDate) / (1000 * 60 * 60 * 24) > 0)
-    //     { product.offerStatus = "Expired"; }
-    //     if((startDate - currentDate) / (1000 * 60 * 60 * 24) > 0)
-    //     { product.offerStatus = "Active"; }
-    //   } else if(product.offerStatus === "Expired"){
-    //     const lastDate = new Date(product.offerEnd);
-    //     const startDate = new Date(product.offerStart);
-    //     if((currentDate - lastDate) / (1000 * 60 * 60 * 24) > 0)
-    //     { product.offerStatus = "Expired"; }
-    //     if((startDate - currentDate) / (1000 * 60 * 60 * 24) > 0)
-    //     { product.offerStatus = "Active"; }
-    //   } else {
-    //     console.log("Something Wrong"); 
-    //   }
+    const currentDate = new Date(moment(networkTime.date));
+    const productOffer = await productData.find({},{offerStatus: 1, offerStart:1, offerEnd: 1});
+    for (const offer of productOffer) {
+      if (offer.offerStatus && offer.offerStatus === "Active") {
+        const lastDate = new Date(offer.offerEnd);
+        if ((currentDate - lastDate) / (1000 * 60 * 60 * 24) > 0) {
+          const result = await productData.findOneAndUpdate(
+            { _id: offer._id },
+            { offerStatus: "Expired" }
+          );
+        }
+      }
+    }
 
-    // });
-    // if(users.offerApplied){
-    //   const daysDiff = (currentDate - date) / (1000 * 60 * 60 * 24);
-    //   if (daysDiff > 30) {
-    //     const result = await userLoginData.findOneAndUpdate({_id: req.session.user}, { offerApplied: false, offerAppliedDate: "" }, { new: true });
-    //     if (!result) {
-    //       return res.status(404).json({ message: 'Offer applied status not updated' });
-    //     }
-    //   }
-    // }
+    const categoryOffer = await categoryData.find({},{offerStatus: 1, offerStart:1, offerEnd: 1});
+    for (const offer of categoryOffer) {
+      if (offer.offerStatus && offer.offerStatus === "Active") {
+        const lastDate = new Date(offer.offerEnd);
+        if ((currentDate - lastDate) / (1000 * 60 * 60 * 24) > 0) {
+          const result = await categoryData.findOneAndUpdate(
+            { _id: offer._id },
+            { offerStatus: "Expired" }
+          );
+        }
+      }
+    }
+
+    const couponOffer = await couponOfferData.find({},{offerStatus: 1, offerStart:1, offerEnd: 1});
+    for (const offer of couponOffer) {
+      if (offer.offerStatus && offer.offerStatus === "Active") {
+        const lastDate = new Date(offer.offerEnd);
+        if ((currentDate - lastDate) / (1000 * 60 * 60 * 24) > 0) {
+          const result = await couponOfferData.findOneAndUpdate(
+            { _id: offer._id },
+            { offerStatus: "Expired" }
+          );
+        }
+      }
+    }
+
     res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
     const itemsPerPage = 4;
     const page = parseInt(req.query.page) || 1;
@@ -295,6 +305,17 @@ exports.loadHomePage = async (req, res) => {
 
     const { paginatedProducts, categories, users, countCart, countWishlist, totalPages } =
       await getFilteredProducts(filter, page, itemsPerPage, req);
+
+      if(users.offerApplied){
+        const date = new Date(users.offerAppliedDate);
+        const daysDiff = (currentDate - date) / (1000 * 60 * 60 * 24);
+        if (daysDiff > 30) {
+          const result = await userLoginData.findOneAndUpdate({_id: req.session.user}, { offerApplied: false, offerAppliedDate: "" }, { new: true });
+          if (!result) {
+            return res.status(404).json({ message: 'Offer applied status not updated' });
+          }
+        }
+      }
     
     res.render('home', {
       user: req.session.user,
@@ -305,6 +326,7 @@ exports.loadHomePage = async (req, res) => {
       countWishlist,
       totalPages,
       currentPage: page,
+      selectedCategories: [],
     });
 
   } catch (error) {
@@ -348,7 +370,7 @@ exports.searchProducts = async (req, res) => {
 
     const users = await userLoginData.findById(req.session.user);
 
-    res.render('home', { user: req.session.user, products, categories, users, countCart, countWishlist, totalPages: 4, currentPage: 1 });
+    res.render('home', { user: req.session.user, products, categories, users, countCart, countWishlist, selectedCategories: [], totalPages: 4, currentPage: 1 });
   } catch (error) {
     console.log(error);
     res.render('home', { error: 'Error searching products.' });
@@ -360,6 +382,7 @@ exports.filterProducts = async (req, res) => {
     const categoryNames = req.body.category || [];
     const minPriceRange = parseInt(req.body.minPriceRange);
     const maxPriceRange = parseInt(req.body.maxPriceRange);
+    console.log(categoryNames);
 
     req.session.filter = {
       categories: categoryNames,
@@ -404,6 +427,7 @@ exports.filterProducts = async (req, res) => {
       currentPage: page,
       productOffer,
       categoryOffer,
+      selectedCategories: categoryNames,
     });
 
   } catch (error) {
@@ -460,6 +484,7 @@ exports.clearFilter = async (req, res) => {
         currentPage: page,
         productOffer,
         categoryOffer,
+        selectedCategories: categoryNames,
       });
   
     } catch (error) {
@@ -507,6 +532,7 @@ exports.loadProductDetail = async (req, res) => {
 
 exports.loadCart = async (req, res) => {
   try {
+    const couponOffer = req.query.offer;
     const countCart = await cartData.find({ customerId: req.session.user }).countDocuments({});
     const countWishlist = await wishlistData.findOne({ customerId: req.session.user }).countDocuments({});
     const cartItems = await cartData.find({ customerId: req.session.user })
@@ -517,7 +543,7 @@ exports.loadCart = async (req, res) => {
     const categories = await categoryData.find({ offerStatus: "Active" });
     const productQuantity = req.body.quantity;
     const users = await userLoginData.findById(req.session.user);
-    res.render('cart', { user: req.session.user, productQuantity, cartItems, countCart, countWishlist, users, categories });
+    res.render('cart', { user: req.session.user, productQuantity, cartItems, countCart, countWishlist, users, categories, couponOffer});
   } catch (error) {
     res.render('cart', { error: 'Error fetching product data.' });
   }
@@ -533,6 +559,25 @@ exports.removeCartItem = async (req, res) => {
     res.render('cart', { error: 'Error fetching product data.' });
   }
 };
+
+exports.applyOffer = async(req, res) => {
+  try {
+    const { couponCode } = req.body;
+    const code = couponCode.substring(5);
+    const offer = await couponOfferData.findOne({couponCode: couponCode});
+    const couponMatched = await bcrypt.compare(code, offer.hashedCouponCode);
+    if(couponMatched)
+    {
+      return res.redirect(`/user/cart?offer=${offer.offerValue}`);
+    }
+    res.redirect('/user/cart');
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: 'Error applying offer', error: error.message });
+  }
+}
+
 
 exports.loadWishlist = async (req, res) => {
   try {
@@ -686,11 +731,13 @@ exports.loadAccount = async (req, res) => {
 exports.updateLoginData = async (req, res) => {
   try {
     const customerId = req.session.user;
-    const imageName = req.file.filename;
-    if(!imageName)
-    { imageName = undefined; }
+    const imageName = req.file;
+    if(imageName)
+    {
+      imageName =  req.file.filename;
+    }
     const userData = {
-      fullName: req.body.userName,
+      fullname: req.body.userName,
       mobile: req.body.userMobileNo,
       profileImageName: imageName,
     }
@@ -1002,13 +1049,14 @@ exports.loadCheckout = async (req, res) => {
 
     const subTotal = parseFloat(req.params.subTotal);
     const total = parseFloat(req.params.total);
+    const discount = parseFloat(req.params.discount)
     const users = await userLoginData.findById(customerId);
     const cartItems = await cartData.find({ customerId: customerId })
       .populate('productId')
       .populate('categoryId')
       .populate('customerId')
       .exec();
-    res.render('checkout', { user: customerId, users, billingAddress, shippingAddress, cartItems, subTotal, total, countCart, countWishlist });
+    res.render('checkout', { user: customerId, users, billingAddress, shippingAddress, cartItems, subTotal, total, countCart, countWishlist, discount });
   } catch (error) {
     res.render('checkout', { error: 'Error fetching product data.' });
   }
@@ -1036,8 +1084,8 @@ exports.placeOrder = async (req, res) => {
   try {
     const currentDate = moment(networkTime.date).format('YYYY-MM-DD HH:mm:ss');
     const subTotal = parseFloat(req.params.subTotal);
-    const discount = 0.00;
-    const total = subTotal + discount;
+    const discount = parseFloat(req.params.discount);
+    const total = subTotal - discount;
 
     const cartItems = await cartData.find({ customerId: req.session.user })
     .populate('productId')
@@ -1179,6 +1227,7 @@ exports.logout = async (req, res) => {
 exports.downloadInvoice = async (req, res) => {
   try {
     const orderId = req.params.orderId;
+    const orderTotal = req.params.total;
     const order = await orderData.findById(orderId)
     .populate('userId')
     .populate('products.productId')
@@ -1197,7 +1246,9 @@ exports.downloadInvoice = async (req, res) => {
     order.products.forEach((product) => {
       totalPrice += (product.offerPrice || product.productPrice) * product.productQuantity;
     });
+
     let total = totalPrice.toString();
+    console.log(total,totalPrice);
 
     let data = {
       "documentTitle": "RECEIPT",

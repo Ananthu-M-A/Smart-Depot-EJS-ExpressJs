@@ -15,6 +15,7 @@ router.get('/clearFilter', requireAuth, isUserBlocked, UserController.clearFilte
 router.get('/productDetails', requireAuth, isUserBlocked, UserController.loadProductDetail);
 router.get('/cart', requireAuth, isUserBlocked, UserController.loadCart);
 router.get('/removeCartItem/:productId', requireAuth, isUserBlocked, UserController.removeCartItem);
+router.post('/applyOffer', requireAuth, isUserBlocked, UserController.applyOffer);
 router.get('/wishlist', requireAuth, isUserBlocked, UserController.loadWishlist);
 router.get('/removeWishlistItem/:productId', requireAuth, isUserBlocked, UserController.removeWishlistItem);
 router.get('/orders', requireAuth, isUserBlocked, UserController.loadOrders);
@@ -31,12 +32,12 @@ router.post('/deleteAccount', requireAuth, UserController.deleteAccount);
 router.post('/cart/:productId', requireAuth, UserController.addToCart);
 router.post('/changeQuantity/:productId/:productQuantity', requireAuth, UserController.changeQuantity);
 router.post('/wishlist/:productId', UserController.addToWishlist);
-router.post('/checkout/:subTotal/:total', requireAuth, UserController.loadCheckout);
+router.post('/checkout/:subTotal/:total/:discount', requireAuth, UserController.loadCheckout);
 router.post('/updateOrderStatus/:orderId', requireAuth, UserController.updateReturnStatus);
-router.post('/placeOrder/:subTotal/:total', requireAuth, UserController.placeOrder);
+router.post('/placeOrder/:subTotal/:total/:discount', requireAuth, UserController.placeOrder);
 router.get('/orderConfirmation', requireAuth, UserController.loadOrderConfirmation);
 router.get('/logout', UserController.logout);
-router.get('/downloadInvoice/:orderId', UserController.downloadInvoice);
+router.get('/downloadInvoice/:orderId/:total', UserController.downloadInvoice);
 
 
 module.exports = router;
