@@ -47,7 +47,6 @@ exports.verifyPayment =  async (req,res)=>{
       if(razorpaySignature===expectedSign)
       {
         res.redirect(`/user/orderConfirmation?id=${razorpayPaymentId}`);
-        // return res.status(200).json({message: "Payment Verified Successfully"});
       }else{
         return res.status(200).json({message: "Invalid Signature Sent"});
       }
@@ -56,4 +55,40 @@ exports.verifyPayment =  async (req,res)=>{
       console.log(error);
       res.status(500).json({message:"Internal Server Error!"});
     }
+};
+
+
+exports.initiateRefund = async (req, res) => {
+  try {
+    const instance = new razorpay({
+      key_id: process.env.RAZORPAY_KEY_ID,
+      key_secret: process.env.RAZORPAY_KEY_SECRET,
+    });
+
+    const paymentId = req.params.paymentId;
+    const refundAmount = req.body.amount;
+    const orderId = req.body.orderId;
+
+    const refund = await instance.payments.refund(paymentId, {
+      amount: refundAmount * 100,
+      speed: 'normal',
+    });
+
+    if (refund.id) {
+      const updateOrder = {
+        refundStatus: true,
+        refundId: refund.id,
+        orderStatus: "Items Returned & Refunded",
+      }
+      await orderData.findByIdAndUpdate(orderId, updateOrder, { upsert: true });
+      res.status(200).json({ message: 'Refund successful', refund });
+    } else {
+      res.status(500).json({ message: 'Refund failed' });
+    }
+
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
 };

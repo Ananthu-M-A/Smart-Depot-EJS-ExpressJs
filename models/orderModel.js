@@ -71,6 +71,13 @@ const order = new mongoose.Schema({
     type: String,
     default: "Nil",
   },
+  refundStatus: {
+    type: Boolean,
+  },
+  refundId: {
+    type: String,
+    default: "Nil",
+  },
 });
 
 const orderData = mongoose.model('orderData', order);

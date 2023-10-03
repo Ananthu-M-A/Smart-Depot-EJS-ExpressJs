@@ -30,12 +30,7 @@ const { log } = require('util');
 async function getFilteredProducts(filter, page, itemsPerPage, req) {
   const startIndex = (page - 1) * itemsPerPage;
 
-  const totalFilteredProducts = await productData.aggregate([
-    { $match: filter },
-    { $count: 'count' },
-  ]);
-
-  const count = totalFilteredProducts.length > 0 ? totalFilteredProducts[0].count : 0;
+  const count = await productData.countDocuments(filter);
 
   const paginatedProducts = await productData.find(filter)
     .populate('productCategory')
@@ -53,9 +48,11 @@ async function getFilteredProducts(filter, page, itemsPerPage, req) {
     users,
     countCart,
     countWishlist,
-    totalPages: Math.ceil(count / itemsPerPage), // Calculate totalPages based on count
+    totalPages: Math.ceil(count / itemsPerPage),
   };
 }
+
+
 
 
 function generateOTP() {
@@ -382,7 +379,6 @@ exports.filterProducts = async (req, res) => {
     const categoryNames = req.body.category || [];
     const minPriceRange = parseInt(req.body.minPriceRange);
     const maxPriceRange = parseInt(req.body.maxPriceRange);
-    console.log(categoryNames);
 
     req.session.filter = {
       categories: categoryNames,
@@ -436,61 +432,50 @@ exports.filterProducts = async (req, res) => {
 };
 
 exports.clearFilter = async (req, res) => {
-    try {
-      const categoryNames = [];
-      const minPriceRange = 0;
-      const maxPriceRange = 10000;
-  
-      req.session.filter = {
-        categories: categoryNames,
-        minPrice: minPriceRange,
-        maxPrice: maxPriceRange,
-      };
-  
-  
-      const filter = {};
-  
-      if (categoryNames.length > 0) {
-        const categoryIds = await categoryData.find({ productCategory: { $in: categoryNames } }).distinct('_id');
-        filter.productCategory = { $in: categoryIds };
-      }
-  
-      if (!isNaN(minPriceRange) && !isNaN(maxPriceRange)) {
-        filter.productPrice = { $gte: minPriceRange, $lte: maxPriceRange };
-      }
-  
-      const itemsPerPage = 4;
-      const page = parseInt(req.query.page) || 1;
-  
-      const {
-        paginatedProducts,
-        categories,
-        users,
-        countCart,
-        countWishlist,
-        productOffer,
-        categoryOffer,
-        totalPages,
-      } = await getFilteredProducts(filter, page, itemsPerPage, req);
-      
-      res.render('home', {
-        user: req.session.user,
-        products: paginatedProducts,
-        categories,
-        users,
-        countCart,
-        countWishlist,
-        totalPages,
-        currentPage: page,
-        productOffer,
-        categoryOffer,
-        selectedCategories: categoryNames,
-      });
-  
-    } catch (error) {
-      res.render('home', { error: 'Error fetching product data.' });
-    }
-  };
+  try {
+    const categoryNames = [];
+    const minPriceRange = 0;
+    const maxPriceRange = 10000;
+
+    req.session.filter = {
+      categories: categoryNames,
+      minPrice: minPriceRange,
+      maxPrice: maxPriceRange,
+    };
+    const itemsPerPage = 4;
+    const page = 1;
+
+    const {
+      paginatedProducts,
+      categories,
+      users,
+      countCart,
+      countWishlist,
+      productOffer,
+      categoryOffer,
+      totalPages,
+    } = await getFilteredProducts({}, page, itemsPerPage, req);
+
+    res.render('home', {
+      user: req.session.user,
+      products: paginatedProducts,
+      categories,
+      users,
+      countCart,
+      countWishlist,
+      totalPages,
+      currentPage: page,
+      productOffer,
+      categoryOffer,
+      selectedCategories: categoryNames,
+    });
+
+  } catch (error) {
+    res.render('home', { error: 'Error fetching product data.' });
+  }
+};
+
+
 
 
 exports.loadProductDetail = async (req, res) => {
@@ -1317,7 +1302,7 @@ exports.downloadInvoice = async (req, res) => {
         }
       });
     });  
-  } catch (err) { // Add the 'err' parameter here
+  } catch (err) {
     console.error('Error:', err);
     res.status(500).send('An error occurred');
   }  

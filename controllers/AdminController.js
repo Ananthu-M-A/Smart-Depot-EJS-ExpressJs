@@ -1,8 +1,10 @@
 const bcrypt = require('bcrypt');
+const axios = require('axios');
 const path = require('path');
 const moment = require('moment');
 const sharp = require('sharp');
-let mongoose = require('mongoose');
+const mongoose = require('mongoose');
+
 
 const productData = require('../models/productModel');
 const userLoginData = require('../models/userModel');
@@ -249,46 +251,70 @@ exports.updateUserBlockStatus = async (req, res) => {
     }
 };
   
-exports.updateOrderStatus =  async (req, res) => {
-    try {
-      const userData = req.body;
-      const result = await orderData.findByIdAndUpdate( userData.orderId , { orderStatus : userData.orderStatus } );
-  
-      if(userData.orderStatus === "Order Delivered")
-      {
-        const result1 = await orderData.findByIdAndUpdate( userData.orderId , { returnOption : true } );
-  
-        const deliveredDate = moment(networkTime.date).format('YYYY-MM-DD HH:mm:ss');
-  
-        const result2 = await orderData.findOneAndUpdate({ _id: userData.orderId },
-          { deliveredDate: deliveredDate },{ upsert: true, new: true });
-      }
 
-      if(userData.orderStatus === "Return Verified & Refund Initiated")
-      {
-        const orderedProducts = await orderData.findOne({ _id: userData.orderId }, 'products.productId products.productQuantity');
-        const order = await orderData.findOne({ _id: userData.orderId});
-    
-        for (const orderedProducts of order.products) {
-          const productId = orderedProducts.productId;
-          const productQuantity = orderedProducts.productQuantity;
-          const product = await productData.findOne({ _id: productId });
-            product.productStock += productQuantity;
-            await product.save();
-            console.log(`Product ${product.productName} stock increased by ${productQuantity}.`);
-        }
-        console.log('Product stock updated successfully for all ordered products.');
-      }
-  
-      if (result.nModified === 0) {
-        return res.status(404).json({ message: 'Order status not updated' });
-      }
-      res.json({ message: 'Order status updated successfully' });
-    } catch (error) {
-      console.log(error);
-      res.status(500).json({ message: 'Error updating order status', error: error.message });
+exports.updateOrderStatus = async (req, res) => {
+  try {
+    const userData = req.body;
+    const result = await orderData.findByIdAndUpdate(userData.orderId, { orderStatus: userData.orderStatus });
+    let refundStatus;
+
+    if (userData.orderStatus === 'Order Delivered') {
+      const result1 = await orderData.findByIdAndUpdate(userData.orderId, { returnOption: true });
+
+      const deliveredDate = moment(networkTime.date).format('YYYY-MM-DD HH:mm:ss');
+
+      const result2 = await orderData.findOneAndUpdate({ _id: userData.orderId },
+        { deliveredDate: deliveredDate }, { upsert: true, new: true });
     }
+
+    if (userData.orderStatus === 'Return Verified & Refund Initiated') {
+      const orderedProducts = await orderData.findOne({ _id: userData.orderId }, 'products.productId products.productQuantity');
+      const order = await orderData.findOne({ _id: userData.orderId });
+
+      for (const orderedProduct of order.products) {
+        const productId = orderedProduct.productId;
+        const productQuantity = orderedProduct.productQuantity;
+        const product = await productData.findOne({ _id: productId });
+        product.productStock += productQuantity;
+        await product.save();
+        console.log(`Product ${product.productName} stock increased by ${productQuantity}.`);
+      }
+      refundStatus = true;
+
+      if (refundStatus === true) {
+        try {
+          const paymentId = order.paymentId;
+          const refundAmount = order.total;
+
+          const refundResponse = await axios.post(`http://localhost:3000/payment/refund/${paymentId}`, {
+            amount: refundAmount,
+            orderId: userData.orderId,
+          });
+
+          if (refundResponse.data.message === 'Refund successful') {
+            console.log('Refund initiated successfully');
+          } else {
+            console.log('Refund failed');
+          }
+        } catch (refundError) {
+          console.error('Error initiating refund:', refundError.message);
+        }
+      }
+    }
+
+    if (refundStatus === true) {
+      res.status(200).json({ message: 'Product stock updated successfully for all ordered products.' });
+    }
+
+    if (result.nModified === 0) {
+      res.status(404).json({ message: 'Order status not updated' });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: 'Error updating order status', error: error.message });
+  }
 };
+
 
 exports.loadEditProducts = async (req, res) => {
     try {
