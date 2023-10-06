@@ -1,7 +1,44 @@
-<button id="rzp-button1">Pay with Razorpay</button>
+<%- include('partials/header.ejs') %>
+<%- include('partials/topbarUser.ejs') %>
+
+<div class="container-fluid text-center">
+    <div class="row">
+        <div class="col-md-4"></div>
+        <div class="col-md-4 border mt-3 bg-secondary rounded-3">
+            <div class="form-group mt-3">
+                <label for="mobileNumber"><h5>Enter your mobile number</h5></label>
+                <input type="tel" class="form-control border text-center rounded-3" id="mobileNumber" name="mobileNumber" pattern="[0-9]{10}" required>
+            </div>
+            <button class="btn-primary rounded-3 p-1 mb-3" id="rzp-button1" disabled>Pay Now</button>
+        </div>
+        <div class="col-md-4"></div>
+    </div>
+</div>
+
+<%- include('partials/bottombarUser.ejs') %>
+<%- include('partials/footer.ejs') %>
+
+<script>
+    $(document).ready(function() {
+        $('#mobileNumber').on('input', function() {
+            const mobileNumber = $(this).val();
+            const pattern = /<%= users.mobile %>/;
+            const payNowButton = $('#rzp-button1');
+
+            if (pattern.test(mobileNumber)) {
+                $(this).removeClass('is-invalid');
+                payNowButton.prop('disabled', false);
+            } else {
+                $(this).addClass('is-invalid');
+                payNowButton.prop('disabled', true);
+            }
+        });
+    });
+</script>
+
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
-var options = {
+    var options = {
     "key": "rzp_test_tckq0nJQnF0XIb",
     "amount": "<%= data.amount %>",
     "currency": "INR",
@@ -22,9 +59,10 @@ var options = {
         "color": "#3399cc"
     }
 };
+
 var rzp1 = new Razorpay(options);
-document.getElementById('rzp-button1').onclick = function(e){
-    rzp1.open();
-    e.preventDefault();
-}
+    document.getElementById('rzp-button1').onclick = function(e){
+        rzp1.open();
+        e.preventDefault();
+    }
 </script>

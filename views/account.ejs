@@ -6,7 +6,7 @@
             <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 300px">
                 <h1 class="font-weight-semi-bold text-uppercase mb-3">Account Details</h1>
                 <div class="d-inline-flex">
-                    <p class="m-0"><a href="/user">Home</a></p>
+                    <p class="m-0"><a href="/user?page=1">Home</a></p>
                     <p class="m-0 px-2">-</p>
                     <p class="m-0">
                         <%= users.fullname %>
@@ -117,17 +117,17 @@
                                     <div class="col-md-6 form-group">
                                          <label>Alternate Mobile No</label>
                                         <input class="form-control" name="alternateMobileNo" type="text" pattern="[0-9]{10}"
-                                            title="Enter valid mobile number" value="<%= billingAddress.alternateMobileNo %>">
+                                            title="Enter valid mobile number" value="<%= billingAddress?billingAddress.alternateMobileNo:""  %>">
                                     </div>
                                     <div class="col-md-6 form-group">
                                         <label>Address Line 1</label>
                                         <input class="form-control" name="userAddressLine1" type="text"
-                                            value="<%= billingAddress.userAddressLine1 %>">
+                                            value="<%= billingAddress?billingAddress.userAddressLine1:"" %>">
                                     </div>
                                     <div class="col-md-6 form-group">
                                         <label>Address Line 2</label>
                                         <input class="form-control" name="userAddressLine2" type="text"
-                                            value="<%= billingAddress.userAddressLine2 %>">
+                                            value="<%= billingAddress?billingAddress.userAddressLine2:"" %>">
                                     </div>
                                     <div class="col-md-6 form-group">
                                         <label>Country</label>
@@ -141,17 +141,17 @@
                                     <div class="col-md-6 form-group">
                                         <label>City</label>
                                         <input class="form-control" name="userCity" type="text"
-                                            value="<%= billingAddress.userCity %>">
+                                            value="<%= billingAddress?billingAddress.userCity:"" %>">
                                     </div>
                                     <div class="col-md-6 form-group">
                                         <label>State</label>
                                         <input class="form-control" name="userState" type="text"
-                                            value="<%= billingAddress.userState %>">
+                                            value="<%= billingAddress?billingAddress.userState:"" %>">
                                     </div>
                                     <div class="col-md-6 form-group">
                                         <label>ZIP Code</label>
                                         <input class="form-control" name="userZIP" type="text" pattern="[0-9]{6}"
-                                        title="Enter valid PIN code"  value="<%= billingAddress.userZIP %>">
+                                        title="Enter valid PIN code"  value="<%= billingAddress?billingAddress.userZIP:"" %>">
                                     </div>
                                 </div>
                                 <div class="form-group mb-0 text-center">
@@ -170,27 +170,27 @@
                                 <div class="col-md-6 form-group">
                                     <label>Name</label>
                                     <input class="form-control" name="userName2" type="text"
-                                        value="<%= shippingAddress.altName %>">
+                                        value="<%= shippingAddress?shippingAddress.altName:"" %>">
                                 </div>
                                 <div class="col-md-6 form-group">
                                     <label>E-mail</label>
                                     <input class="form-control" name="userEmail2" type="text"
-                                        value="<%= shippingAddress.altEmail %>">
+                                        value="<%= shippingAddress?shippingAddress.altEmail:"" %>">
                                 </div>
                                 <div class="col-md-6 form-group">
                                     <label>Mobile No</label>
                                     <input class="form-control" name="alternateMobileNo2" type="text" pattern="[0-9]{10}"
-                                    title="Enter a valid mobile number" value="<%= shippingAddress.altMobileNo %>">
+                                    title="Enter a valid mobile number" value="<%= shippingAddress?shippingAddress.altMobileNo:"" %>">
                                 </div>
                                 <div class="col-md-6 form-group">
                                     <label>Address Line 1</label>
                                     <input class="form-control" name="userAddressLine12" type="text"
-                                        value="<%= shippingAddress.altAddressLine1 %>">
+                                        value="<%= shippingAddress?shippingAddress.altAddressLine1:"" %>">
                                 </div>
                                 <div class="col-md-6 form-group">
                                     <label>Address Line 2</label>
                                     <input class="form-control" name="userAddressLine22" type="text"
-                                        value="<%= shippingAddress.altAddressLine2 %>">
+                                        value="<%= shippingAddress?shippingAddress.altAddressLine2:"" %>">
                                 </div>
                                 <div class="col-md-6 form-group">
                                     <label>Country</label>
@@ -204,17 +204,17 @@
                                 <div class="col-md-6 form-group">
                                     <label>City</label>
                                     <input class="form-control" name="userCity2" type="text"
-                                        value="<%= shippingAddress.altCity %>">
+                                        value="<%= shippingAddress?shippingAddress.altCity:"" %>">
                                 </div>
                                 <div class="col-md-6 form-group">
                                     <label>State</label>
                                     <input class="form-control" name="userState2" type="text"
-                                        value="<%= shippingAddress.altState %>">
+                                        value="<%= shippingAddress?shippingAddress.altState:"" %>">
                                 </div>
                                 <div class="col-md-6 form-group">
                                     <label>ZIP Code</label>
                                     <input class="form-control" name="userZIP2" type="text" pattern="[0-9]{6}"
-                                    title="Enter valid PIN code" value="<%= shippingAddress.altZIP %>">
+                                    title="Enter valid PIN code" value="<%= shippingAddress?shippingAddress.altZIP:"" %>">
                                 </div>  
                             </div>
                             <div class="form-group mb-0 text-center">
@@ -259,32 +259,32 @@
                                     <h5 class="font-weight-semi-bold mb-4">Primary Billing Address</h5>
                                     <label>Alternate Mobile No</label>
                                     <h5>
-                                        <%= billingAddress.alternateMobileNo %>
+                                        <%= billingAddress?billingAddress.alternateMobileNo:"" %>
                                     </h5>
                                     <label>Address</label>
                                     <h5>
-                                        <%= billingAddress.userAddressLine1 %> <br>
-                                        <%= billingAddress.userAddressLine2 %> <br>
-                                        <%= billingAddress.userCity %> <br>
-                                        <%= billingAddress.userState %> <br>
-                                        <%= billingAddress.userCountry %> <br>
-                                        <%= billingAddress.userZIP %>
+                                        <%= billingAddress?billingAddress.userAddressLine1:"" %> <br>
+                                        <%= billingAddress?billingAddress.userAddressLine2:"" %> <br>
+                                        <%= billingAddress?billingAddress.userCity:"" %> <br>
+                                        <%= billingAddress?billingAddress.userState:"" %> <br>
+                                        <%= billingAddress?billingAddress.userCountry:"" %> <br>
+                                        <%= billingAddress?billingAddress.userZIP:"" %>
                                     </h5>
                                 </div>
                                 <div class="col-md-6 form-group">
                                     <h5 class="font-weight-semi-bold mb-4">Primary Shipping Address</h5>
                                     <label>Alternate Mobile No</label>
                                     <h5>
-                                        <%= shippingAddress.altMobileNo %>
+                                        <%= shippingAddress?shippingAddress.altMobileNo:"" %>
                                     </h5>
                                     <label>Address</label>
                                     <h5>
-                                        <%= shippingAddress.altAddressLine1 %> <br>
-                                        <%= shippingAddress.altAddressLine2 %> <br>
-                                        <%= shippingAddress.altCity %> <br>
-                                        <%= shippingAddress.altState %> <br>
-                                        <%= shippingAddress.altCountry %> <br>
-                                        <%= shippingAddress.altZIP %>
+                                        <%= shippingAddress?shippingAddress.altAddressLine1:"" %> <br>
+                                        <%= shippingAddress?shippingAddress.altAddressLine2:"" %> <br>
+                                        <%= shippingAddress?shippingAddress.altCity:"" %> <br>
+                                        <%= shippingAddress?shippingAddress.altState:"" %> <br>
+                                        <%= shippingAddress?shippingAddress.altCountry:"" %> <br>
+                                        <%= shippingAddress?shippingAddress.altZIP:"" %>
                                     </h5>
                                 </div>
                             </div>

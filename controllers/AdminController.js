@@ -16,6 +16,7 @@ const orderData = require('../models/orderModel');
 
 const networkTime = require('../middlewares/networkTime');
 const { log } = require('console');
+const walletData = require('../models/walletModel');
 
 exports.loadLoginPage = function (req, res) {
     if(!req.session.admin || req.session.adminStatus !== 'logged-in'){
@@ -256,20 +257,29 @@ exports.updateOrderStatus = async (req, res) => {
   try {
     const userData = req.body;
     const result = await orderData.findByIdAndUpdate(userData.orderId, { orderStatus: userData.orderStatus });
+    const order = await orderData.findOne({ _id: userData.orderId });
     let refundStatus;
 
-    if (userData.orderStatus === 'Order Delivered') {
-      const result1 = await orderData.findByIdAndUpdate(userData.orderId, { returnOption: true });
-
+    if ((userData.orderStatus === 'Order Delivered') && (order.paymentMethod === "COD")) {
       const deliveredDate = moment(networkTime.date).format('YYYY-MM-DD HH:mm:ss');
+      const result1 = await orderData.findByIdAndUpdate(userData.orderId, 
+        { returnOption: true, 
+          deliveredDate: deliveredDate,
+          paymentStatus: true,
+          paymentId: "pay_cod"},
+        { upsert: true, new: true });
+    }
 
-      const result2 = await orderData.findOneAndUpdate({ _id: userData.orderId },
-        { deliveredDate: deliveredDate }, { upsert: true, new: true });
+    if ((userData.orderStatus === 'Order Delivered') && (order.paymentMethod === "Online")) {
+      const deliveredDate = moment(networkTime.date).format('YYYY-MM-DD HH:mm:ss');
+      const result1 = await orderData.findByIdAndUpdate(userData.orderId, 
+        { returnOption: true, 
+          deliveredDate: deliveredDate},
+        { upsert: true, new: true });
     }
 
     if (userData.orderStatus === 'Return Verified & Refund Initiated') {
       const orderedProducts = await orderData.findOne({ _id: userData.orderId }, 'products.productId products.productQuantity');
-      const order = await orderData.findOne({ _id: userData.orderId });
 
       for (const orderedProduct of order.products) {
         const productId = orderedProduct.productId;
@@ -281,7 +291,7 @@ exports.updateOrderStatus = async (req, res) => {
       }
       refundStatus = true;
 
-      if (refundStatus === true) {
+      if ((refundStatus === true) && (order.paymentMethod === "Online")) {
         try {
           const paymentId = order.paymentId;
           const refundAmount = order.total;
@@ -290,9 +300,50 @@ exports.updateOrderStatus = async (req, res) => {
             amount: refundAmount,
             orderId: userData.orderId,
           });
-
+          console.log('Refund initiated successfully');
           if (refundResponse.data.message === 'Refund successful') {
+            let newBalance;
+            const wallet = await walletData.findOne({customerId: order.userId});
+            if(wallet){
+              newBalance = (wallet.balance + (refundResponse.data.refund.amount/100));
+              await walletData.findOneAndUpdate({customerId: order.userId}, {balance: newBalance}, {new: true});
+            } else {
+              newBalance = (refundResponse.data.refund.amount/100);
+              const wallet = new walletData({
+                customerId: order.userId,
+                balance: newBalance
+              });
+              await wallet.save();
+            }
+            console.log('Refund completed successfully');
+          } else {
+            console.log('Refund failed');
+          }
+        } catch (refundError) {
+          console.error('Error initiating refund:', refundError.message);
+        }
+      }
+      if ((refundStatus === true) && (order.paymentMethod === "COD")) {
+        try {
+          const result = await orderData.findByIdAndUpdate({_id: userData.orderId},{refundStatus: true, refundId: "refund_cod", orderStatus: "Items Returned & Refunded"},{new: true});
+          console.log(result);
+          if (result.refundId === 'refund_cod') {
             console.log('Refund initiated successfully');
+              let newBalance;
+              const wallet = await walletData.findOne({customerId: order.userId});
+              if(wallet){
+                newBalance = (wallet.balance + result.total);
+                await walletData.findOneAndUpdate({customerId: order.userId}, {balance: newBalance}, {new: true});
+              } else {
+                newBalance = result.total;
+                const wallet = new walletData({
+                  customerId: order.userId,
+                  balance: newBalance,
+                });
+                await wallet.save();
+              }
+
+              console.log('Refund completed successfully');
           } else {
             console.log('Refund failed');
           }
@@ -334,7 +385,7 @@ exports.loadEditProducts = async (req, res) => {
     }
 };
   
- 
+
 exports.updateProductBlockStatus =  async (req, res) => {
     try {
       let result;

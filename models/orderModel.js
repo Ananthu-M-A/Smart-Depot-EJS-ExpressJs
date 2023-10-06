@@ -65,6 +65,7 @@ const order = new mongoose.Schema({
   },
   paymentStatus : {
     type: Boolean,
+    default: false,
     required: true,
   },
   paymentId: {
@@ -73,6 +74,7 @@ const order = new mongoose.Schema({
   },
   refundStatus: {
     type: Boolean,
+    default: false,
   },
   refundId: {
     type: String,

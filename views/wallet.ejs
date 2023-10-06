@@ -1,0 +1,72 @@
+
+<%-include('partials/header.ejs')%>
+<%- include('partials/topbarUser.ejs', { countWishlist: countWishlist }) %>
+
+
+    <!-- Page Header Start -->
+    <div class="container-fluid bg-secondary mb-5">
+        <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 300px">
+            <h1 class="font-weight-semi-bold text-uppercase mb-3">Smart Wallet</h1>
+            <div class="d-inline-flex">
+                <p class="m-0"><a href="/user?page=1">Home</a></p>
+                <p class="m-0 px-2">-</p>
+                <p class="m-0">Smart Wallet</p>
+            </div>
+        </div>
+    </div>
+    <!-- Page Header End -->
+
+
+
+<!-- Wallet Start -->
+<div class="container">
+    <div class="row">
+        <div class="col-md-7">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6">
+                        <img class="w-75  border" src="/images/wallet-img.png" alt="">
+                    </div>
+                    <div class="col-md-6 mt-5">
+                        <% let walletBalance = 0; %>
+                        <% if(wallet) { %>
+                        <% walletBalance = wallet.balance; %>
+                        <% } %>
+                        Wallet balance:- <h1>₹<%= walletBalance %></h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5 text-center">
+            <strong>Transactions History</strong>
+            <table class="table text-center mt-2">
+                <thead>
+                  <tr>
+                    <th scope="col">Date</th>
+                    <th scope="col">Type</th>
+                    <th scope="col">Total</th>
+                    <th scope="col">Order Id</th>
+                  </tr>
+                </thead>
+                <tbody>
+                    <% orders.forEach(order => { %>
+                        <% if(order.refundStatus === true) { %>
+                    <tr>
+                        <td><%= order.orderDate %></td>
+                        <td>Cr</td>
+                        <td><%= order.total %></td>
+                        <td><%= order._id %></td>
+                    </tr>
+                    <% }}); %>
+                </tbody>
+              </table>
+        </div>
+    </div>
+  </div>
+  
+<!-- Wallet End -->
+
+    <%-include('partials/bottombarUser.ejs')%>
+    <%-include('partials/footer.ejs')%>
+
+ 

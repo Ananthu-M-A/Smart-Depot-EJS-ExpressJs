@@ -2,14 +2,13 @@ const bcrypt = require('bcrypt');
 const path = require('path');
 const crypto = require('crypto');
 const PDFDocument = require('pdfkit');
-const moment = require('moment');
-const multer = require('multer');
-const fs = require('fs');
 const mongoose = require('mongoose');
+const fs = require('fs');
 const { ObjectId } = require('mongoose').Types;
 const { error } = require('console');
+const multer = require('multer');
+const moment = require('moment');
 const easyinvoice = require('easyinvoice');
-
 
 const productData = require('../models/productModel');
 const categoryData = require('../models/categoryModel');
@@ -18,6 +17,7 @@ const billingAddressData = require('../models/billingAddressModel');
 const shippingAddressData = require('../models/shippingAddressModel');
 const userLoginData = require('../models/userModel');
 const wishlistData = require('../models/wishlistModel');
+const walletData = require('../models/walletModel');
 const couponOfferData = require('../models/couponOfferModel');
 const orderData = require('../models/orderModel');
 
@@ -28,32 +28,39 @@ const session = require('express-session');
 const { log } = require('util');
 
 async function getFilteredProducts(filter, page, itemsPerPage, req) {
-  const startIndex = (page - 1) * itemsPerPage;
+  try {
+    const options = {
+      page: page,
+      limit: itemsPerPage,
+    };
 
-  const count = await productData.countDocuments(filter);
+    if (filter.productCategory) {
+      options.populate = { path: 'productCategory' };
+    }
 
-  const paginatedProducts = await productData.find(filter)
-    .populate('productCategory')
-    .skip(startIndex)
-    .limit(itemsPerPage);
+    if (filter.productPrice) {
+      options.where = { productPrice: filter.productPrice };
+    }
 
-  const categories = await categoryData.find();
-  const countCart = await cartData.countDocuments({ customerId: req.session.user });
-  const countWishlist = await wishlistData.countDocuments({ customerId: req.session.user });
-  const users = await userLoginData.findById(req.session.user);
+    const result = await productData.paginate(filter, options);
 
-  return {
-    paginatedProducts,
-    categories,
-    users,
-    countCart,
-    countWishlist,
-    totalPages: Math.ceil(count / itemsPerPage),
-  };
+    const populatedProducts = result.docs.map((product) => ({
+      ...product.toJSON(),
+      category: product.productCategory ? product.productCategory.productCategory : null,
+    }));
+
+    return {
+      paginatedProducts: populatedProducts,
+      categories: await categoryData.find(),
+      users: await userLoginData.findById(req.session.user),
+      countCart: await cartData.countDocuments({ customerId: req.session.user }),
+      countWishlist: await wishlistData.countDocuments({ customerId: req.session.user }),
+      totalPages: result.totalPages,
+    };
+  } catch (error) {
+    throw error;
+  }
 }
-
-
-
 
 function generateOTP() {
   return crypto.randomInt(100000, 999999).toString();
@@ -313,7 +320,7 @@ exports.loadHomePage = async (req, res) => {
           }
         }
       }
-    
+      
     res.render('home', {
       user: req.session.user,
       products: paginatedProducts,
@@ -324,12 +331,15 @@ exports.loadHomePage = async (req, res) => {
       totalPages,
       currentPage: page,
       selectedCategories: [],
+      selectedMinPriceRange: 0,
+      selectedMaxPriceRange: 10000,
     });
 
   } catch (error) {
-    res.render('home', { error: 'Error fetching product data.' });
+    res.status(500).render('home', { error: 'Error fetching product data.' });
   }
 };
+
 
 
 exports.searchProducts = async (req, res) => {
@@ -354,11 +364,15 @@ exports.searchProducts = async (req, res) => {
       ],
     }).populate('productCategory');
 
-    if (products.length === 0 && typeof(query) === Number) {
-      console.log(parseFloat(query));
+    if (products.length === 0 && parseFloat(query)) {
       products = await productData.find({
         productPrice: { $lte: parseFloat(query) },
-      });
+      }).populate('productCategory');
+      console.log(products);
+    }
+    
+    if(products.length === 0){
+      products = await productData.find().populate('productCategory');
     }
 
     const categories = await categoryData.find();
@@ -367,7 +381,9 @@ exports.searchProducts = async (req, res) => {
 
     const users = await userLoginData.findById(req.session.user);
 
-    res.render('home', { user: req.session.user, products, categories, users, countCart, countWishlist, selectedCategories: [], totalPages: 4, currentPage: 1 });
+    res.render('home', { user: req.session.user, products, categories, users, countCart, countWishlist, selectedCategories: [],
+       totalPages: 4, currentPage: 1, selectedMinPriceRange: 0,selectedMaxPriceRange: 10000, });
+    
   } catch (error) {
     console.log(error);
     res.render('home', { error: 'Error searching products.' });
@@ -379,13 +395,12 @@ exports.filterProducts = async (req, res) => {
     const categoryNames = req.body.category || [];
     const minPriceRange = parseInt(req.body.minPriceRange);
     const maxPriceRange = parseInt(req.body.maxPriceRange);
-
+    
     req.session.filter = {
       categories: categoryNames,
       minPrice: minPriceRange,
       maxPrice: maxPriceRange,
     };
-
 
     const filter = {};
 
@@ -407,11 +422,16 @@ exports.filterProducts = async (req, res) => {
       users,
       countCart,
       countWishlist,
-      productOffer,
-      categoryOffer,
       totalPages,
     } = await getFilteredProducts(filter, page, itemsPerPage, req);
     
+    console.log(paginatedProducts,
+      categories,
+      users,
+      countCart,
+      countWishlist,
+      totalPages);
+
     res.render('home', {
       user: req.session.user,
       products: paginatedProducts,
@@ -421,15 +441,17 @@ exports.filterProducts = async (req, res) => {
       countWishlist,
       totalPages,
       currentPage: page,
-      productOffer,
-      categoryOffer,
       selectedCategories: categoryNames,
+      selectedMinPriceRange: minPriceRange,
+      selectedMaxPriceRange: maxPriceRange,
     });
 
   } catch (error) {
-    res.render('home', { error: 'Error fetching product data.' });
+    console.log(error);
+    res.status(500).render('home', { error: 'Error fetching product data.' });
   }
 };
+
 
 exports.clearFilter = async (req, res) => {
   try {
@@ -443,7 +465,7 @@ exports.clearFilter = async (req, res) => {
       maxPrice: maxPriceRange,
     };
     const itemsPerPage = 4;
-    const page = 1;
+    const page = parseInt(req.query.page) || 1;
 
     const {
       paginatedProducts,
@@ -468,6 +490,8 @@ exports.clearFilter = async (req, res) => {
       productOffer,
       categoryOffer,
       selectedCategories: categoryNames,
+      selectedMinPriceRange: minPriceRange,
+      selectedMaxPriceRange: maxPriceRange,
     });
 
   } catch (error) {
@@ -576,6 +600,22 @@ exports.loadWishlist = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
+
+exports.loadWallet = async (req,res) => {
+  try {
+    const customerId = req.session.user;
+    const wallet = await walletData.findOne({customerId: customerId});
+    const countCart = await cartData.find({ customerId }).countDocuments({});
+    const countWishlist = await wishlistData.findOne({ customerId: req.session.user }).countDocuments({});
+    const users = await userLoginData.findById(customerId);
+    const orders = await orderData.find({userId: customerId});
+    
+    res.render('wallet', { user: customerId, wallet, countCart, countWishlist, users, orders });
+    
+  } catch (error) {
+    console.log(error);
   }
 };
 
@@ -707,6 +747,7 @@ exports.loadAccount = async (req, res) => {
     const shippingAddress = await shippingAddressData.findOne({customerId: customerId});
     const users = await userLoginData.findById(customerId);
 
+
     res.render('account', { user: customerId, users, countCart, countWishlist, billingAddress, shippingAddress });
   } catch (error) {
     res.render('account', { error: 'Error fetching product data.' });
@@ -716,7 +757,7 @@ exports.loadAccount = async (req, res) => {
 exports.updateLoginData = async (req, res) => {
   try {
     const customerId = req.session.user;
-    const imageName = req.file;
+    let imageName = req.file;
     if(imageName)
     {
       imageName =  req.file.filename;
@@ -1118,7 +1159,6 @@ exports.placeOrder = async (req, res) => {
       paymentMethod: req.body.paymentMethod,
       billingAddress:req.body.billingAddress,
       shippingAddress:req.body.shippingAddress,
-      paymentStatus: false,
     });
 
     const savedOrder = await order.save();
@@ -1171,12 +1211,14 @@ exports.loadOrderConfirmation = async (req, res) => {
 
     const offerApplied = await userLoginData.findByIdAndUpdate(customerId,{offerApplied: true, offerAppliedDate: currentDate},{upsert:true});
 
+
     if (req.session.paymentMethod === "Online") {
       const paymentId = req.query.id;
 
       const updatedOrder = await orderData.findByIdAndUpdate(orderId, {
         paymentStatus: true,
         paymentId: paymentId,
+        orderStatus: "Order Confirmed",
       });
 
       if (!updatedOrder) {
@@ -1220,20 +1262,23 @@ exports.downloadInvoice = async (req, res) => {
     .populate('shippingAddress')
     .exec();
 
-    const currentDate = moment(networkTime.date).format('YYYY-MM-DD HH:mm:ss');
-    const products = order.products.map((product) => ({
-      "quantity": product.productQuantity,
-      "description": product.productId.productName,
-      "tax-rate": 0,
-      "price": product.offerPrice || product.productPrice,
-    }));
+    let tax;
     let totalPrice = 0;
     order.products.forEach((product) => {
       totalPrice += (product.offerPrice || product.productPrice) * product.productQuantity;
     });
+    tax = ((totalPrice - orderTotal)*100)/totalPrice;
+    
+    const currentDate = moment(networkTime.date).format('YYYY-MM-DD HH:mm:ss');
+    const products = order.products.map((product) => ({
+      "quantity": product.productQuantity,
+      "description": product.productId.productName,
+      "tax-rate": -tax,
+      "price": product.offerPrice || product.productPrice,
+    }));
+
 
     let total = totalPrice.toString();
-    console.log(total,totalPrice);
 
     let data = {
       "documentTitle": "RECEIPT",
@@ -1266,7 +1311,7 @@ exports.downloadInvoice = async (req, res) => {
       },
       "products": products,
       "total": total,
-      "bottomNotice": "Kindly pay your invoice within 15 days.",
+      "bottomNotice": "Coupon offer applied (vat)",
       "vat": 0,
       "vatPercentage": 0,
     };
@@ -1282,7 +1327,6 @@ exports.downloadInvoice = async (req, res) => {
         return;
       }
   
-      // Write the decoded PDF data to the specified file path
       fs.writeFile(filePath, Buffer.from(pdf, 'base64'), function (err) {
         if (err) {
           console.error('Error while saving the PDF:', err);
@@ -1290,7 +1334,6 @@ exports.downloadInvoice = async (req, res) => {
         } else {
           console.log('PDF saved as', filePath);
     
-          // Send the PDF for download
           res.download(filePath, 'invoice.pdf', function (err) {
             if (err) {
               console.error('Error while sending the PDF:', err);

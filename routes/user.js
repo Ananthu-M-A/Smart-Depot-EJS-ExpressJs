@@ -17,6 +17,7 @@ router.get('/cart', requireAuth, isUserBlocked, UserController.loadCart);
 router.get('/removeCartItem/:productId', requireAuth, isUserBlocked, UserController.removeCartItem);
 router.post('/applyOffer', requireAuth, isUserBlocked, UserController.applyOffer);
 router.get('/wishlist', requireAuth, isUserBlocked, UserController.loadWishlist);
+router.get('/wallet',requireAuth, isUserBlocked, UserController.loadWallet);
 router.get('/removeWishlistItem/:productId', requireAuth, isUserBlocked, UserController.removeWishlistItem);
 router.get('/orders', requireAuth, isUserBlocked, UserController.loadOrders);
 router.get('/cancelOrder/:orderId', requireAuth, isUserBlocked, UserController.cancelOrder);

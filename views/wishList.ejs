@@ -8,7 +8,7 @@
         <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 300px">
             <h1 class="font-weight-semi-bold text-uppercase mb-3">WishList</h1>
             <div class="d-inline-flex">
-                <p class="m-0"><a href="/user">Home</a></p>
+                <p class="m-0"><a href="/user?page=1">Home</a></p>
                 <p class="m-0 px-2">-</p>
                 <p class="m-0">WishList</p>
             </div>
@@ -45,7 +45,7 @@
                       <a href="/user/removeWishlistItem/<%= wish.product._id %>" class="btn btn-primary">X</i></a></td>
                     </div>
                     <div class="col-md-4">
-                        <a href="/user/productDetails/<%= wish.product._id %>" class="btn btn-primary">
+                        <a href="/user/productDetails?productId=<%= wish.product._id %>&categoryId=<%= wish.product.productCategory._id %>" class="btn btn-primary">
                           <img width="20vh" src="/images/view.png" alt=""></a>
                     </div>
                 </div>

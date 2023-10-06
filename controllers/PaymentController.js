@@ -1,36 +1,49 @@
 const crypto = require('crypto');
 const razorpay = require('razorpay');
 const orderData = require('../models/orderModel');
+const userLoginData = require('../models/userModel');
+const cartData = require('../models/cartModel');
+const wishlistData = require('../models/wishlistModel');
 
-exports.createOrder = async (req,res)=>{
-    try {
-      const instance = new razorpay({
-        key_id: process.env.RAZORPAY_KEY_ID,
-        key_secret: process.env.RAZORPAY_KEY_SECRET,
+exports.createOrder = async (req, res) => {
+  try {
+    const instance = new razorpay({
+      key_id: process.env.RAZORPAY_KEY_ID,
+      key_secret: process.env.RAZORPAY_KEY_SECRET,
+    });
+
+    const orderId = req.query.id;
+    const order = await orderData.findOne({ _id: orderId });
+    let amount = order.total * 100;
+    const options = {
+      amount: amount,
+      currency: "INR",
+      receipt: orderId,
+    };
+
+    const createOrderPromise = () => {
+      return new Promise((resolve, reject) => {
+        instance.orders.create(options, function (error, order) {
+          if (error) {
+            console.log(error);
+            reject({ message: "Something went wrong!" });
+          }
+          resolve(order);
+        });
       });
-      
-      const orderId = req.query.id;
-      const order = await orderData.findOne({_id: orderId});
-      let amount = order.total*100;
-      const options = {
-        amount: amount,
-        currency: "INR",
-        receipt: orderId,
-      };
-  
-      instance.orders.create(options, function(error, order) {
-        if(error)
-        {
-          console.log(error);
-          return res.status(500).json({message:"Something went wrong!"});
-        }
-        res.render('index',{data:order});
-        // res.status(200).json({data:order});
-      });
-    } catch (error) {
-        res.status(500).json({message:"Internal Server Error!"});
-    }
+    };
+    const customerId = req.session.user;
+    const users = await userLoginData.findById(customerId);
+    const countCart = await cartData.find({ customerId: req.session.user }).countDocuments({});
+    const countWishlist = await wishlistData.findOne({ customerId: req.session.user }).countDocuments({});
+    const createdOrder = await createOrderPromise();
+    res.render('index',{ users,countCart,countWishlist, data: createdOrder });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Internal Server Error!" });
+  }
 };
+
 
 exports.verifyPayment =  async (req,res)=>{
     try {
@@ -85,7 +98,6 @@ exports.initiateRefund = async (req, res) => {
     } else {
       res.status(500).json({ message: 'Refund failed' });
     }
-
 
   } catch (error) {
     console.error(error);
