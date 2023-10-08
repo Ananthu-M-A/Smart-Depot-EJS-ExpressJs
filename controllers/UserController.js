@@ -130,7 +130,7 @@ exports.verifyOtp = async (req, res) => {
   if (currentTime > otpExpiry) {
     console.log("timeout");
     req.session.userData = null;
-    res.redirect("/userSignup");
+    return res.redirect("/userSignup");
   }
 
   if (enteredOTP === storedUserData.otp){
@@ -188,8 +188,11 @@ exports.forgotPassword = async (req, res, next) => {
   }
 
   const otp = generateOTP();
+  const currentTime = new Date();
+  const otpTimeout = 120;
+  const otpExpiry = new Date(currentTime.getTime() + otpTimeout * 1000);
   
-  req.session.userData = { email, otp };
+  req.session.userData = { email, otp, otpExpiry };
 
   try {
     const mailOptions = {
@@ -206,19 +209,32 @@ exports.forgotPassword = async (req, res, next) => {
         console.log('OTP email sent:', info.response);
       }
     });
-    res.redirect('/userLogin/verify-otp');
+    res.render('verifyOtpFP');
   } catch (error) {
     console.error('Error saving user:', error);
   }
 
 };
 
+exports.loadOtpPageFP = (req, res) => {
+  res.render('verifyOtpFP');
+};
+
 exports.verifyOtpForgotPassword = async (req, res) => {
   const enteredOTP = req.body.otp;
   const storedUserData = req.session.userData;
+  const otpExpiry = new Date(storedUserData.otpExpiry);
+  const currentTime = new Date();
+
   if (!storedUserData) {
     res.status(400).send('User data not found in session');
     return;
+  }
+
+  if (currentTime > otpExpiry) {
+    console.log("timeout");
+    storedUserData.otp = null;
+    return res.redirect('/userLogin/forgotPassword');
   }
 
   if (enteredOTP === storedUserData.otp) { res.render('addNewPassword'); }
@@ -241,7 +257,7 @@ exports.addNewPassword = async (req, res) => {
         res.render('login');
       }
       else {
-        res.redirect('/userLogin/forgotPassword')
+        res.redirect('/userLogin/forgotPassword');
       }
     }
   } catch (error) {
@@ -676,7 +692,7 @@ exports.loadOrders = async (req, res) => {
     }
     const users = await userLoginData.findById(userId);
     
-    orderData.find().sort({ orderDate: -1 }).exec()
+    orderData.find({ userId: userId }).sort({ orderDate: -1 }).exec()
       .then((orders) => {
         res.render('order', { user: userId, orders: orders, countCart, countWishlist, users });
       })

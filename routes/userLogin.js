@@ -5,7 +5,7 @@ const UserController = require('../controllers/UserController');
 router.get('/', UserController.loadLoginPage); 
 router.get('/forgotPassword', UserController.loadForgotPasswordPage);
 router.post('/forgotPassword', UserController.forgotPassword);
-router.get('/verify-otp', UserController.loadOtpPage);
+router.get('/verify-otp', UserController.loadOtpPageFP);
 router.post('/verifyOtpFP', UserController.verifyOtpForgotPassword);
 router.post('/addNewPassword', UserController.addNewPassword);
 router.post('/', UserController.login);
