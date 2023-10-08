@@ -16,6 +16,24 @@
     </div>
     <!-- Page Header End -->
 
+    <div class="container bg-secondary">
+        <div class="row text-center p-3">
+            <h2>BIG BILLION OFFERS</h2>
+            <% offers.forEach((offer, index) => { %>
+            <div class="col-md-3">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md text-center p-3">
+                            <input class="text-center" id="code<%= index %>" value="<%= offer.couponCode %>" type="text" disabled>
+                            <br><br>
+                            <button class="btn btn-primary p-0 w-50 rounded-3" id="copyButton<%= index %>">Copy Code</button>
+                        </div>
+                    </div>
+                </div>  
+            </div>
+            <% }) %>
+        </div>
+    </div>
 
     <!-- Cart Start -->
     <div class="container-fluid pt-5">
@@ -80,7 +98,7 @@
             <div class="col-lg-4">
                 <form class="mb-5" action="/user/applyOffer" method="POST">
                     <div class="input-group">
-                        <input type="text" name="couponCode" class="form-control p-4" placeholder="Coupon Code">
+                        <input type="text" name="couponCode" id="applyCode" class="form-control p-4" placeholder="Coupon Code">
                         <div class="input-group-append">
                             <button class="btn btn-primary">Apply Coupon</button>
                         </div>
@@ -130,3 +148,18 @@
     <%-include('partials/bottombarUser.ejs')%>
     <%-include('partials/footer.ejs')%>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const totalOffers = <%= offers.length %>;
+        for (let i = 0; i < totalOffers; i++) {
+            const copyButton = document.getElementById(`copyButton${i}`);
+            const codeToCopy = document.getElementById(`code${i}`);
+            const applyCode = document.getElementById('applyCode');
+
+            copyButton.addEventListener('click', function () {
+                applyCode.value = codeToCopy.value;
+                console.log(applyCode.value);
+            });
+        }
+    });
+</script>

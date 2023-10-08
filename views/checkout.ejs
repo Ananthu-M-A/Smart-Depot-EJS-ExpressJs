@@ -14,6 +14,127 @@
         </div>
         <!-- Page Header End -->
 
+        <div class="container"> 
+            <div class="row">
+                <div class="col-md">
+                    <button class="btn-primary p-1 rounded-3" data-bs-toggle="modal" data-bs-target="#addressModal" data-bs-target="#staticBackdrop" href="">Add another Address</button>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="addressModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="addressModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content custom-modal-content">
+                    <div class="modal-header">
+                      <h1 class="modal-title fs-5" id="staticBackdropLabel">ADD NEW ADDRESS</h1>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-md-12">
+                                        <h5 class="font-weight-semi-bold mb-4 text-center">Billing Address</h5>
+                                        <form action="/user/addAddressCheckout" method="POST" >
+                                        <div class="row">
+                                            <div class="col-md-6 form-group">
+                                                 <label>Alternate Mobile No</label>
+                                                <input class="form-control" name="alternateMobileNo" type="tel" pattern="[0-9]{10}"
+                                                title="Enter a valid mobile number">
+                                            </div>
+                                            <div class="col-md-6 form-group">
+                                                <label>Address Line 1</label>
+                                                <input class="form-control" name="userAddressLine1" type="text">
+                                            </div>
+                                            <div class="col-md-6 form-group">
+                                                <label>Address Line 2</label>
+                                                <input class="form-control" name="userAddressLine2" type="text">
+                                            </div>
+                                            <div class="col-md-6 form-group">
+                                                <label>Country</label>
+                                                <select class="custom-select" name="userCountry">
+                                                    <option selected>India</option>
+                                                    <option>United States</option>
+                                                    <option>China</option>
+                                                    <option>Sreelanka</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-6 form-group">
+                                                <label>City</label>
+                                                <input class="form-control" name="userCity" type="text">
+                                            </div>
+                                            <div class="col-md-6 form-group">
+                                                <label>State</label>
+                                                <input class="form-control" name="userState" type="text">
+                                            </div>
+                                            <div class="col-md-6 form-group">
+                                                <label>ZIP Code</label>
+                                                <input class="form-control" name="userZIP" type="tel" pattern="[0-9]{6}"
+                                                title="Enter valid PIN code">
+                                            </div>
+                                        </div>
+                                    </div>
+                                <br>
+                                <br>
+                                <div class="col-md-12" id="shipping-address">
+                                    <br>
+                                    <br>
+                                    <h5 class="font-weight-semi-bold mb-4 text-center">Shipping Address</h5>
+                                    <div class="row">
+                                        <div class="col-md-6 form-group">
+                                            <label>Name</label>
+                                            <input class="form-control" name="userName2" type="text">
+                                        </div>
+                                        <div class="col-md-6 form-group">
+                                            <label>E-mail</label>
+                                            <input class="form-control" name="userEmail2" type="email" aria-describedby="emailHelp">
+                                        </div>
+                                        <div class="col-md-6 form-group">
+                                            <label>Mobile No</label>
+                                            <input class="form-control" name="alternateMobileNo2" type="tel" pattern="[0-9]{10}"
+                                            title="Enter a valid mobile number">
+                                        </div>
+                                        <div class="col-md-6 form-group">
+                                            <label>Address Line 1</label>
+                                            <input class="form-control" name="userAddressLine12" type="text">
+                                        </div>
+                                        <div class="col-md-6 form-group">
+                                            <label>Address Line 2</label>
+                                            <input class="form-control" name="userAddressLine22" type="text">
+                                        </div>
+                                        <div class="col-md-6 form-group">
+                                            <label>Country</label>
+                                            <select class="custom-select" name="userCountry2">
+                                                <option selected>India</option>
+                                                <option>United States</option>
+                                                <option>China</option>
+                                                <option>Sreelanka</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6 form-group">
+                                            <label>City</label>
+                                            <input class="form-control" name="userCity2" type="text">
+                                        </div>
+                                        <div class="col-md-6 form-group">
+                                            <label>State</label>
+                                            <input class="form-control" name="userState2" type="text">
+                                        </div>
+                                        <div class="col-md-6 form-group">
+                                            <label>ZIP Code</label>
+                                            <input class="form-control" name="userZIP2" type="tel" pattern="[0-9]{6}"
+                                            title="Enter valid PIN code">
+                                        </div>  
+                                    </div>
+                                    <div class="form-group mb-0 text-center">
+                                        <button type="submit" class="btn btn-primary px-3" id="addressSubmit">Add Address</button>
+                                    </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div> 
+        </div>                     
+
 
 <!-- Checkout Start -->
 <form id="paymentForm" action="/user/placeOrder/<%= subTotal %>/<%= total %>/<%= discount %>" method="post">
@@ -49,6 +170,7 @@
                 <div class="mb-4 border rounded-3">
                     <div class="card-header bg-secondary border-0 mb-5 rounded-3">
                         <h4 class="font-weight-semi-bold m-0">Shipping Address</h4>
+                        <a class="text-decoration-none" href="">Add another Address</a>
                     </div>
                     <div class="card-body">
                         <% shippingAddress.forEach(address=> { %>
@@ -131,14 +253,14 @@
                         <div class="form-group">
                             <div class="custom-control custom-radio">
                                 <input type="radio" class="custom-control-input" name="paymentMethod" id="cod"
-                                    value="COD" checked>
+                                    value="COD">
                                 <label class="custom-control-label" for="cod">Cash-On-Delivery</label>
                             </div>
                         </div>
                         <div class="form-group">
                             <div class="custom-control custom-radio">
                                 <input type="radio" class="custom-control-input" name="paymentMethod" id="online"
-                                    value="Online">
+                                    value="Online" checked>
                                 <label class="custom-control-label" for="online">Online Payment (RazorPay)</label>
                             </div>
                         </div>
@@ -159,7 +281,13 @@
 
         <%-include('partials/bottombarUser.ejs')%>
             <%-include('partials/footer.ejs')%>
-
+            <script>
+                document.getElementById('addressSubmit').addEventListener('click', function() {
+                  setTimeout(function() {
+                    window.location.reload();
+                  }, 2000); 
+                });
+              </script>
                 <script>
                     let orderId;
                     $(document).ready(function () {
@@ -175,7 +303,6 @@
                             }),
                         };
 
-                        //creates new orderId everytime
                         $.ajax(settings).done(function (response) {
 
                             orderId = response.data.id;

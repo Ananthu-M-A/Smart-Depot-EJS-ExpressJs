@@ -78,14 +78,17 @@ exports.signup = async (req, res) => {
     return res.status(400).send('You already have an account');
   }
 
-  const otp = generateOTP();
-
+  const otp = generateOTP()
+  const currentTime = new Date();
+  const otpTimeout = 120;
+  const otpExpiry = new Date(currentTime.getTime() + otpTimeout * 1000);
   req.session.userData = {
     fullname,
     email,
     mobile,
     password,
     otp,
+    otpExpiry,
   };
 
   try {
@@ -116,13 +119,21 @@ exports.loadOtpPage = (req, res) => {
 exports.verifyOtp = async (req, res) => {
   const enteredOTP = req.body.otp;
   const storedUserData = req.session.userData;
+  const otpExpiry = new Date(storedUserData.otpExpiry);
+  const currentTime = new Date();
 
-  if (!storedUserData) {
+  if(!storedUserData) {
     res.status(400).send('User data not found in session');
     return;
   }
 
-  if (enteredOTP === storedUserData.otp) {
+  if (currentTime > otpExpiry) {
+    console.log("timeout");
+    req.session.userData = null;
+    res.redirect("/userSignup");
+  }
+
+  if (enteredOTP === storedUserData.otp){
     const { fullname, email, mobile, password } = storedUserData;
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -177,6 +188,7 @@ exports.forgotPassword = async (req, res, next) => {
   }
 
   const otp = generateOTP();
+  
   req.session.userData = { email, otp };
 
   try {
@@ -276,7 +288,7 @@ exports.loadHomePage = async (req, res) => {
       }
     }
 
-    const categoryOffer = await categoryData.find({},{offerStatus: 1, offerStart:1, offerEnd: 1});
+    const categoryOffer = await categoryData.find({},{offerStatus: 1, offerStart: 1, offerEnd: 1});
     for (const offer of categoryOffer) {
       if (offer.offerStatus && offer.offerStatus === "Active") {
         const lastDate = new Date(offer.offerEnd);
@@ -289,7 +301,7 @@ exports.loadHomePage = async (req, res) => {
       }
     }
 
-    const couponOffer = await couponOfferData.find({},{offerStatus: 1, offerStart:1, offerEnd: 1});
+    const couponOffer = await couponOfferData.find({});
     for (const offer of couponOffer) {
       if (offer.offerStatus && offer.offerStatus === "Active") {
         const lastDate = new Date(offer.offerEnd);
@@ -320,7 +332,7 @@ exports.loadHomePage = async (req, res) => {
           }
         }
       }
-      
+    let pageRoute = req.path;
     res.render('home', {
       user: req.session.user,
       products: paginatedProducts,
@@ -333,6 +345,8 @@ exports.loadHomePage = async (req, res) => {
       selectedCategories: [],
       selectedMinPriceRange: 0,
       selectedMaxPriceRange: 10000,
+      pageRoute,
+      couponOffer
     });
 
   } catch (error) {
@@ -344,6 +358,8 @@ exports.loadHomePage = async (req, res) => {
 
 exports.searchProducts = async (req, res) => {
   const query = req.query.searchInput;
+  const page = parseInt(req.query.page) || 1;
+
   if (!query) {
     res.redirect('/user');
   }
@@ -368,7 +384,6 @@ exports.searchProducts = async (req, res) => {
       products = await productData.find({
         productPrice: { $lte: parseFloat(query) },
       }).populate('productCategory');
-      console.log(products);
     }
     
     if(products.length === 0){
@@ -392,10 +407,14 @@ exports.searchProducts = async (req, res) => {
 
 exports.filterProducts = async (req, res) => {
   try {
-    const categoryNames = req.body.category || [];
-    const minPriceRange = parseInt(req.body.minPriceRange);
-    const maxPriceRange = parseInt(req.body.maxPriceRange);
-    
+    const categoryNames = req.query.category || req.query.categoryNames || [];
+    console.log(typeof(categoryNames));
+
+    const minPriceRange = parseInt(req.query.minPriceRange);
+    const maxPriceRange = parseInt(req.query.maxPriceRange);
+
+    console.log(categoryNames);
+
     req.session.filter = {
       categories: categoryNames,
       minPrice: minPriceRange,
@@ -415,7 +434,7 @@ exports.filterProducts = async (req, res) => {
 
     const itemsPerPage = 4;
     const page = parseInt(req.query.page) || 1;
-
+    console.log(page);
     const {
       paginatedProducts,
       categories,
@@ -424,13 +443,10 @@ exports.filterProducts = async (req, res) => {
       countWishlist,
       totalPages,
     } = await getFilteredProducts(filter, page, itemsPerPage, req);
-    
-    console.log(paginatedProducts,
-      categories,
-      users,
-      countCart,
-      countWishlist,
-      totalPages);
+
+    // console.log(paginatedProducts);
+
+    let pageRoute = req.path;
 
     res.render('home', {
       user: req.session.user,
@@ -444,6 +460,7 @@ exports.filterProducts = async (req, res) => {
       selectedCategories: categoryNames,
       selectedMinPriceRange: minPriceRange,
       selectedMaxPriceRange: maxPriceRange,
+      pageRoute,
     });
 
   } catch (error) {
@@ -500,8 +517,6 @@ exports.clearFilter = async (req, res) => {
 };
 
 
-
-
 exports.loadProductDetail = async (req, res) => {
   try {
     const countCart = await cartData.find({ customerId: req.session.user }).countDocuments({});
@@ -552,7 +567,9 @@ exports.loadCart = async (req, res) => {
     const categories = await categoryData.find({ offerStatus: "Active" });
     const productQuantity = req.body.quantity;
     const users = await userLoginData.findById(req.session.user);
-    res.render('cart', { user: req.session.user, productQuantity, cartItems, countCart, countWishlist, users, categories, couponOffer});
+    const offers = await couponOfferData.find({offerStatus: "Active"});
+    const totalOffers = offers.length;
+    res.render('cart', { user: req.session.user, productQuantity, cartItems, countCart, countWishlist, users, categories, couponOffer, offers, totalOffers});
   } catch (error) {
     res.render('cart', { error: 'Error fetching product data.' });
   }
@@ -1087,6 +1104,46 @@ exports.loadCheckout = async (req, res) => {
     res.render('checkout', { error: 'Error fetching product data.' });
   }
 };
+
+ 
+exports.addAddressCheckout = async (req, res) => {
+  try {
+    const customerId = req.session.user;
+
+    const billingAddress = new billingAddressData({
+      customerId: customerId,
+      alternateMobileNo: req.body.alternateMobileNo,
+      userAddressLine1: req.body.userAddressLine1,
+      userAddressLine2: req.body.userAddressLine2,
+      userCountry: req.body.userCountry,
+      userCity: req.body.userCity,
+      userState: req.body.userState,
+      userZIP: req.body.userZIP,
+    });
+
+    const shippingAddress = new shippingAddressData({
+      customerId: customerId,
+      altName: req.body.userName2,
+      altEmail: req.body.userEmail2,
+      altMobileNo: req.body.alternateMobileNo2,
+      altAddressLine1: req.body.userAddressLine12,
+      altAddressLine2: req.body.userAddressLine22,
+      altCountry: req.body.userCountry2,
+      altCity: req.body.userCity2,
+      altState: req.body.userState2,
+      altZIP: req.body.userZIP2,
+    });
+
+    if(shippingAddress && billingAddress)
+    {
+      const result1 = await billingAddress.save();
+      const result2 = await shippingAddress.save();
+    }
+  } catch (error) {
+    console.log(error);
+    res.render('home', { error: 'Error fetching product data.' });
+  }
+}
 
 exports.updateReturnStatus = async (req, res) => {
   try {

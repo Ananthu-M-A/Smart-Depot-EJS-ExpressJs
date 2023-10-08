@@ -10,7 +10,7 @@ const UserController = require('../controllers/UserController');
 
 router.get('/', requireAuth, isUserBlocked, UserController.loadHomePage);
 router.get('/search', requireAuth, isUserBlocked, UserController.searchProducts);
-router.post('/filterProducts', requireAuth, isUserBlocked, UserController.filterProducts);
+router.get('/filterProducts', requireAuth, isUserBlocked, UserController.filterProducts);
 router.get('/clearFilter', requireAuth, isUserBlocked, UserController.clearFilter);
 router.get('/productDetails', requireAuth, isUserBlocked, UserController.loadProductDetail);
 router.get('/cart', requireAuth, isUserBlocked, UserController.loadCart);
@@ -34,6 +34,7 @@ router.post('/cart/:productId', requireAuth, UserController.addToCart);
 router.post('/changeQuantity/:productId/:productQuantity', requireAuth, UserController.changeQuantity);
 router.post('/wishlist/:productId', UserController.addToWishlist);
 router.post('/checkout/:subTotal/:total/:discount', requireAuth, UserController.loadCheckout);
+router.post('/addAddressCheckout', requireAuth, UserController.addAddressCheckout);
 router.post('/updateOrderStatus/:orderId', requireAuth, UserController.updateReturnStatus);
 router.post('/placeOrder/:subTotal/:total/:discount', requireAuth, UserController.placeOrder);
 router.get('/orderConfirmation', requireAuth, UserController.loadOrderConfirmation);

@@ -7,8 +7,7 @@
                     <div class="col-lg-3 d-none d-lg-block">
                         <div class="filter-panel">
                             <!-- Filter Categories -->
-                            <% let i = 1; %>
-                            <form action="/user/filterProducts?page=1" method="POST">
+                            <form action="/user/filterProducts" method="GET">
                                 <div class="container-fluid">
                                     <div class="row m-0 btn shadow-none d-flex align-items-center justify-content-center bg-primary text-white w-100"
                                         style="height: 65px; margin-top: -1px; padding: 0 30px;">
@@ -105,7 +104,6 @@
                                     </div>
                                 </div>
                             </form>
-
                         </div>
                     </div>
 
@@ -282,7 +280,6 @@
                                             </strong>
                                             </div>
                                         </div>     
-                                        <!-- Add other product details as needed -->
 
                                     </div>
                                 </div>
@@ -313,27 +310,28 @@
             </div>
             <!-- Categories End -->
 
-
+            
             <!-- Offer Start -->
+
             <div class="container-fluid offer pt-5">
                 <div class="row px-xl-5">
                     <div class="col-md-6 pb-4">
                         <div class="position-relative bg-secondary text-center text-md-right text-white mb-2 py-5 px-5">
-                            <img src="img/offer-1.png" alt="">
                             <div class="position-relative" style="z-index: 1;">
-                                <h5 class="text-uppercase text-primary mb-3">20% off the all order</h5>
-                                <h1 class="mb-4 font-weight-semi-bold">Spring Collection</h1>
-                                <a href="" class="btn btn-outline-primary py-md-2 px-md-3">Shop Now</a>
+                                <h5 class="text-uppercase text-primary mb-3">Start with an OFF </h5>
+                                <h1 class="mb-4 font-weight-semi-bold">BIG BILLION DAYS</h1> 
+                                <h5 class="text-uppercase text-primary mb-3">Avail offers from your CART</h5>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-6 pb-4">
                         <div class="position-relative bg-secondary text-center text-md-left text-white mb-2 py-5 px-5">
-                            <img src="img/offer-2.png" alt="">
                             <div class="position-relative" style="z-index: 1;">
-                                <h5 class="text-uppercase text-primary mb-3">20% off the all order</h5>
-                                <h1 class="mb-4 font-weight-semi-bold">Winter Collection</h1>
-                                <a href="" class="btn btn-outline-primary py-md-2 px-md-3">Shop Now</a>
+                                <div class="position-relative" style="z-index: 1;">
+                                    <h5 class="text-uppercase text-primary mb-3">Start with an OFF </h5>
+                                    <h1 class="mb-4 font-weight-semi-bold">BIG BILLION DAYS</h1> 
+                                    <h5 class="text-uppercase text-primary mb-3">Avail offers from your CART</h5>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -409,14 +407,26 @@
 
             <!-- Products End -->
 
-        <div id="pagination" class="text-center">
-            <h5>Page No : <% for (i=1; i <=totalPages; i++) { %>
-                    <a href="/user?page=<%= i %>" class="pagination-link <%= i === currentPage ? 'active' : '' %>">
-                        <%= i %>
-                    </a>
+            <div id="pagination" class="text-center">
+                <% if (pageRoute === '/') { %>
+                    <h5>Page No :</h5>
+                    <% for (let i=1; i <= totalPages; i++) { %>
+                        <a href="/user?page=<%= i %>" class="pagination-link <%= i === currentPage ? 'active' : '' %>">
+                            <%= i %>
+                        </a>
+                    <% } %>
+                <% } else if (pageRoute === '/filterProducts') { %>
+                    <h5>Page No :</h5>
+                    <% for (let i=1; i <= totalPages; i++) { %>
+                        <a href="/user/filterProducts?page=<%= i %>&categoryNames=<%= selectedCategories %>&minPriceRange=<%= selectedMinPriceRange %>&maxPriceRange=<%= selectedMaxPriceRange %>" class="pagination-link <%= i === currentPage ? 'active' : '' %>">
+                            <%= i %>
+                        </a>
                     <% } %> 
-            </h5>
-        </div>
+                <% } else { %>
+                    <h5>Page No : 1</h5>
+                <% } %>
+            </div>
+            
         
         <%-include('partials/bottombarUser.ejs')%>
             <%-include('partials/footer.ejs')%>
@@ -426,5 +436,5 @@
               
                 document.querySelector('select[name="minPriceRange"]').value = selectedMinPriceRange;
                 document.querySelector('select[name="maxPriceRange"]').value = selectedMaxPriceRange;
-              </script>
+            </script>
               
