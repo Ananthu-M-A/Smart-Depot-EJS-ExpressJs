@@ -5,26 +5,28 @@
     <div class="col-md-4"></div>
     <div class="col-md-4 bg-light p-5 rounded text-center">
       <h1 class="mb-3">SIGN UP</h1>
-      <form method="POST" action="/userSignup" class="text-center text-light" id="signupForm" onsubmit="return validateForm()">
+      <form method="POST" action="/userSignup" class="text-center text-light" id="signupForm" onsubmit="return validateFormSignup()">
         <div class="mb-3">
           <label for="name" class="form-label text-dark">Full Name</label>
           <input type="text" class="form-control bg-light" id="name" name="fullname"
-            required>
+          pattern="[A-Za-z\s]{2,50}" title="Name should only have Alphabets & Spaces." required>
         </div>
         <div class="mb-3">
           <label for="email" class="form-label text-dark">Email Address</label>
           <input type="email" class="form-control bg-light" id="email" name="email"
-           aria-describedby="emailHelp" required>
+           aria-describedby="emailHelp" pattern="[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}" 
+           title="Email should be in 'user@example.com' format." required>
         </div>
         <div class="mb-3">
           <label for="number" class="form-label text-dark">Mobile Number</label>
           <input type="tel" id="mobile" name="mobile" class="form-control bg-light" pattern="[0-9]{10}"
-          title="Enter valid mobile number" required>
+          title="Mobile number should be 10 digits." required>
         </div>
         <div class="mb-3">
           <label for="password" class="form-label text-dark">Password</label>
           <input type="password" id="password" name="password" class="form-control bg-light" 
-          pattern="[0-9]{6}" title="Minimum 4 characters" required>
+          pattern="(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@#$%^&+=!])[A-Za-z\d@#$%^&+=!]{8,}" 
+          title="Min 8 characters which should include atleast a uppercase, lowercase, digit & special character" required>
         </div>
         <div class="container">
           <div class="row">
@@ -33,8 +35,13 @@
             </div>
           </div>
         </div>
+        <% if(errorMsg){ %>
+          <div class="bg-danger mt-2">
+              <h6><%= errorMsg %></h6>
+          </div>
+        <% } %>
       </form>
-      <a href="/userLogin"><p class="mt-2 text-dark">Already have an account</p></a>
+      <a href="/userLogin"><p class="mt-2 text-dark">Already have an account..?</p></a>
       </div>
     <div class="col-md-4"></div>
   </div>

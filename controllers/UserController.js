@@ -67,7 +67,7 @@ function generateOTP() {
 }
 
 exports.loadSignupPage = (req, res) => {
-  res.render('signup');
+  res.render('signup',{ errorMsg: undefined });
 };
 
 exports.signup = async (req, res) => {
@@ -75,8 +75,9 @@ exports.signup = async (req, res) => {
   const user = await userLoginData.findOne({ email });
 
   if (user) {
-    return res.status(400).send('You already have an account');
-  }
+    const errorMsg = "Your Email already have an account...!";
+    res.status(400).render('signup', { errorMsg });
+  }  
 
   const otp = generateOTP()
   const currentTime = new Date();

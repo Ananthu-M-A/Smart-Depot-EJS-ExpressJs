@@ -109,35 +109,37 @@
 })(jQuery); // End of use strict
 
 
-  function validateForm() {
+  function validateFormSignup() {
 
-    let fullNameInput = document.getElementById("name");
-    let emailInput = document.getElementById("email");
-    let mobileInput = document.getElementById("mobile");
-    let passwordInput = document.getElementById("password");
-    let fullName = fullNameInput.value;
-    let email = emailInput.value;
-    let mobile = mobileInput.value;
-    let password = passwordInput.value;
+    const fullNameInput = document.getElementById("name");
+    const emailInput = document.getElementById("email");
+    const mobileInput = document.getElementById("mobile");
+    const passwordInput = document.getElementById("password");
+    const fullName = fullNameInput.value;
+    const email = emailInput.value;
+    const mobile = mobileInput.value;
+    const password = passwordInput.value;
 
-    let emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-    let mobilePattern = /^\d{10}$/;
+    const namePattern = /^[A-Za-z\s]{2,50}$/;
+    const emailPattern = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+    const mobilePattern = /^[0-9]{10}$/;
+    const passwordPattern = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@#$%^&+=!])[A-Za-z\d@#$%^&+=!]{8,}$/;
     let isValid = true;
-    if (fullName === "") {
+    if ((fullName === "")||(!namePattern.test(fullName))) {
       isValid = false;
-      alert("Name is required");
+      alert("Full Name : Only Alphabets & Spaces are allowed & it should have min 2 characters");
     }
     if (!emailPattern.test(email)) {
       isValid = false;
-      alert("Invalid Email Address");
+      alert("Enter you Email in 'user@example.com' format.");
     }
     if (!mobilePattern.test(mobile)) {
       isValid = false;
-      alert("Invalid Mobile Number (10 digits required)");
+      alert("Enter a valid 10 digit mobile number.");
     }
-    if (password === "") {
+    if ((password === "")||(!passwordPattern.test(password))) {
       isValid = false;
-      alert("Password is required");
+      alert("Password should have atleast one uppercase, lowercase, digit & special character with min length of 8 characters.");
     }
     return isValid;
   }
