@@ -17,6 +17,7 @@
     "express-session": "^1.17.3",
     "http-errors": "~1.6.3",
     "moment": "^2.29.4",
+    "mongodb": "^6.1.0",
     "mongoose": "^7.4.4",
     "mongoose-paginate-v2": "^1.7.4",
     "morgan": "~1.9.1",
