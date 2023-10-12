@@ -32,11 +32,11 @@
         </div>
         <div class="row align-items-center py-3 px-xl-5 bg-dark">
             <div class="col-lg-3 d-none d-lg-block text-center">
-                <a href="/user?page=1" class="text-decoration-none">
+                <a href="/?page=1" class="text-decoration-none">
                 <img src="/images/smart-depot1.png" width="200" alt=""></a>
             </div>
             <div class="col-lg-6 col-6 text-left">
-                <form action="/user/search" method="GET">
+                <form action="/search" method="GET">
                     <div class="input-group">
                         <input type="text" class="form-control rounded" placeholder="Product name, Price, Brand, Category etc.." name="searchInput">
                         <div class="input-group-append">
@@ -48,18 +48,18 @@
                 </form>
             </div>
             <div class="col-lg-3 col-6 text-right">
-                <a href="/user/account" class="btn" id="profileicon">
+                <a href="/account" class="btn" id="profileicon">
                     <img src="/profileImage/<%= users.profileImageName %>" class="rounded-3" id="profileiconimg" alt="">
                 </a>
-                <a href="/user/wishlist" class="btn border rounded-3" id="topicon">
+                <a href="/wishlist" class="btn border rounded-3" id="topicon">
                     <i class="fas fa-heart text-primary"></i>
                     <span class="badge"><%= countWishlist %></span>
                 </a>
-                <a href="/user/cart" class="btn border rounded-3" id="topicon">
+                <a href="/cart" class="btn border rounded-3" id="topicon">
                     <i class="fas fa-shopping-cart text-primary"></i>
                     <span class="badge"><%= countCart %></span>
                 </a>
-                <a href="/user/wallet" class="btn border rounded-3" id="topicon">
+                <a href="/wallet" class="btn border rounded-3" id="topicon">
                     <i class="fas fa-wallet text-primary"></i>
                     <span class="badge">₹</span>
                 </a>

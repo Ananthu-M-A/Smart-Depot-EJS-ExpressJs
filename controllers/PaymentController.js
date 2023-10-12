@@ -59,7 +59,7 @@ exports.verifyPayment =  async (req,res)=>{
   
       if(razorpaySignature===expectedSign)
       {
-        res.redirect(`/user/orderConfirmation?id=${razorpayPaymentId}`);
+        res.redirect(`/orderConfirmation?id=${razorpayPaymentId}`);
       }else{
         return res.status(200).json({message: "Invalid Signature Sent"});
       }

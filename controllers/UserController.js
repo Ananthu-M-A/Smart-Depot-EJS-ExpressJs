@@ -164,7 +164,7 @@ exports.loadLoginPage = async (req, res) => {
       res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
       res.render('login');
     } else {
-      res.redirect('/user');
+      res.redirect('/');
     }
   } catch (error) {
     res.render('login', { error: 'Error fetching product data.' });
@@ -278,7 +278,7 @@ exports.login = async (req, res, next) => {
     if (passwordMatch) {
       req.session.user = user._id;
       req.session.status = 'logged-in';
-      return res.redirect('/user');
+      return res.redirect('/');
     } else {
       return res.status(401).send('Enter correct password');
     }
@@ -377,7 +377,7 @@ exports.searchProducts = async (req, res) => {
   const page = parseInt(req.query.page) || 1;
 
   if (!query) {
-    res.redirect('/user');
+    res.redirect('/');
   }
   try {
     let products = await productData.find({
@@ -596,7 +596,7 @@ exports.removeCartItem = async (req, res) => {
     const productId = req.params.productId;
     const customerId = req.session.user;
     const result = await cartData.findOneAndRemove({ productId, customerId: customerId });
-    res.redirect('/user/cart')
+    res.redirect('/cart')
   } catch (error) {
     res.render('cart', { error: 'Error fetching product data.' });
   }
@@ -610,9 +610,9 @@ exports.applyOffer = async(req, res) => {
     const couponMatched = await bcrypt.compare(code, offer.hashedCouponCode);
     if(couponMatched)
     {
-      return res.redirect(`/user/cart?offer=${offer.offerValue}`);
+      return res.redirect(`/cart?offer=${offer.offerValue}`);
     }
-    res.redirect('/user/cart');
+    res.redirect('/cart');
 
   } catch (error) {
     console.log(error);
@@ -665,7 +665,7 @@ exports.removeWishlistItem = async (req, res) => {
     //   { new: true }
     // );
 
-    res.redirect('/user/wishlist');
+    res.redirect('/wishlist');
   } catch (error) {
     res.render('cart', { error: 'Error removing product from the wishlist.' });
   }
@@ -736,7 +736,7 @@ exports.cancelOrder = async (req, res) => {
     }
 
     const orders = await orderData.find({ userId: userId });
-    res.redirect('/user/orders');
+    res.redirect('/orders');
   } catch (error) {
     res.render('order', { error: 'Error fetching product data.' });
   }
@@ -804,7 +804,7 @@ exports.updateLoginData = async (req, res) => {
       await userLoginData.findByIdAndUpdate(customerId, userData, {upsert: true} );
     }
 
-    res.redirect('/user/account');
+    res.redirect('/account');
   } catch (error) {
     console.log(error);
     res.render('home', { error: 'Error fetching product data.' });
@@ -830,7 +830,7 @@ exports.addBillingAddress = async (req, res) => {
       // await billingAddressData.findByIdAndUpdate(billingAddressId, billingAddress, {upsert: true});
       await billingAddress.save();
     }
-    res.redirect('/user/account');
+    res.redirect('/account');
   } catch (error) {
     console.log(error);
     res.render('home', { error: 'Error fetching product data.' });
@@ -854,7 +854,7 @@ exports.updateBillingAddress = async (req, res) => {
     {
       await billingAddressData.findByIdAndUpdate(billingAddressId, billingAddress);
     }
-    res.redirect('/user/account');
+    res.redirect('/account');
   } catch (error) {
     console.log(error);
     res.render('home', { error: 'Error fetching product data.' });
@@ -882,7 +882,7 @@ exports.addShippingAddress = async (req, res) => {
       // await shippingAddressData.findByIdAndUpdate(shippingAddressId, shippingAddress, {upsert: true});
       await shippingAddress.save();
     }
-    res.redirect('/user/account');
+    res.redirect('/account');
   } catch (error) {
     console.log(error);
     res.render('home', { error: 'Error fetching product data.' });
@@ -908,7 +908,7 @@ exports.updateShippingAddress = async (req, res) => {
     {
       await shippingAddressData.findByIdAndUpdate(shippingAddressId, shippingAddress);
     }
-    res.redirect('/user/account');
+    res.redirect('/account');
   } catch (error) {
     console.log(error);
     res.render('home', { error: 'Error fetching product data.' });
@@ -920,7 +920,7 @@ exports.changePassword = async (req, res) => {
     const { currentPassword, newPassword, newPassword2 } = req.body;
     if (newPassword !== newPassword2) {
       console.log('Incorrect password');
-      return res.redirect('/user/account');
+      return res.redirect('/account');
     }
 
     const customerId = req.session.user;
@@ -932,12 +932,12 @@ exports.changePassword = async (req, res) => {
       const updatePassword = await userLoginData.findOneAndUpdate({ _id: customerId }, { password: hashedNewPassword });
 
       if (updatePassword.nModified !== 0) {
-        return res.redirect('/user/account');
+        return res.redirect('/account');
       } else {
-        res.redirect('/user/logout');
+        res.redirect('/logout');
       }
     } else {
-      res.redirect('/user/logout');
+      res.redirect('/logout');
     }
   } catch (error) {
     console.error(error);
@@ -952,14 +952,14 @@ exports.deleteAccount = async (req, res) => {
     const { userEmail, currentPassword } = req.body;
     const user = await userLoginData.findOne({ email: userEmail }, { password: 1 });
     if (!user) {
-      res.redirect('/user/logout');
+      res.redirect('/logout');
     }
     const passwordMatch = await bcrypt.compare(currentPassword, user.password);
     if (passwordMatch) {
       const deleteAccount = await userLoginData.deleteOne({ email: userEmail });
       res.redirect('/userSignup')
     } else {
-      res.redirect('/user/logout');
+      res.redirect('/logout');
     }
   } catch (error) {
     console.log(error);
@@ -983,18 +983,18 @@ exports.addToCart = async (req, res) => {
       const updatedQuantity = parseFloat(productQuantity) + parseFloat(cartProduct.productQuantity);
       if(products.productStock < updatedQuantity)
       {
-        return res.redirect("/user/cart");
+        return res.redirect("/cart");
       }
       const updatedProduct = { productQuantity: updatedQuantity };
       const result = await cartData.findByIdAndUpdate(cartProduct._id, updatedProduct, { new: true });
       if (!result) {
         return res.render('home', { error: 'Product not found.' });
       }
-      return res.redirect('/user/cart');
+      return res.redirect('/cart');
     } else {
       if(products.productStock < productQuantity)
       {
-        return res.redirect("/user/cart");
+        return res.redirect("/cart");
       }
       const cartItems = new cartData({
         customerId: customerId,
@@ -1005,7 +1005,7 @@ exports.addToCart = async (req, res) => {
         createdTime: currentDate,
       });
       const result = await cartItems.save();
-      return res.redirect('/user/cart');
+      return res.redirect('/cart');
     }
   } catch (error) {
     console.error('Error adding product to cart: ', error);
@@ -1021,7 +1021,7 @@ exports.changeQuantity = async (req, res) => {
     console.log(product.productStock);
 
     if (parseFloat(productQuantity) < 1 || product.productStock < parseFloat(productQuantity)) {
-      res.redirect('/user/cart');
+      res.redirect('/cart');
     }
 
     const products = await productData.findById(productId);
@@ -1036,7 +1036,7 @@ exports.changeQuantity = async (req, res) => {
     if (cartProduct) {
       const updatedQuantity = parseFloat(productQuantity);
       if (updatedQuantity >= 0) {
-        res.redirect('/user/cart');
+        res.redirect('/cart');
       }
 
       const updatedProduct = { productQuantity: updatedQuantity };
@@ -1044,7 +1044,7 @@ exports.changeQuantity = async (req, res) => {
       if (!result) {
         return res.render('home', { error: 'Product not found.' });
       }
-      res.redirect('/user/cart');
+      res.redirect('/cart');
     } else {
       const cartItems = new cartData({
         customerId: customerId,
@@ -1054,7 +1054,7 @@ exports.changeQuantity = async (req, res) => {
         createdTime: currentDate,
       });
       const result = await cartItems.save();
-      res.redirect('/user/cart');
+      res.redirect('/cart');
     }
   } catch (error) {
     console.error('Error adding product to cart: ', error);
@@ -1076,16 +1076,16 @@ exports.addToWishlist = async (req, res) => {
         product: productId,
       });
       await newWishlist.save();
-      res.redirect('/user/wishlist');
+      res.redirect('/wishlist');
     } else {
       if (wishlist.product.equals(productId)) {
         console.log('product already exists in wishlist');
-        res.redirect('/user/wishlist');
+        res.redirect('/wishlist');
       } else {
         console.log('user exists, but product does not');
         wishlist.product = productId;
         await wishlist.save();
-        res.redirect('/user/wishlist');
+        res.redirect('/wishlist');
       }
     }
   } catch (error) {
@@ -1173,7 +1173,7 @@ exports.updateReturnStatus = async (req, res) => {
     if (result2.nModified === 0) {
       return res.status(404).json({ message: 'Return option not updated' });
     }
-    res.redirect('/user/orders');
+    res.redirect('/orders');
   } catch (error) {
     res.status(500).json({ message: 'Error updating order status', error: error.message });
   }
@@ -1242,12 +1242,12 @@ exports.placeOrder = async (req, res) => {
     }
     else {
       req.session.paymentMethod = "COD";
-      res.redirect(`/user/orderConfirmation?id=${savedOrder._id}`);
+      res.redirect(`/orderConfirmation?id=${savedOrder._id}`);
     }
 
   } catch (error) {
     console.log(error);
-    res.redirect('/user');
+    res.redirect('/');
   }
 };
 

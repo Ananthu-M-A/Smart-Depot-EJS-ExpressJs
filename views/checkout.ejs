@@ -6,7 +6,7 @@
             <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 300px">
                 <h1 class="font-weight-semi-bold text-uppercase mb-3">Checkout</h1>
                 <div class="d-inline-flex">
-                    <p class="m-0"><a href="/user?page=1">Home</a></p>
+                    <p class="m-0"><a href="/?page=1">Home</a></p>
                     <p class="m-0 px-2">-</p>
                     <p class="m-0">Checkout</p>
                 </div>
@@ -33,7 +33,7 @@
                             <div class="row">
                                 <div class="col-md-12">
                                         <h5 class="font-weight-semi-bold mb-4 text-center">Billing Address</h5>
-                                        <form action="/user/addAddressCheckout" method="POST" >
+                                        <form action="/addAddressCheckout" method="POST" >
                                         <div class="row">
                                             <div class="col-md-6 form-group">
                                                  <label>Alternate Mobile No</label>
@@ -137,7 +137,7 @@
 
 
 <!-- Checkout Start -->
-<form id="paymentForm" action="/user/placeOrder/<%= subTotal %>/<%= total %>/<%= discount %>" method="post">
+<form id="paymentForm" action="/placeOrder/<%= subTotal %>/<%= total %>/<%= discount %>" method="post">
     <div class="container-fluid pt-5">
         <div class="row px-xl-5">
             <div class="col-lg-6">

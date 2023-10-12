@@ -6,7 +6,7 @@
             <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 300px">
                 <h1 class="font-weight-semi-bold text-uppercase mb-3">Account Details</h1>
                 <div class="d-inline-flex">
-                    <p class="m-0"><a href="/user?page=1">Home</a></p>
+                    <p class="m-0"><a href="/?page=1">Home</a></p>
                     <p class="m-0 px-2">-</p>
                     <p class="m-0">
                         <%= users.fullname %>
@@ -31,7 +31,7 @@
                     <div class="row">
                         <div class="col-md-4"></div>
                         <div class="col-md-4">
-                            <form action="/user/changePassword" method="POST">
+                            <form action="/changePassword" method="POST">
                                 <div class="mb-3">
                                     <label>Enter current password</label>
                                     <input type="password" id="password" name="currentPassword" class="form-control"
@@ -60,7 +60,7 @@
                     <div class="row">
                         <div class="col-md-4"></div>
                         <div class="col-md-4">
-                            <form action="/user/deleteAccount" method="POST">
+                            <form action="/deleteAccount" method="POST">
                                 <div class="mb-3">
                                     <label>Enter your primary email</label>
                                     <input class="form-control" name="userEmail" type="text" required>
@@ -82,7 +82,7 @@
                         <div class="col-md-12">
                                 <h4 class="font-weight-semi-bold mb-4 text-center">UPDATE DETAIL</h4>
                                 <h5 class="font-weight-semi-bold mb-4 text-center">Login Data</h5>
-                                <form action="/user/updateLoginData" method="POST" enctype="multipart/form-data">
+                                <form action="/updateLoginData" method="POST" enctype="multipart/form-data">
                                 <div class="row">
                                     <div class="col-md-6 form-group">
                                         <label>Profile Image</label>
@@ -111,7 +111,7 @@
                                 </form>
                                 <br>
                                 <br>
-                                <form action="/user/updateBillingAddress" method="POST" >
+                                <form action="/updateBillingAddress" method="POST" >
                                 <h5 class="font-weight-semi-bold mb-4 text-center">Current Billing Address</h5>
                                 <div class="row">
                                     <div class="col-md-6 form-group">
@@ -164,7 +164,7 @@
                         <div class="col-md-12" id="shipping-address">
                             <br>
                             <br>
-                            <form action="/user/updateShippingAddress" method="POST" >
+                            <form action="/updateShippingAddress" method="POST" >
                             <h5 class="font-weight-semi-bold mb-4 text-center">Current Shipping Address</h5>
                             <div class="row">
                                 <div class="col-md-6 form-group">
@@ -297,7 +297,7 @@
                     <div class="row">
                         <div class="col-md-12">
                                 <h4 class="font-weight-semi-bold mb-4 text-center">ADD ADDRESSES</h4>
-                                <form action="/user/addBillingAddress" method="POST" >
+                                <form action="/addBillingAddress" method="POST" >
                                 <h5 class="font-weight-semi-bold mb-4 text-center">Billing Address</h5>
                                 <div class="row">
                                     <div class="col-md-6 form-group">
@@ -346,7 +346,7 @@
                         <div class="col-md-12" id="shipping-address">
                             <br>
                             <br>
-                            <form action="/user/addShippingAddress" method="POST" >
+                            <form action="/addShippingAddress" method="POST" >
                             <h5 class="font-weight-semi-bold mb-4 text-center">Shipping Address</h5>
                             <div class="row">
                                 <div class="col-md-6 form-group">

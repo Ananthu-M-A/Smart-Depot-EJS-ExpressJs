@@ -5,7 +5,7 @@
             <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 300px">
                 <h1 class="font-weight-semi-bold text-uppercase mb-3">Order Details</h1>
                 <div class="d-inline-flex">
-                    <p class="m-0"><a href="/user?page=1">Home</a></p>
+                    <p class="m-0"><a href="/?page=1">Home</a></p>
                     <p class="m-0 px-2">-</p>
                     <p class="m-0">Order Details</p>
                 </div>
@@ -99,7 +99,7 @@
                             </tbody>
                         </table>
                         <div class="col-md">
-                            <a href="/user/downloadInvoice/<%= order._id %>/<%= order.total %>"
+                            <a href="/downloadInvoice/<%= order._id %>/<%= order.total %>"
                                 class="btn btn-outline-primary py-md-2 px-md-3">
                                 Download Invoice<img width="20vh" src="/images/pdfdownload.png" alt=""></a>
                         </div>

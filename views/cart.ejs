@@ -8,7 +8,7 @@
         <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 300px">
             <h1 class="font-weight-semi-bold text-uppercase mb-3">Shopping Cart</h1>
             <div class="d-inline-flex">
-                <p class="m-0"><a href="/user?page=1">Home</a></p>
+                <p class="m-0"><a href="/?page=1">Home</a></p>
                 <p class="m-0 px-2">-</p>
                 <p class="m-0">Shopping Cart</p>
             </div>
@@ -69,7 +69,7 @@
                             <td class="align-middle" id="itemPrice"><%= offerPrice %></td>
                             <td class="align-middle text-center">
                                 <div class="d-flex justify-content-center">
-                                    <form action="/user/changeQuantity/<%= cartItem.productId._id %>/<%= cartItem.productQuantity-1 %>" method="POST">
+                                    <form action="/changeQuantity/<%= cartItem.productId._id %>/<%= cartItem.productQuantity-1 %>" method="POST">
                                     <button class="btn">
                                         <i class="fa fa-minus"></i>
                                     </button>
@@ -77,7 +77,7 @@
                                     <input type="text" id="quantity" name="quantity" 
                                         class="form-control bg-secondary text-center" style="width: 4vw; height: 8vh;" 
                                         value="<%= cartItem.productQuantity %>">
-                                    <form action="/user/changeQuantity/<%= cartItem.productId._id %>/<%= cartItem.productQuantity+1 %>" method="POST">
+                                    <form action="/changeQuantity/<%= cartItem.productId._id %>/<%= cartItem.productQuantity+1 %>" method="POST">
                                     <button class="btn">
                                         <i class="fa fa-plus"></i>
                                     </button>
@@ -89,14 +89,14 @@
                             <td class="align-middle"><input type="text" id="itemTotal" name="itemTotal"
                                 class="form-control bg-secondary text-center w-100 bg-transparent" style="width: 4vw; height: 8vh;" 
                                 value="<%= itemTotal %>"></td>
-                            <td class="align-middle"><a href="/user/removeCartItem/<%= cartItem.productId._id %>" class="btn btn-sm btn-primary"><i class="fa fa-times"></i></a></td>
+                            <td class="align-middle"><a href="/removeCartItem/<%= cartItem.productId._id %>" class="btn btn-sm btn-primary"><i class="fa fa-times"></i></a></td>
                         </tr>
                         <% }); %>
                     </tbody>
                 </table>
             </div>
             <div class="col-lg-4">
-                <form class="mb-5" action="/user/applyOffer" method="POST">
+                <form class="mb-5" action="/applyOffer" method="POST">
                     <div class="input-group">
                         <input type="text" name="couponCode" id="applyCode" class="form-control p-4" placeholder="Coupon Code">
                         <div class="input-group-append">
@@ -135,10 +135,10 @@
                             <h5 class="font-weight-bold">Total</h5>
                             <h5 class="font-weight-bold">₹<%= total %></h5>
                         </div>
-                        <form action="/user/checkout/<%= subTotal %>/<%= total %>/<%= discount %>" method="POST">
+                        <form action="/checkout/<%= subTotal %>/<%= total %>/<%= discount %>" method="POST">
                             <button class="btn btn-block btn-primary my-3 py-3">Proceed To Checkout</button>
                         </form>                        
-                        <a href="/user?page=1" class="btn btn-block btn-primary my-3 py-3">Continue Shopping</a>
+                        <a href="/?page=1" class="btn btn-block btn-primary my-3 py-3">Continue Shopping</a>
                     </div>
                 </div>
             </div>

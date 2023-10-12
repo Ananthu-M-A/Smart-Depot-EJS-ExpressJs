@@ -46,7 +46,7 @@
                     </div>
                 </div>
                 <div class="col-lg-4 pb-5 border text-center">
-                    <form action="/user/cart/<%= product._id %>" method="POST">
+                    <form action="/cart/<%= product._id %>" method="POST">
                         <p class="font-weight-semi-bold mb-4 ml-0">
                             <%= product.productCategory.productCategory %> >
                         </p>
@@ -101,7 +101,7 @@
                         </div>
                     </form>
 
-                    <form action="/user/wishlist/<%= product._id %>" method="POST">
+                    <form action="/wishlist/<%= product._id %>" method="POST">
                         <button class="btn btn-primary">Add To Wishlist <img width="20vh" src="/images/wishlist.png"
                                 alt=""></button>
                     </form>

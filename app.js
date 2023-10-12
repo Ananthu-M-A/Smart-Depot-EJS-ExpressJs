@@ -15,10 +15,7 @@ const userRouter = require('./routes/user');
 const adminRouter = require('./routes/admin');
 const paymentRouter = require('./routes/payment');
 
-mongoose.connect('mongodb+srv://heartchaserananthu:p1V7Mkx42cu4tORr@smartdepot.syldpcv.mongodb.net/?retryWrites=true&w=majority', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+mongoose.connect('mongodb+srv://heartchaserananthu:p1V7Mkx42cu4tORr@smartdepot.syldpcv.mongodb.net/?retryWrites=true&w=majority');
 
 
 let app = express();
@@ -44,7 +41,7 @@ app.use(express.static(path.join(__dirname, 'uploads')));
 app.use('/userSignup', userSignupRouter);
 app.use('/userLogin', userLoginRouter);
 app.use('/adminLogin', adminLoginRouter);
-app.use('/user', userRouter);
+app.use('/', userRouter);
 app.use('/admin', adminRouter);
 app.use('/payment',paymentRouter);
 
