@@ -15,7 +15,7 @@ const userRouter = require('./routes/user');
 const adminRouter = require('./routes/admin');
 const paymentRouter = require('./routes/payment');
 
-mongoose.connect('mongodb://127.0.0.1:27017/smartDepot', {
+mongoose.connect('mongodb+srv://heartchaserananthu:p1V7Mkx42cu4tORr@smartdepot.syldpcv.mongodb.net/?retryWrites=true&w=majority', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
