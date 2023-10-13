@@ -18,7 +18,7 @@ const paymentRouter = require('./routes/payment');
 const app = express();
 dotenv.config();
 
-mongoose.connect(process.env.MONGODB_URI);
+mongoose.connect("mongodb+srv://heartchaserananthu:p1V7Mkx42cu4tORr@smartdepot.syldpcv.mongodb.net/?retryWrites=true&w=majority");
 
 
 app.set('views', path.join(__dirname, 'views'));
