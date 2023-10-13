@@ -28,7 +28,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 app.use(session({
-  secret: process.env.SESSION_SECRET,
+  secret: 'the_smart_depot',
   resave: false,
   saveUninitialized: true,
   cookie: { secure: false }
