@@ -143,3 +143,65 @@
     }
     return isValid;
   }
+
+  function validateFormLogin() {
+
+    const emailInput = document.getElementById("email");
+    const passwordInput = document.getElementById("password");
+    const email = emailInput.value;
+    const password = passwordInput.value;
+
+    const emailPattern = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+    const passwordPattern = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@#$%^&+=!])[A-Za-z\d@#$%^&+=!]{8,}$/;
+    let isValid = true;
+
+    if (!emailPattern.test(email)) {
+      isValid = false;
+      alert("Enter you Email in 'user@example.com' format.");
+    }
+    if ((password === "")||(!passwordPattern.test(password))) {
+      isValid = false;
+      alert("Password should have atleast one uppercase, lowercase, digit & special character with min length of 8 characters.");
+    }
+    return isValid;
+  }
+
+  function validateFormFP() {
+
+    const emailInput = document.getElementById("email");
+    const email = emailInput.value;
+
+    const emailPattern = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+    let isValid = true;
+
+    if (!emailPattern.test(email)) {
+      isValid = false;
+      alert("Enter you Email in 'user@example.com' format.");
+    }
+    return isValid;
+  }
+
+  
+  function validateFormOTP() {
+
+    const otpInput = document.getElementById("otp");
+    const otp = otpInput.value;
+
+    if (!otpPattern.test(otp)) {
+      isValid = false;
+      alert("Enter a valid 6 digit otp number.");
+    }
+    return isValid;
+  }
+
+  function validateFormOTPFP() {
+
+    const otpInput = document.getElementById("otp");
+    const otp = otpInput.value;
+
+    if (!otpPattern.test(otp)) {
+      isValid = false;
+      alert("Enter a valid 6 digit otp number.");
+    }
+    return isValid;
+  }

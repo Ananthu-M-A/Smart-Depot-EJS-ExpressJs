@@ -5,17 +5,19 @@
     <div class="col-md-4"></div>
     <div class="col-md-4 bg-light p-5 rounded text-center">
       <h1 class="mb-3">LOGIN</h1>
-        <form method="POST" action="/userLogin" class="text-center text-dark">
+        <form method="POST" action="/userLogin" class="text-center text-dark" onsubmit="return validateFormLogin()">
         
           <div class="mb-3">
             <label for="email" class="form-label">Email Address</label>
-            <input type="email" class="form-control bg-outline-primary" id="email" name="email" aria-describedby="emailHelp"
-              required>
+            <input type="email" class="form-control bg-outline-primary" id="email" name="email" 
+            aria-describedby="emailHelp" pattern="[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}" 
+            title="Email should be in 'user@example.com' format." required>
           </div>
           <div class="mb-3">
             <label for="password" class="form-label">Password</label>
             <input type="password" id="password" name="password" class="form-control bg-light"
-            pattern="[0-9]{6}" title="Minimum 6 characters" required>
+            pattern="(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@#$%^&+=!])[A-Za-z\d@#$%^&+=!]{8,}" 
+            title="Min 8 characters which should include atleast a uppercase, lowercase, digit & special character" required>
           </div>
           <div class="container">
             <div class="row">
