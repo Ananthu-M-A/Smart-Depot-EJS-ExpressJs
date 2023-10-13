@@ -15,17 +15,20 @@ const userRouter = require('./routes/user');
 const adminRouter = require('./routes/admin');
 const paymentRouter = require('./routes/payment');
 
-mongoose.connect('mongodb+srv://heartchaserananthu:p1V7Mkx42cu4tORr@smartdepot.syldpcv.mongodb.net/?retryWrites=true&w=majority');
-
-
-let app = express();
+const app = express();
 dotenv.config();
+
+mongoose.connect(process.env.MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 app.use(session({
-  secret: 'the_smart_depot',
+  secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: true,
   cookie: { secure: false }
