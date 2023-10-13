@@ -163,7 +163,7 @@ exports.loadLoginPage = async (req, res) => {
   try {
     if (!req.session.user || req.session.status !== 'logged-in') {
       res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-      res.render('login');
+      res.render('login',{ errorMsg: undefined });
     } else {
       res.redirect('/');
     }
@@ -272,7 +272,8 @@ exports.login = async (req, res, next) => {
     const user = await userLoginData.findOne({ email });
 
     if (!user) {
-      return res.status(400).send('User not found');
+      const errorMsg = 'User not found';
+      res.status(400).render('login', { errorMsg });
     }
 
     const passwordMatch = await bcrypt.compare(password, user.password);
@@ -281,11 +282,12 @@ exports.login = async (req, res, next) => {
       req.session.status = 'logged-in';
       return res.redirect('/');
     } else {
-      return res.status(401).send('Enter correct password');
+      const errorMsg = 'Enter correct password';
+      res.status(401).render('login', { errorMsg });
     }
   } catch (error) {
-    console.error('Error during login:', error);
-    return res.status(500).send('Internal server error');
+    const errorMsg = 'Error during login';
+    res.status(500).render('login', { errorMsg });
   }
 };
 

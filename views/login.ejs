@@ -26,6 +26,11 @@
               </div>
             </div>
           </div>
+          <% if(errorMsg){ %>
+            <div class="bg-danger mt-2">
+                <h6><%= errorMsg %></h6>
+            </div>
+          <% } %>
         </form>
         <a href="/userLogin/forgotPassword"><p class="mt-2 text-dark">Forgot Password ?</p></a>
         <a href="/userSignup"><p class="mt-2 text-dark">Create a new account</p></a>
