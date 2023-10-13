@@ -630,7 +630,7 @@ exports.loadWishlist = async (req, res) => {
     const countWishlist = await wishlistData.findOne({ customerId: req.session.user }).countDocuments({});
     const users = await userLoginData.findById(customerId);
     
-    res.render('wishlist', { user: customerId, wishlist, countCart, countWishlist, users });
+    res.render('wishList', { user: customerId, wishlist, countCart, countWishlist, users });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal Server Error' });
@@ -666,7 +666,7 @@ exports.removeWishlistItem = async (req, res) => {
     //   { new: true }
     // );
 
-    res.redirect('/wishlist');
+    res.redirect('/wishList');
   } catch (error) {
     res.render('cart', { error: 'Error removing product from the wishlist.' });
   }
@@ -1077,16 +1077,16 @@ exports.addToWishlist = async (req, res) => {
         product: productId,
       });
       await newWishlist.save();
-      res.redirect('/wishlist');
+      res.redirect('/wishList');
     } else {
       if (wishlist.product.equals(productId)) {
         console.log('product already exists in wishlist');
-        res.redirect('/wishlist');
+        res.redirect('/wishList');
       } else {
         console.log('user exists, but product does not');
         wishlist.product = productId;
         await wishlist.save();
-        res.redirect('/wishlist');
+        res.redirect('/wishList');
       }
     }
   } catch (error) {
