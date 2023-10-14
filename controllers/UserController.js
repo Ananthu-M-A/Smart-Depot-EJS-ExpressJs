@@ -336,7 +336,8 @@ exports.loadHomePage = async (req, res) => {
     res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
     const itemsPerPage = 4;
     const page = parseInt(req.query.page) || 1;
-    const filter = req.session.filter || {};
+    const filter = {};
+
 
     const { paginatedProducts, categories, users, countCart, countWishlist, totalPages } =
       await getFilteredProducts(filter, page, itemsPerPage, req);
@@ -352,6 +353,7 @@ exports.loadHomePage = async (req, res) => {
         }
       }
     let pageRoute = req.path;
+
     res.render('home', {
       user: req.session.user,
       products: paginatedProducts,
@@ -382,42 +384,62 @@ exports.searchProducts = async (req, res) => {
   if (!query) {
     res.redirect('/');
   }
+
   try {
-    let products = await productData.find({
+    let filter = {
       $or: [
         { productName: { $regex: query, $options: 'i' } },
         { productBrand: { $regex: query, $options: 'i' } },
         { productQuality: { $regex: query, $options: 'i' } },
         { productDescription: { $regex: query, $options: 'i' } },
         {
-          productCategory: { 
+          productCategory: {
             $in: await categoryData.distinct('_id', {
               productCategory: { $regex: query, $options: 'i' },
             }),
           },
         },
       ],
-    }).populate('productCategory');
+    };
 
-    if (products.length === 0 && parseFloat(query)) {
-      products = await productData.find({
-        productPrice: { $lte: parseFloat(query) },
-      }).populate('productCategory');
-    }
-    
-    if(products.length === 0){
-      products = await productData.find().populate('productCategory');
+    if (parseFloat(query)) {
+      filter = {
+        $or: [
+          filter,
+          { productPrice: { $lte: parseFloat(query) } },
+        ],
+      };
     }
 
     const categories = await categoryData.find();
-    const countCart = await cartData.find({ customerId: req.session.user }).countDocuments({});
-    const countWishlist = await wishlistData.findOne({ customerId: req.session.user }).countDocuments({});
-
     const users = await userLoginData.findById(req.session.user);
+    const countCart = await cartData.countDocuments({ customerId: req.session.user });
+    const countWishlist = await wishlistData.countDocuments({ customerId: req.session.user });
 
-    res.render('home', { user: req.session.user, products, categories, users, countCart, countWishlist, selectedCategories: [],
-       totalPages: 4, currentPage: 1, selectedMinPriceRange: 0,selectedMaxPriceRange: 10000, });
-    
+    const options = { page: page, limit: 4 };
+
+    const result = await productData.paginate(filter, options, { populate: 'productCategory' });
+
+    if (result.docs.length === 0) {
+      // No products found, you can handle this case as needed
+    }
+    let pageRoute = req.path;
+
+    res.render('home', {
+      user: req.session.user,
+      products: result.docs,
+      categories,
+      users,
+      countCart,
+      countWishlist,
+      totalPages: result.totalPages,
+      currentPage: result.page,
+      selectedCategories: [],
+      selectedMinPriceRange: 0,
+      selectedMaxPriceRange: 10000,
+      pageRoute,
+    });
+
   } catch (error) {
     console.log(error);
     res.render('home', { error: 'Error searching products.' });
@@ -427,12 +449,9 @@ exports.searchProducts = async (req, res) => {
 exports.filterProducts = async (req, res) => {
   try {
     const categoryNames = req.query.category || req.query.categoryNames || [];
-    console.log(typeof(categoryNames));
 
     const minPriceRange = parseInt(req.query.minPriceRange);
     const maxPriceRange = parseInt(req.query.maxPriceRange);
-
-    console.log(categoryNames);
 
     req.session.filter = {
       categories: categoryNames,
@@ -454,6 +473,7 @@ exports.filterProducts = async (req, res) => {
     const itemsPerPage = 4;
     const page = parseInt(req.query.page) || 1;
     console.log(page);
+
     const {
       paginatedProducts,
       categories,
@@ -488,7 +508,6 @@ exports.filterProducts = async (req, res) => {
   }
 };
 
-
 exports.clearFilter = async (req, res) => {
   try {
     const categoryNames = [];
@@ -514,6 +533,8 @@ exports.clearFilter = async (req, res) => {
       totalPages,
     } = await getFilteredProducts({}, page, itemsPerPage, req);
 
+    let pageRoute = "/";
+
     res.render('home', {
       user: req.session.user,
       products: paginatedProducts,
@@ -528,6 +549,7 @@ exports.clearFilter = async (req, res) => {
       selectedCategories: categoryNames,
       selectedMinPriceRange: minPriceRange,
       selectedMaxPriceRange: maxPriceRange,
+      pageRoute
     });
 
   } catch (error) {

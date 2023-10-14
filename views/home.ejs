@@ -422,8 +422,20 @@
                             <%= i %>
                         </a>
                     <% } %> 
-                <% } else { %>
-                    <h5>Page No : 1</h5>
+                <% } else if (pageRoute === '/search') { %>
+                    <h5>Page No :</h5>
+                    <% for (let i=1; i <= totalPages; i++) { %>
+                        <a href="/search">
+                            <%= i %>
+                        </a>
+                    <% } %> 
+                <% } else if (pageRoute === '/clearFilter') { %>
+                    <h5>Page No :</h5>
+                    <% for (let i=1; i <= totalPages; i++) { %>
+                        <a href="/clearFilter">
+                            <%= i %>
+                        </a>
+                    <% } %> 
                 <% } %>
             </div>
             
