@@ -16,10 +16,10 @@
     </div>
     <!-- Page Header End -->
 
+    <% offers.forEach((offer, index) => { %>
     <div class="container bg-secondary">
         <div class="row text-center p-3">
             <h2>BIG BILLION OFFERS</h2>
-            <% offers.forEach((offer, index) => { %>
             <div class="col-md-3">
                 <div class="container">
                     <div class="row">
@@ -31,11 +31,12 @@
                     </div>
                 </div>  
             </div>
-            <% }) %>
         </div>
     </div>
+    <% }) %>
 
     <!-- Cart Start -->
+    <% if(cartItems.length !== 0) { %>
     <div class="container-fluid pt-5">
         <div class="row px-xl-5">
             <div class="col-lg-8 table-responsive mb-5">
@@ -144,6 +145,19 @@
             </div>
         </div>
     </div>
+    <% } else { %>
+    <div class="container">
+        <div class="row">
+            <strong><h4 class="text-center">Your shopping cart is empty.</h4></strong>
+            <br>
+            <br>
+            <br>
+            <div class="col">
+                <a href="/?page=1" class="btn btn-block btn-primary">Continue Shopping</a>
+            </div>
+        </div>
+    </div>
+    <% } %>
     <!-- Cart End -->
     <%-include('partials/bottombarUser.ejs')%>
     <%-include('partials/footer.ejs')%>

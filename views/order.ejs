@@ -12,6 +12,7 @@
             </div>
         </div>
         <!-- Page Header End -->
+        <% if(orders.length !== 0) { %>
         <div class="container-fluid pt-5">
             <div class="row px-xl-5">
                 <% let i=1;%>
@@ -71,6 +72,19 @@
                         <% }); %>
             </div>
         </div>
+        <% } else { %>
+            <div class="container">
+                <div class="row">
+                    <strong><h4 class="text-center">What are you waiting for.?!!</h4></strong>
+                    <br>
+                    <br>
+                    <br>
+                    <div class="col">
+                        <a href="/?page=1" class="btn btn-block btn-primary"><h6>Purchase Now</h6></a>
+                    </div>
+                </div>
+            </div>
+        <% } %>
 
         <%-include('partials/bottombarUser.ejs')%>
             <%-include('partials/footer.ejs')%>

@@ -19,6 +19,7 @@
 
 
 <!-- Wallet Start -->
+<% if(wallet) { %>
 <div class="container">
     <div class="row">
         <div class="col-md-7">
@@ -63,7 +64,19 @@
         </div>
     </div>
   </div>
-  
+  <% } else { %>
+    <div class="container">
+        <div class="row">
+            <strong><h4 class="text-center">Your wallet is empty.</h4></strong>
+            <br>
+            <br>
+            <br>
+            <div class="col">
+                <a href="/?page=1" class="btn btn-block btn-primary"><h6 class="mt-2">Go to home page</h6></a>
+            </div>
+        </div>
+    </div>
+<% } %>
 <!-- Wallet End -->
 
     <%-include('partials/bottombarUser.ejs')%>
