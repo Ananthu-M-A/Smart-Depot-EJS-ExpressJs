@@ -121,7 +121,7 @@
     const password = passwordInput.value;
 
     const namePattern = /^[A-Za-z\s]{2,50}$/;
-    const emailPattern = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+    const emailPattern = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.com$/;
     const mobilePattern = /^[0-9]{10}$/;
     const passwordPattern = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@#$%^&+=!])[A-Za-z\d@#$%^&+=!]{8,}$/;
     let isValid = true;
@@ -151,7 +151,7 @@
     const email = emailInput.value;
     const password = passwordInput.value;
 
-    const emailPattern = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+    const emailPattern = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.com$/;
     const passwordPattern = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@#$%^&+=!])[A-Za-z\d@#$%^&+=!]{8,}$/;
     let isValid = true;
 
@@ -171,7 +171,7 @@
     const emailInput = document.getElementById("email");
     const email = emailInput.value;
 
-    const emailPattern = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+    const emailPattern = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.com$/;
     let isValid = true;
 
     if (!emailPattern.test(email)) {
@@ -187,6 +187,9 @@
     const otpInput = document.getElementById("otp");
     const otp = otpInput.value;
 
+    const otpPattern = /^[0-9]{6}$/;
+    let isValid = true;
+
     if (!otpPattern.test(otp)) {
       isValid = false;
       alert("Enter a valid 6 digit otp number.");
@@ -198,6 +201,9 @@
 
     const otpInput = document.getElementById("otp");
     const otp = otpInput.value;
+
+    const otpPattern = /^[0-9]{6}$/;
+    let isValid = true;
 
     if (!otpPattern.test(otp)) {
       isValid = false;
