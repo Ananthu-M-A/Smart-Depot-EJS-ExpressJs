@@ -84,7 +84,7 @@
                                 <input type="text" id="quantity" name="quantity"
                                     class="form-control bg-secondary text-center" value="1">
                                 <a class="btn">
-                                    <i class="fa fa-plus" onclick="increaseValue()"></i>
+                                    <i class="fa fa-plus" onclick="increaseValue(<%= product.productStock %>)"></i>
                                 </a>
                             </div>
                         </div>
@@ -280,10 +280,12 @@
                         });
                     });
 
-                    function increaseValue() {
+                    function increaseValue(stockValue) {
                         let inputElement = document.getElementById('quantity');
                         let currentValue = parseInt(inputElement.value);
+                        if (stockValue > currentValue) {
                         inputElement.value = currentValue + 1;
+                        }
                     }
 
                     function decreaseValue() {
