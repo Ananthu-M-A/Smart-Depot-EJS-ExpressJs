@@ -18,14 +18,14 @@ const paymentRouter = require('./routes/payment');
 const app = express();
 dotenv.config();
 
-mongoose.connect("mongodb+srv://heartchaserananthu:p1V7Mkx42cu4tORr@smartdepot.syldpcv.mongodb.net/?retryWrites=true&w=majority");
+mongoose.connect(process.env.MONGODB_URI);
 
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 app.use(session({
-  secret: 'the_smart_depot',
+  secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: true,
   cookie: { secure: false }
