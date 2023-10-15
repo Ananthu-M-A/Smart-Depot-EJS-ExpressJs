@@ -1414,7 +1414,8 @@ exports.downloadInvoice = async (req, res) => {
       "vatPercentage": 0,
     };
 
-    let filePath = 'C:/Users/anant/Downloads/invoice.pdf';
+    
+    let filePath = path.join(__dirname,'/invoice.pdf');
 
     easyinvoice.createInvoice(data, function (result) {
       const pdf = result.pdf;
