@@ -149,7 +149,7 @@ exports.verifyOtp = async (req, res) => {
       await registerUserWithOTP.save();
       req.session.userData = null;
 
-      res.render('login');
+      res.render('login',{errorMsg: undefined});
     } catch (error) {
       console.error('Error saving user:', error);
     }
