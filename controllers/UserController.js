@@ -255,7 +255,7 @@ exports.addNewPassword = async (req, res) => {
       const updatePasswordWithOTP = await userLoginData.findOneAndUpdate({ email: email }, { password: hashedPassword });
       if (updatePasswordWithOTP.nModified !== 0) {
         req.session.userData = null;
-        res.render('login');
+        res.render('login',{errorMsg: undefined});
       }
       else {
         res.redirect('/userLogin/forgotPassword');
