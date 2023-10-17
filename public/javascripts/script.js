@@ -120,18 +120,18 @@
     const mobile = mobileInput.value;
     const password = passwordInput.value;
 
-    const namePattern = /^[A-Za-z\s]{2,50}$/;
-    const emailPattern = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.com$/;
+    const namePattern = /^[A-Za-z]+(?: [A-Za-z]+)*$/;
+    const emailPattern = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/;
     const mobilePattern = /^[0-9]{10}$/;
     const passwordPattern = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@#$%^&+=!])[A-Za-z\d@#$%^&+=!]{6,}$/;
     let isValid = true;
     if ((fullName === "")||(!namePattern.test(fullName))) {
       isValid = false;
-      alert("Full Name : Only Alphabets & Spaces are allowed & it should have min 2 characters");
+      alert("Full Name : Only alphabets & In between single spaces are allowed, Nothing Else.");
     }
     if (!emailPattern.test(email)) {
       isValid = false;
-      alert("Enter you Email in 'user@example.com' format.");
+      alert("Email : Enter a valid Email(Eg:- user@example.com).");
     }
     if (!mobilePattern.test(mobile)) {
       isValid = false;
@@ -139,7 +139,7 @@
     }
     if ((password === "")||(!passwordPattern.test(password))) {
       isValid = false;
-      alert("Password should have atleast one uppercase, lowercase, digit & special character with min length of 6 characters.");
+      alert("Password: It should contain atleast one uppercase, lowercase, digit & special character with min length of 6 characters without including spaces");
     }
     return isValid;
   }
