@@ -102,19 +102,23 @@ exports.signup = async (req, res) => {
 
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
-        console.error('Error sending OTP email:', error);
+        console.log(error);
+        const errorMsg = "Error sending OTP Email.";
+        res.status(400).render('signup', { errorMsg });
       } else {
         console.log('OTP email sent:', info.response);
       }
     });
-    res.redirect('/userSignup/verify-otp');
+    res.redirect('/userSignup/verify-otp',{ errorMsg: undefined });
   } catch (error) {
-    console.error('Error saving user:', error);
+    console.log(error);
+    const errorMsg = "Error creating account..";
+    res.status(400).render('signup', { errorMsg });
   }
 };
 
 exports.loadOtpPage = (req, res) => {
-  res.render('verifyOtp');
+  res.render('verifyOtp',{ errorMsg: undefined });
 };
 
 exports.verifyOtp = async (req, res) => {
@@ -124,14 +128,17 @@ exports.verifyOtp = async (req, res) => {
   const currentTime = new Date();
 
   if(!storedUserData) {
-    res.status(400).send('User data not found in session');
+    console.log("User data not found in session.");
+    const errorMsg = "Error creating account..";
+    res.status(400).render('signup', { errorMsg });
     return;
   }
 
   if (currentTime > otpExpiry) {
-    console.log("timeout");
+    console.log("OTP timeout");
     req.session.userData = null;
-    return res.redirect("/userSignup");
+    const errorMsg = "OTP Timeout.";
+    res.status(400).render('signup', { errorMsg });
   }
 
   if (enteredOTP === storedUserData.otp){
@@ -151,11 +158,15 @@ exports.verifyOtp = async (req, res) => {
 
       res.render('login',{errorMsg: undefined});
     } catch (error) {
-      console.error('Error saving user:', error);
+      console.log("User data not found in session.",error);
+      const errorMsg = "Error creating account..";
+      res.status(400).render('signup', { errorMsg });
     }
   } else {
     req.session.userData = null;
-    res.status(400).send('Invalid OTP');
+    console.log("Invalid OTP");
+    const errorMsg = "Invalid OTP";
+    res.status(400).render('signup', { errorMsg });
   }
 };
 
@@ -272,7 +283,7 @@ exports.login = async (req, res, next) => {
     const user = await userLoginData.findOne({ email });
 
     if (!user) {
-      const errorMsg = 'User not found';
+      const errorMsg = "User not found, Check the Email Address you've entered.";
       res.status(400).render('login', { errorMsg });
     }
 
