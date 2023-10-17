@@ -151,17 +151,17 @@
     const email = emailInput.value;
     const password = passwordInput.value;
 
-    const emailPattern = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.com$/;
+    const emailPattern = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/;
     const passwordPattern = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@#$%^&+=!])[A-Za-z\d@#$%^&+=!]{6,}$/;
     let isValid = true;
 
     if (!emailPattern.test(email)) {
       isValid = false;
-      alert("Please enter valid Email ID");
+      alert("Please enter a valid Email Address.");
     }
     if ((password === "")||(!passwordPattern.test(password))) {
       isValid = false;
-      alert("The password you've entered is incorrect.");
+      alert("The password you've entered maight be incorrect.");
     }
     return isValid;
   }
