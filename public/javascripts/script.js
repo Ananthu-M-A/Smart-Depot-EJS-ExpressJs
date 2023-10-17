@@ -123,7 +123,7 @@
     const namePattern = /^[A-Za-z\s]{2,50}$/;
     const emailPattern = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.com$/;
     const mobilePattern = /^[0-9]{10}$/;
-    const passwordPattern = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@#$%^&+=!])[A-Za-z\d@#$%^&+=!]{8,}$/;
+    const passwordPattern = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@#$%^&+=!])[A-Za-z\d@#$%^&+=!]{6,}$/;
     let isValid = true;
     if ((fullName === "")||(!namePattern.test(fullName))) {
       isValid = false;
@@ -139,7 +139,7 @@
     }
     if ((password === "")||(!passwordPattern.test(password))) {
       isValid = false;
-      alert("Password should have atleast one uppercase, lowercase, digit & special character with min length of 8 characters.");
+      alert("Password should have atleast one uppercase, lowercase, digit & special character with min length of 6 characters.");
     }
     return isValid;
   }
@@ -152,16 +152,16 @@
     const password = passwordInput.value;
 
     const emailPattern = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.com$/;
-    const passwordPattern = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@#$%^&+=!])[A-Za-z\d@#$%^&+=!]{8,}$/;
+    const passwordPattern = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@#$%^&+=!])[A-Za-z\d@#$%^&+=!]{6,}$/;
     let isValid = true;
 
     if (!emailPattern.test(email)) {
       isValid = false;
-      alert("Enter you Email in 'user@example.com' format.");
+      alert("Please enter valid Email ID");
     }
     if ((password === "")||(!passwordPattern.test(password))) {
       isValid = false;
-      alert("Password should have atleast one uppercase, lowercase, digit & special character with min length of 8 characters.");
+      alert("The password you've entered is incorrect.");
     }
     return isValid;
   }
