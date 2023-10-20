@@ -4,14 +4,14 @@
             <!-- Navbar Start -->
             <div class="container-fluid mb-5">
                 <div class="row border-top px-xl-5">
-                    <div class="col-lg-3 d-none d-lg-block">
+                    <div class="col-lg-3 col-md-6 col-sm-12 d-none d-lg-block">
                         <div class="filter-panel">
                             <!-- Filter Categories -->
                             <form action="/filterProducts" method="GET">
                                 <div class="container-fluid">
                                     <div class="row m-0 btn shadow-none d-flex align-items-center justify-content-center bg-primary text-white w-100"
                                         style="height: 65px; margin-top: -1px; padding: 0 30px;">
-                                        <div class="col-md">
+                                        <div class="col-lg">
                                             <h4 class="m-0">Filter Products</h4>
                                         </div>
                                     </div>
@@ -65,7 +65,7 @@
                                     <div class="container-fluid">
                                         <div class="row">
 
-                                            <div class="col-md-6 input-group">
+                                            <div class="col-lg-6 input-group">
                                                 <select class="form-select" id="inputGroupSelect02" name="minPriceRange">
                                                     <option value="0" selected>Min</option>
                                                         <option value="250"> ₹250 </option>
@@ -76,7 +76,7 @@
                                                         <option value="10000"> ₹10000 </option>       
                                                 </select>
                                             </div>
-                                            <div class="col-md-6 input-group">
+                                            <div class="col-lg-6 input-group">
                                                 <select class="form-select" id="inputGroupSelect02" name="maxPriceRange">
                                                     <option value="10000" selected>Max</option>
                                                         <option value="250"> ₹250 </option>
@@ -94,7 +94,7 @@
                                 <div class="container-fluid">
                                     <div class="row m-0 btn shadow-none d-flex align-items-center justify-content-center bg-primary text-white w-100"
                                         style="height: 65px; margin-top: -1px; padding: 0 30px;">
-                                        <div class="col-md">
+                                        <div class="col-lg">
                                             <button class="bg-dark text-white ml-2 rounded-3 p-1 btn-outline-primary"
                                                 type="submit">Apply</button>
                                             <a href="/clearFilter?page=1"
@@ -219,7 +219,7 @@
                 <div class="row">
                     <% products.forEach(product=> { %>
                         <% if(!product.blocked) { %>
-                            <div class="col-md-3">
+                            <div class="col-lg-3 col-md-6 col-sm-12">
                                 <div class="card mb-3" id="card">
                                     <div class="div" id="out-of-stock">
                                         <a href="/productDetails?productId=<%= product._id %>&categoryId=<%= product.productCategory._id %>">
@@ -232,9 +232,9 @@
                                         </a>
                                       </div>                                                                        
                                     <div class="card-body">
-                                        <div class="container border p-1 rounded-3">
+                                        <div class="container-fluid border p-1 rounded-3">
                                             <div class="row text-center">
-                                                <div class="col-md-4">
+                                                <div class="col-lg-4">
                                                     <form action="/cart/<%= product._id %>" method="POST">
                                                         <input type="text" name="quantity"
                                                             class="form-control bg-secondary text-center" value="1"
@@ -243,12 +243,12 @@
                                                                 src="/images/cart.png" alt=""></button>
                                                     </form>
                                                 </div>
-                                                <div class="col-md-4">
+                                                <div class="col-lg-4">
                                                     <a href="/productDetails?productId=<%= product._id %>&categoryId=<%= product.productCategory._id %>"
                                                         class="btn btn-primary rounded-3">
                                                         <img width="20vh" src="/images/view.png" alt=""></a>
                                                 </div>
-                                                <div class="col-md-4">
+                                                <div class="col-lg-4">
                                                     <form action="/wishList/<%= product._id %>" method="POST">
                                                         <button class="btn btn-primary rounded-3"><img width="20vh"
                                                                 src="/images/wishlist.png" alt=""></button>
@@ -265,10 +265,10 @@
                                         <p class="card-text">Brand: <%= product.productBrand %>
                                         </p>
                                         <div class="row">
-                                            <div class="col-md-6">
+                                            <div class="col-lg-6">
                                                 <p class="card-text">Price: <%= product.productPrice %></p>
                                             </div>
-                                            <div class="col-md-5 border bg-secondary text-center">
+                                            <div class="col-lg-5 border bg-secondary text-center">
                                             <strong>
                                                     <% if(product.offerStatus === "Active") { %>
                                                     <%= product.offerValue + "% OFF" %>
@@ -294,7 +294,7 @@
             <div class="container-fluid pt-5">
                 <div class="row px-xl-5 pb-3">
                     <% categories.forEach(category=> { %>
-                        <div class="col-lg-3 col-md-6 pb-1">
+                        <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
                             <div class="cat-item d-flex flex-column border mb-4" style="padding: 30px;">
                                 <a href="" class="cat-img position-relative overflow-hidden mb-3">
                                     <img class="img-fluid" src="/images/accessories.png" alt="">
@@ -314,8 +314,8 @@
 
             <div class="container-fluid offer pt-5">
                 <div class="row px-xl-5">
-                    <div class="col-md-6 pb-4">
-                        <div class="position-relative bg-secondary text-center text-md-right text-white mb-2 py-5 px-5">
+                    <div class="col-lg-6 pb-4">
+                        <div class="position-relative bg-secondary text-center text-lg-right text-white mb-2 py-5 px-5">
                             <div class="position-relative" style="z-index: 1;">
                                 <h5 class="text-uppercase text-primary mb-3">Start with an OFF </h5>
                                 <h1 class="mb-4 font-weight-semi-bold">BIG BILLION DAYS</h1> 
@@ -323,8 +323,8 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6 pb-4">
-                        <div class="position-relative bg-secondary text-center text-md-left text-white mb-2 py-5 px-5">
+                    <div class="col-lg-6 pb-4">
+                        <div class="position-relative bg-secondary text-center text-lg-left text-white mb-2 py-5 px-5">
                             <div class="position-relative" style="z-index: 1;">
                                 <div class="position-relative" style="z-index: 1;">
                                     <h5 class="text-uppercase text-primary mb-3">Start with an OFF </h5>
@@ -343,15 +343,15 @@
                 <div class="row">
                     <% products.forEach(product=> { %>
                         <% if(!product.blocked) { %>
-                            <div class="col-md-3">
+                            <div class="col-lg-3 col-md-6 col-sm-12">
                                 <div class="card mb-3" id="card">
                                     <a href="/productDetails/<%= product._id %>">
                                         <img src="/productImages/<%= product.productImageNames[0] %>"
                                             class="card-img-top" id="productImageLarge" alt="Product Image"></a>
                                     <div class="card-body">
-                                        <div class="container border p-1 rounded-3">
+                                        <div class="container-fluid border p-1 rounded-3">
                                             <div class="row text-center">
-                                                <div class="col-md-4">
+                                                <div class="col-lg-4">
                                                     <form action="/cart/<%= product._id %>" method="POST">
                                                         <input type="text" name="quantity"
                                                             class="form-control bg-secondary text-center" value="1"
@@ -360,12 +360,12 @@
                                                                 src="/images/cart.png" alt=""></button>
                                                     </form>
                                                 </div>
-                                                <div class="col-md-4">
+                                                <div class="col-lg-4">
                                                     <a href="/productDetails?productId=<%= product._id %>&categoryId=<%= product.productCategory._id %>"
                                                         class="btn btn-primary rounded-3">
                                                         <img width="20vh" src="/images/view.png" alt=""></a>
                                                 </div>
-                                                <div class="col-md-4">
+                                                <div class="col-lg-4">
                                                     <form action="/wishList/<%= product._id %>" method="POST">
                                                         <button class="btn btn-primary rounded-3"><img width="20vh"
                                                                 src="/images/wishlist.png" alt=""></button>
@@ -382,10 +382,10 @@
                                         <p class="card-text">Brand: <%= product.productBrand %>
                                         </p>
                                         <div class="row">
-                                            <div class="col-md-6">
+                                            <div class="col-lg-6">
                                                 <p class="card-text">Price: <%= product.productPrice %></p>
                                             </div>
-                                            <div class="col-md-5 border bg-secondary text-center">
+                                            <div class="col-lg-5 border bg-secondary text-center">
                                             <strong>
                                                 <% if(product.offerStatus === "Active") { %>
                                                 <%= product.offerValue + "% OFF" %>
