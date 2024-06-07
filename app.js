@@ -18,7 +18,9 @@ const paymentRouter = require('./routes/payment');
 const app = express();
 dotenv.config();
 
-mongoose.connect(process.env.MONGODB_URI);
+mongoose.connect(process.env.MONGODB_URI).then(() => {
+  console.log("MongoDb Connected");
+});
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -42,22 +44,27 @@ app.use('/userLogin', userLoginRouter);
 app.use('/adminLogin', adminLoginRouter);
 app.use('/', userRouter);
 app.use('/admin', adminRouter);
-app.use('/payment',paymentRouter);
+app.use('/payment', paymentRouter);
 
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   res.locals.message = err.message;
-  
+
   if (req.app.get('env') === 'development') {
     res.locals.error = err;
-} else {
+  } else {
     res.locals.error = {};
-}
+  }
   res.status(err.status || 500);
   res.render('error');
+});
+
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
 });
 
 module.exports = app;
