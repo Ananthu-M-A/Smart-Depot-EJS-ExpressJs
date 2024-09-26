@@ -5,6 +5,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const mongoose = require('mongoose');
+const MongoStore = require('connect-mongo');
 const dotenv = require('dotenv');
 const razorpay = require('razorpay');
 
@@ -33,6 +34,9 @@ app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: true,
+  store: MongoStore.create({
+    mongoUrl: mongoUri,
+  }),
   cookie: { secure: false }
 }));
 
