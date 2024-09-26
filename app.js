@@ -18,9 +18,13 @@ const paymentRouter = require('./routes/payment');
 const app = express();
 dotenv.config();
 
-mongoose.connect(process.env.MONGODB_URI).then(() => {
+const mongoUri = process.env.MONGODB_URI;
+mongoose.connect(mongoUri, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+}).then(() => {
   console.log("MongoDb Connected");
-});
+}).catch((err) => console.error('Could not connect to MongoDB', err));
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
