@@ -29,19 +29,19 @@
                                         <li>
                                             <label>
                                                 <input type="checkbox" name="category" value="Smartphone Repair Tools (Hardware)" <% if (selectedCategories.includes('Smartphone Repair Tools (Hardware)')) { %>checked<% } %>>
-                                                Repair Tools (Hardware)
+                                                Repair Tools (HW)
                                             </label>
                                         </li>
                                         <li>
                                             <label>
                                                 <input type="checkbox" name="category" value="Smartphone Repair Tools (Software)" <% if (selectedCategories.includes('Smartphone Repair Tools (Software)')) { %>checked<% } %>>
-                                                Repair Tools (Software)
+                                                Repair Tools (SW)
                                             </label>
                                         </li>
                                         <li>
                                             <label>
                                                 <input type="checkbox" name="category" value="Smartphone Accessories" <% if (selectedCategories.includes('Smartphone Accessories')) { %>checked<% } %>>
-                                                Smartphone Accessories
+                                                Smart Accessories
                                             </label>
                                         </li>
                                         <li>
@@ -53,7 +53,7 @@
                                         <li>
                                             <label>
                                                 <input type="checkbox" name="category" value="Smartphone Repair Tools (Hardware)" <% if (selectedCategories.includes('Smartphone Repair Tools (Hardware)')) { %>checked<% } %>>
-                                                Smartphone Repair Tools
+                                                Smart Repair Tools
                                             </label>
                                         </li>
                                     </ul>
@@ -223,7 +223,7 @@
                                 <div class="card mb-3" id="card">
                                     <div class="div" id="out-of-stock">
                                         <a href="/productDetails?productId=<%= product._id %>&categoryId=<%= product.productCategory._id %>">
-                                          <div class="image-container">
+                                          <div class="image-container py-2">
                                             <img src="/productImages/<%= product.productImageNames[0] %>" class="cardImgTop" id="productImageLarge" alt="Product Image">
                                             <% if(product.productStock === 0) { %>
                                               <strong class="text-danger text-center out-of-stock w-100">Sold Out</strong>
@@ -325,9 +325,16 @@
                         <% if(!product.blocked) { %>
                             <div class="col-lg-3 col-md-6 col-sm-12">
                                 <div class="card mb-3" id="card">
-                                    <a href="/productDetails/<%= product._id %>">
-                                        <img src="/productImages/<%= product.productImageNames[0] %>"
-                                            class="card-img-top" id="productImageLarge" alt="Product Image"></a>
+                                    <div class="div" id="out-of-stock">
+                                        <a href="/productDetails?productId=<%= product._id %>&categoryId=<%= product.productCategory._id %>">
+                                          <div class="image-container py-2">
+                                            <img src="/productImages/<%= product.productImageNames[0] %>" class="cardImgTop" id="productImageLarge" alt="Product Image">
+                                            <% if(product.productStock === 0) { %>
+                                              <strong class="text-danger text-center out-of-stock w-100">Sold Out</strong>
+                                            <% } %>
+                                          </div>
+                                        </a>
+                                      </div>                                                                        
                                     <div class="card-body">
                                         <div class="container-fluid border p-1 rounded-3">
                                             <div class="row text-center">
@@ -367,16 +374,17 @@
                                             </div>
                                             <div class="col-lg-5 border bg-secondary text-center">
                                             <strong>
-                                                <% if(product.offerStatus === "Active") { %>
-                                                <%= product.offerValue + "% OFF" %>
-                                                <% } else if(product.productCategory.offerStatus === "Active") { %>
-                                                <%= product.productCategory.offerValue + "% OFF" %>
-                                                <% } else { %>
-                                                <%= "No Offer" %>
-                                                <% } %>
+                                                    <% if(product.offerStatus === "Active") { %>
+                                                    <%= product.offerValue + "% OFF" %>
+                                                    <% } else if(product.productCategory.offerStatus === "Active") { %>
+                                                    <%= product.productCategory.offerValue + "% OFF" %>
+                                                    <% } else { %>
+                                                    <%= "No Offer" %>
+                                                    <% } %>
                                             </strong>
                                             </div>
                                         </div>     
+
                                     </div>
                                 </div>
                             </div>
